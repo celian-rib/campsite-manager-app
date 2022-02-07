@@ -86,7 +86,7 @@
 
 									<!-- add the main class -->
 									<arg value="--main-class" />
-									<arg value="pt4.flotsblancs.HelloWorld" />
+									<arg value="pt4.flotsblancs.App" />
 
 									<!-- add the version number -->
 									<arg value="--module-version" />
