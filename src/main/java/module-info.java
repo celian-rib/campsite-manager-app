@@ -5,5 +5,8 @@ module pt4.flotsblancs {
 	requires ormlite.jdbc;
 	requires java.sql;
 	
-	opens pt4.flotsblancs to javafx.graphics;
+	
+	opens pt4.flotsblancs to javafx.graphics,ormlite.jdbc;
+	
+	exports pt4.flotsblancs;
 }
