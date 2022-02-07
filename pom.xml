@@ -16,6 +16,14 @@
  	</properties>
 
 	<dependencies>
+	
+
+		<dependency>
+			<groupId>io.github.palexdev</groupId>
+			<artifactId>materialfx</artifactId>
+			<version>11.13.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
@@ -35,10 +43,12 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
 				<configuration>
+					<source>3.8.0</source>
+					<target>3.8.0</target>
 					<release>10</release>
 				</configuration>
 			</plugin>
-
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -67,81 +77,8 @@
 			</plugin>
 
 			<!-- perform some additional tasks (Maven does not support this yet) -->
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-
-					<!-- patch the module jar to feature a main class and a version number -->
-					<!-- see https://issues.apache.org/jira/browse/MJAR-238 -->
-					<execution>
-						<id>patch-module-jar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<exec executable="${java.home}/bin/jar" failonerror="true">
-
-									<!-- add the main class -->
-									<arg value="--main-class" />
-									<arg value="pt4.flotsblancs.App" />
-
-									<!-- add the version number -->
-									<arg value="--module-version" />
-									<arg value="${project.version}" />
-
-									<!-- update only -->
-									<arg value="--update" />
-
-									<!-- file to update -->
-									<arg value="--file" />
-									<arg
-										value="${project.build.directory}/release/${project.artifactId}-${project.version}.jar" />
-								</exec>
-							</target>
-						</configuration>
-					</execution>
-
-					<!-- create runimage with a minimal JRE and all required modules and 
-						a launcher "bin/Hello World" in the "runimage" folder -->
-					<!-- see https://maven.apache.org/plugins/maven-jlink-plugin -->
-					<execution>
-						<id>create-jre</id>
-						<phase>package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<exec executable="${java.home}/bin/jlink"
-									failonerror="true">
-									<!-- path to modules -->
-									<arg value="-p" />
-									<arg value="${project.build.directory}/release" />
-
-									<!-- name(s) of root module(s) -->
-									<arg value="--add-modules" />
-									<arg value="pt4.flotsblancs" />
-
-									<!-- target folder for the runimage -->
-									<arg value="--output" />
-									<arg value="${project.build.directory}/runimage" />
-
-									<!-- strip debug information -->
-									<arg value="--strip-debug" />
-
-									<!-- name of the launcher and module to launch -->
-									<arg value="--launcher" />
-									<arg value="Hello World=pt4.flotsblancs" />
-								</exec>
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+			
+		</plugins> 
 	</build>
 
 </project>
