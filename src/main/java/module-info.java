@@ -2,7 +2,11 @@ module pt4.flotsblancs {
 
 	requires javafx.base;
 	requires javafx.controls;
-	requires MaterialFX;
-
-	opens pt4.flotsblancs to javafx.graphics;
+	requires ormlite.jdbc;
+	requires java.sql;
+	
+	
+	opens pt4.flotsblancs to javafx.graphics,ormlite.jdbc;
+	
+	exports pt4.flotsblancs;
 }
