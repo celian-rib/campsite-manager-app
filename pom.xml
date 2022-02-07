@@ -1,0 +1,147 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>pt4.flotsblancs</groupId>
+	<artifactId>flots-blancs</artifactId>
+	<version>1.0.0</version>
+
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<javafx.version>11.0.2</javafx.version>
+ 	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics </artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<release>10</release>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<outputDirectory>${project.build.directory}/release</outputDirectory>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/release</outputDirectory>
+							<includeScope>runtime</includeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- perform some additional tasks (Maven does not support this yet) -->
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+
+					<!-- patch the module jar to feature a main class and a version number -->
+					<!-- see https://issues.apache.org/jira/browse/MJAR-238 -->
+					<execution>
+						<id>patch-module-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<exec executable="${java.home}/bin/jar" failonerror="true">
+
+									<!-- add the main class -->
+									<arg value="--main-class" />
+									<arg value="pt4.flotsblancs.HelloWorld" />
+
+									<!-- add the version number -->
+									<arg value="--module-version" />
+									<arg value="${project.version}" />
+
+									<!-- update only -->
+									<arg value="--update" />
+
+									<!-- file to update -->
+									<arg value="--file" />
+									<arg
+										value="${project.build.directory}/release/${project.artifactId}-${project.version}.jar" />
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+
+					<!-- create runimage with a minimal JRE and all required modules and 
+						a launcher "bin/Hello World" in the "runimage" folder -->
+					<!-- see https://maven.apache.org/plugins/maven-jlink-plugin -->
+					<execution>
+						<id>create-jre</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<exec executable="${java.home}/bin/jlink"
+									failonerror="true">
+									<!-- path to modules -->
+									<arg value="-p" />
+									<arg value="${project.build.directory}/release" />
+
+									<!-- name(s) of root module(s) -->
+									<arg value="--add-modules" />
+									<arg value="pt4.flotsblancs" />
+
+									<!-- target folder for the runimage -->
+									<arg value="--output" />
+									<arg value="${project.build.directory}/runimage" />
+
+									<!-- strip debug information -->
+									<arg value="--strip-debug" />
+
+									<!-- name of the launcher and module to launch -->
+									<arg value="--launcher" />
+									<arg value="Hello World=pt4.flotsblancs" />
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
