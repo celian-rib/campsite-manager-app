@@ -11,9 +11,10 @@ public class Membre
 	
     @DatabaseField(canBeNull = false)
     private String name;
-    
-    public Membre()
-    {
-    	
+
+    public Membre(String name) {
+        this.name = name;
     }
+
+    public Membre(){}
 }
