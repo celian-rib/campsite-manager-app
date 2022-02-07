@@ -1,5 +1,10 @@
 package pt4.flotsblancs;
 
+import java.sql.SQLException;
+
+import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.table.TableUtils;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -10,7 +15,14 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
+		
+		JdbcPooledConnectionSource connectionSource
+		 = new JdbcPooledConnectionSource("jdbc:mysql://localhost:3306/test","route","09071998");
+		
+		TableUtils.createTable(connectionSource, Membre.class);
+		
+		
 		launch(args);
 	}
 
@@ -20,7 +32,8 @@ public class App extends Application {
 		nameText.setText("Ecrire ici");
 		nameText.setLayoutX(10);
 		nameText.setLayoutY(10);
-
+		
+		
 		Button button = new Button();
 		button.setLayoutX(160);
 		button.setLayoutY(10);
