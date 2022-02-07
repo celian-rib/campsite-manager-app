@@ -4,7 +4,12 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+
 import io.github.cdimascio.dotenv.Dotenv;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.enums.ButtonType;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -42,7 +47,11 @@ public class App extends Application {
 		}
 
 		// Lancer JFX
-		launch(args);
+		try {
+			launch(args);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	@Override
@@ -62,10 +71,16 @@ public class App extends Application {
 		greetingLabel.setLayoutX(10);
 		greetingLabel.setLayoutY(40);
 
+		MFXButton buttonBeauGosse = new MFXButton();
+		buttonBeauGosse.setLayoutX(250);
+		buttonBeauGosse.setLayoutY(50);
+		buttonBeauGosse.setButtonType(ButtonType.RAISED);
+		buttonBeauGosse.setText("Gros BG");
+
 		button.setOnAction(event -> greetingLabel.setText("Hello " + nameText.getText() + "!"));
 
 		Group root = new Group();
-		root.getChildren().addAll(nameText, button, greetingLabel);
+		root.getChildren().addAll(nameText, button, greetingLabel, buttonBeauGosse);
 
 		primaryStage.setTitle("Camping !");
 		primaryStage.setScene(new Scene(root, 950, 800));

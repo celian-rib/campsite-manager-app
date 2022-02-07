@@ -15,6 +15,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>io.github.palexdev</groupId>
+			<artifactId>materialfx</artifactId>
+			<version>11.13.0</version>
+		</dependency>
+		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
 			<version>2.2.0</version>
@@ -44,6 +49,11 @@
 			<artifactId>javafx-graphics </artifactId>
 			<version>${javafx.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>18-ea+10</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -53,6 +63,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
 				<configuration>
+					<source>3.8.0</source>
+					<target>3.8.0</target>
 					<release>10</release>
 				</configuration>
 			</plugin>
@@ -83,8 +95,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<!-- perform some additional tasks (Maven does not support this yet) -->
 		</plugins>
 	</build>
 
