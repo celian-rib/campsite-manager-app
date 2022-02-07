@@ -1,14 +1,48 @@
-# Init ORM
+# PT4 - FlotsBlancs
 
-si erreur jlink alors on supprime le gros truc plugin dans maven
+## 1/ Setup projet
 
-On doit config jdbc avec le jar et cette commande
+1. Clone le projet `git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
+2. Installer dépendances `mvn clean package`
+3. Installer ojdbc (Gestionnaire base de donnée pour l'ORM)
+    ```
+    mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar
+    ```
+4. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
+5. Editer le fichier `.env``
+```
+DB_URL=""
+DB_USER=root
+DB_PASSWORD=root
+```
 
-mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar
+## 2/ Ajouter une dépendance Maven
 
+1. Ajouter la dépendance au fichier `pom.xml`
+> Exemple :
+```xml
+<dependency>
+    <groupId>io.github.cdimascio</groupId>
+    <artifactId>dotenv-java</artifactId>
+    <version>2.2.0</version>
+</dependency>
+```
+2. Ajouter un require de cette dépendance dans `module-info.java`
 
-Le module info est dans la branche d'Emilien et ça marche niquel
+## 3/ Ajouter une feature (Workflow)
 
-Connexion au mysql
+1. Checkout sur main et pull
+2. Créer une branche portant le nom de la feature : `git checkout -b ma-feature`
+3. Coder la feature
+4. Implémenter des tests pour cette feature (Si besoin)
+5. Créer une Merge Request vers main
+6. Demander à un autre membre de l'équipe de review la Merge Request
+7. Merge
 
-"jdbc:mysql://IP:PORT/Nom_Base","USER","PASSWORD"
+## 4/ Lancer les tests
+
+// TO DO
+
+## 5/ Build le projet
+
+// TO DO

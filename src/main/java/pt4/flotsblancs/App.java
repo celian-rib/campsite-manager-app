@@ -4,7 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -15,13 +15,13 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
-	private final static String DATABASE_URL = "jdbc:mysql://localhost:3306/pt4";
-
 	public static void main(String[] args) {
 
 		try {
-			JdbcPooledConnectionSource connectionSource =
-					new JdbcPooledConnectionSource(DATABASE_URL, "root", "root");
+			Dotenv dotenv = Dotenv.load();;
+
+			var connectionSource = new JdbcPooledConnectionSource(dotenv.get("DB_URL"),
+					dotenv.get("DB_USER"), dotenv.get("DB_PASSWORD"));
 
 			TableUtils.createTableIfNotExists(connectionSource, Membre.class);
 
