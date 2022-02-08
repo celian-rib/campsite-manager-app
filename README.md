@@ -9,7 +9,8 @@
     mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar
     ```
 4. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
-5. Editer le fichier `.env``
+5. Lancer un serveur sql en local
+6. Editer le fichier `.env` et mettre les informations de connexion au serveur SQL
 ```
 DB_URL=""
 DB_USER=root
