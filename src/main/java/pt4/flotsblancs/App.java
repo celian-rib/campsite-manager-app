@@ -9,12 +9,24 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+
+
 public class App extends Application {
+
+	public static final HashMap<AvailableRoutes,FBScreen> routes = new HashMap<AvailableRoutes,FBScreen>();
+	private static App INSTANCE;
+	private FBScreen currentScene;
+	private AvailableRoutes currentRoute;
+	private Scene root;
+	private static Stage primaryStage;
 
 	public static void main(String[] args) {
 		// Lancer JFX
@@ -73,5 +85,48 @@ public class App extends Application {
 		for (Client c : Database.getInstance().getClientsDao().queryForAll()) {
 			clientsLabel.setText(clientsLabel.getText() + "\n" + c.toString());
 		}
+		
+		/**
+		 * Exemple de démarrage avec routeur
+		 * @param primaryStage
+		 */
+	public void startExample(Stage primaryStage) {
+		App.INSTANCE = this;
+		App.primaryStage = primaryStage;
+		createRoutes();
+		goToScreen(AvailableRoutes.LAUNCHING);
+		this.root = new Scene((Parent)getCurrentScene(), 950, 800);
+		routes.values().forEach(page -> page.initialize());
+		primaryStage.setScene(this.root);
+
+		primaryStage.setTitle("Camping !");
+		
+		primaryStage.show();
+	}
+
+	private void createRoutes() {
+		routes.put(AvailableRoutes.LAUNCHING,new LaunchingScreen(App.INSTANCE));
+		routes.put(AvailableRoutes.HOME,new HomeScreen(App.INSTANCE));
+	}
+
+	public static void goToScreen(AvailableRoutes newRoute) {
+		App.INSTANCE.currentRoute = newRoute;
+		App.INSTANCE.currentScene = routes.get(newRoute);
+		
+		if (App.INSTANCE.root != null) {
+			App.INSTANCE.root.setRoot((Parent)App.INSTANCE.currentScene);
+		}
+	}
+
+	public Scene getRoot() {
+		return this.root;
+	}
+
+	public static App getInstance() {
+		return INSTANCE;
+	}
+
+	public FBScreen getCurrentScene() {
+		return this.currentScene;
 	}
 }
