@@ -6,6 +6,7 @@ module pt4.flotsblancs {
 	requires java.sql;
 	requires dotenv.java;
 	requires MaterialFX;
+	requires junit;
 	
 	opens pt4.flotsblancs to javafx.graphics,ormlite.jdbc;
 	opens pt4.flotsblancs.orm to javafx.graphics,ormlite.jdbc;
