@@ -1,3 +1,12 @@
 /target
 *.log
 .DS_Store
+
+.vscode
+.settings
+.project
+.classpath
+.travis.yml
+org.*
+.env
+start-tunnel.sh
