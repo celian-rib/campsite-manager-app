@@ -1,7 +1,6 @@
 package pt4.flotsblancs.orm;
 
 import java.sql.SQLException;
-import java.util.HashSet;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import io.github.cdimascio.dotenv.Dotenv;
 
