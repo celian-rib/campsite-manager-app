@@ -1,6 +1,6 @@
 # PT4 - FlotsBlancs
 
-## 1/ Setup projet
+## Setup projet
 
 1. Clone le projet `git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
 2. Installer dépendances `mvn clean package`
@@ -11,13 +11,32 @@
 4. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
 5. Lancer un serveur sql en local
 6. Editer le fichier `.env` et mettre les informations de connexion au serveur SQL
+
 ```
-DB_URL=""
-DB_USER=root
-DB_PASSWORD=root
+DB_URL=<url>
+DB_USER=<user>
+DB_PASSWORD=<password>
 ```
 
-## 2/ Ajouter une dépendance Maven
+## Setup tunnel SSH (Se connecter à la BD depuis chez soi)
+> La base est actuellement hébergée sur l'intranet de l'IUT, pour établir une connexion avec une machine n'étant pas sur le réseau de l'IUT il faut setup un tunnel ssh
+
+1. Ouvrir un terminal
+```
+ssh <idnum>@info-ssh2.iut.u-bordeaux.fr -L <port>:info-titania.iut.bx1:3306
+```
+Exemple : `ssh criboulet@info-ssh2.iut.u-bordeaux.fr -L 7777:info-titania.iut.bx1:3306`
+
+2. Modifier le .env
+> Le port dans DB URL doit être le même que celui donné dans la commande ssh précédente
+
+> Ici on doit utiliser les identifiants de la base de Gaël. (Fichier .env disponible sur Discord)
+```
+DB_URL="jdbc:mysql://127.0.0.1:<port>/etu_gbarrebeylot"
+DB_USER=<user>
+DB_PASSWORD=<password>
+```
+## Ajouter une dépendance Maven
 
 1. Ajouter la dépendance au fichier `pom.xml`
 > Exemple :
@@ -30,7 +49,7 @@ DB_PASSWORD=root
 ```
 2. Ajouter un require de cette dépendance dans `module-info.java`
 
-## 3/ Ajouter une feature (Workflow)
+## Ajouter une feature (Workflow)
 
 1. Checkout sur main et pull
 2. Créer une branche portant le nom de la feature : `git checkout -b ma-feature`
@@ -40,10 +59,10 @@ DB_PASSWORD=root
 6. Demander à un autre membre de l'équipe de review la Merge Request
 7. Merge
 
-## 4/ Lancer les tests
+## Lancer les tests
 
-// TO DO
+TO DO
 
-## 5/ Build le projet
+## Build le projet
 
-// TO DO
+TO DO

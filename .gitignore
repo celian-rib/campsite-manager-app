@@ -8,3 +8,4 @@
 .classpath
 .travis.yml
 org.*
+.env
