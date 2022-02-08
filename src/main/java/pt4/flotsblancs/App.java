@@ -1,11 +1,11 @@
 package pt4.flotsblancs;
 
-import pt4.flotsblancs.orm.*;
 import pt4.flotsblancs.router.*;
 import java.sql.SQLException;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import pt4.flotsblancs.orm.Database;
 
 public class App extends Application {
 

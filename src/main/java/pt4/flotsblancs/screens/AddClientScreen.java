@@ -3,15 +3,19 @@ package pt4.flotsblancs.screens;
 
 
 import java.sql.SQLException;
-
+import java.util.List;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import pt4.flotsblancs.orm.Client;
+import pt4.flotsblancs.orm.model.Client;
 import pt4.flotsblancs.orm.Database;
 import pt4.flotsblancs.router.IScreen;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Routes;
 
 public class AddClientScreen extends Group implements IScreen {
 
@@ -31,6 +35,23 @@ public class AddClientScreen extends Group implements IScreen {
 
 	@Override
     public void start() {
+
+		QueryBuilder<Client, String> queryBuilder;
+		try {
+			queryBuilder = Database.getInstance().getClientsDao().queryBuilder();
+			queryBuilder.where().eq("first_name", "Emilien");
+			PreparedQuery<Client> preparedQuery = queryBuilder.prepare();
+			List<Client> accountList = Database.getInstance().getClientsDao().query(preparedQuery);
+	
+			for (Client c : accountList) {
+				System.out.println(c.toString());
+				System.out.println("-------");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
         TextField firstText = new TextField();
 		firstText.setText("Prénom du client à ajouter");
 		firstText.setLayoutX(130);
@@ -65,7 +86,10 @@ public class AddClientScreen extends Group implements IScreen {
 			e.printStackTrace();
 		}
 
-		this.getChildren().addAll(firstText, nameText, addButton, clientsLabel);
+		MFXButton myButton = new MFXButton("go to home");
+        myButton.setOnAction((arg0) -> Router.goToScreen(Routes.HOME));
+
+		this.getChildren().addAll(firstText, nameText, addButton, clientsLabel, myButton);
     }
 
 	

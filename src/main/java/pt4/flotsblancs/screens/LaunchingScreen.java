@@ -3,7 +3,6 @@ package pt4.flotsblancs.screens;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import pt4.flotsblancs.App;
 import pt4.flotsblancs.router.*;
 
 public class LaunchingScreen extends VBox implements IScreen {

@@ -2,14 +2,12 @@ package pt4.flotsblancs.screens;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
-import pt4.flotsblancs.App;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.GridPane;
 import pt4.flotsblancs.router.*;
 
-public class HomeScreen extends FlowPane implements IScreen {
+public class HomeScreen extends GridPane implements IScreen {
 
 	@Override
 	public String getName() {
@@ -18,29 +16,21 @@ public class HomeScreen extends FlowPane implements IScreen {
 
 	@Override
     public void start() {
-        // this.prefWidthProperty().bind(App.getInstance().getRoot().widthProperty());
-        TextField nameText = new TextField();
-		nameText.setText("Ecrire ici");
-		nameText.setLayoutX(10);
-		nameText.setLayoutY(10);
+		this.setAlignment(Pos.CENTER);
+		this.setVgap(20);
+		this.setPadding(new Insets(25, 25, 25, 25));
 
-		Button button = new Button();
-		button.setLayoutX(160);
-		button.setLayoutY(10);
-		button.setText("Super bouton");
+		MFXButton addClientButton = new MFXButton("Page ajout client", 200, 40);
+		addClientButton.setStyle("-fx-background-color: #5fc9fa; -fx-text-fill: #ffffff; -fx-font-size: 20");
+		addClientButton.setButtonType(ButtonType.RAISED);
+		addClientButton.setOnAction(event -> Router.goToScreen(Routes.ADD_CLIENT));
+		this.add(addClientButton, 1, 1);
+		
+		MFXButton otherScreenButton = new MFXButton("Page jsp", 200, 40);
+		otherScreenButton.setStyle("-fx-background-color: #5fc9fa; -fx-text-fill: #ffffff; -fx-font-size: 20");
+		otherScreenButton.setButtonType(ButtonType.RAISED);
+		otherScreenButton.setOnAction(event -> Router.goToScreen(Routes.LAUNCHING));
+		this.add(otherScreenButton, 1, 2);
 
-		Label greetingLabel = new Label();
-		greetingLabel.setLayoutX(10);
-		greetingLabel.setLayoutY(40);
-
-		MFXButton buttonBeauGosse = new MFXButton();
-		buttonBeauGosse.setLayoutX(250);
-		buttonBeauGosse.setLayoutY(50);
-		buttonBeauGosse.setButtonType(ButtonType.RAISED);
-		buttonBeauGosse.setText("Retour");
-
-
-		buttonBeauGosse.setOnAction(event -> Router.goToScreen(Routes.LAUNCHING));
-        this.getChildren().addAll(nameText,button,greetingLabel, buttonBeauGosse);
     }
 }
