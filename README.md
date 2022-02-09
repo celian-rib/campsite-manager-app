@@ -16,7 +16,11 @@ DB_URL=<url>
 DB_USER=<user>
 DB_PASSWORD=<password>
 ```
-7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) , pour VScode il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok)
+7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) , pour VScode il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok).
+Pour eclipse il faut premièrement télécharger ce .jar https://repo1.maven.org/maven2/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar 
+L'executer avec java -jar lombok-1.18.22.jar.
+Il faut ensuite aller dans Project > Clean. Vous pouvez désormais lancer le programme
+
 
 ## Setup tunnel SSH (Se connecter à la BD depuis chez soi)
 > La base est actuellement hébergée sur l'intranet de l'IUT, pour établir une connexion avec une machine n'étant pas sur le réseau de l'IUT il faut setup un tunnel ssh

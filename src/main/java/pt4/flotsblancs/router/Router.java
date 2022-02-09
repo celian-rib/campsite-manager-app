@@ -5,8 +5,11 @@ import java.util.HashMap;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import pt4.flotsblancs.screens.*;
+import pt4.flotsblancs.screens.AddClientScreen;
+import pt4.flotsblancs.screens.HomeScreen;
+import pt4.flotsblancs.screens.LaunchingScreen;
+import pt4.flotsblancs.screens.toast.ToastBuilder;
+import pt4.flotsblancs.screens.toast.ToastType;
 
 public class Router {
 
@@ -50,9 +53,13 @@ public class Router {
         this.currentScene = routes.get(newRoute);
 
         primaryStage.setTitle(this.currentScene.getName());
+     
+        
+        
 
         if (this.rootJFXScene != null) {
             this.rootJFXScene.setRoot((Parent) this.currentScene);
+            ToastBuilder.createToast(ToastType.ERROR,primaryStage,"Le compte n'a pas été reconnu dans la base de données ! Veuillez contacter un administrateur !",3000,800);
         }
     }
 
