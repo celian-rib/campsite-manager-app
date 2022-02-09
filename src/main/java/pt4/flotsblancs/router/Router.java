@@ -20,7 +20,7 @@ public class Router {
     private Scene rootJFXScene;
     private IScreen currentScene;
 
-    private static Router INSTANCE;
+    public static Router INSTANCE; //Passé en public pour le débug des toast
 
     public Router(Routes defaultRoute, Stage primaryStage) {
         Router.INSTANCE = this;
@@ -37,6 +37,11 @@ public class Router {
 
         routes.values().forEach(page -> page.start());
         primaryStage.setScene(this.rootJFXScene);
+    }
+    
+    public Stage getStage()
+    {
+    	return this.primaryStage;
     }
 
     public static void goToScreen(Routes newRoute) {
@@ -59,7 +64,6 @@ public class Router {
 
         if (this.rootJFXScene != null) {
             this.rootJFXScene.setRoot((Parent) this.currentScene);
-            ToastBuilder.createToast(ToastType.ERROR,primaryStage,"Le compte n'a pas été reconnu dans la base de données ! Veuillez contacter un administrateur !",3000,800);
         }
     }
 

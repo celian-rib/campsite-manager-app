@@ -6,8 +6,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -38,20 +40,35 @@ public class ToastBuilder
         BorderPane pane = new BorderPane();
         ImageView icon = new ImageView();
         
+        icon.setFitHeight(25);
+        icon.setFitWidth(25);
+        icon.setImage(type.getIcon());
+        
         switch(type)
         {
 	        case ERROR:
 	        	rgbaBackground = "rgba(248, 215, 218,1)";
 	        	text.setFill(Color.rgb(132,32,41));
-	        	icon.setImage(type.getIcon());
+	        	icon.setEffect(new DropShadow(15, Color.rgb(132,32,41)));
 	        	break;
 	        case INFO:
+	        	rgbaBackground = "rgba(207, 226, 255,1)";
+	        	text.setFill(Color.rgb(72,66,152));
+	        	icon.setEffect(new DropShadow(15, Color.rgb(72,66,152)));
 	        	break;
 	        case SUCCESS:
+	        	rgbaBackground = "rgba(209, 231, 221,1)";
+	        	text.setFill(Color.rgb(15,81,50));
+	        	icon.setEffect(new DropShadow(15, Color.rgb(15,81,50)));
 	        	break;
 	        case WARNING:
+	        	rgbaBackground = "rgba(255, 243, 205,1)";
+	        	text.setFill(Color.rgb(102,77,0));
+	        	icon.setEffect(new DropShadow(15, Color.rgb(102,77,0)));
 	        	break;
         }
+        
+       
         
         StackPane txt = new StackPane(text);
         
@@ -66,6 +83,9 @@ public class ToastBuilder
         
         pane.setLeft(icon);
         pane.setCenter(txt);
+        
+        Insets insets = new Insets(0,10, 0, 0);
+        BorderPane.setMargin(icon, insets);
         							  
         Scene scene = new Scene(pane);
         scene.setFill(Color.TRANSPARENT);

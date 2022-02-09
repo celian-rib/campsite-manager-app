@@ -26,7 +26,7 @@ public class HomeScreen extends GridPane implements IScreen {
 		addClientButton.setOnAction(event -> Router.goToScreen(Routes.ADD_CLIENT));
 		this.add(addClientButton, 1, 1);
 		
-		MFXButton otherScreenButton = new MFXButton("Page jsp", 200, 40);
+		MFXButton otherScreenButton = new MFXButton("Page test toasts", 200, 40);
 		otherScreenButton.setStyle("-fx-background-color: #5fc9fa; -fx-text-fill: #ffffff; -fx-font-size: 20");
 		otherScreenButton.setButtonType(ButtonType.RAISED);
 		otherScreenButton.setOnAction(event -> Router.goToScreen(Routes.LAUNCHING));

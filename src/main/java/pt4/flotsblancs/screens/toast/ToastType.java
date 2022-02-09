@@ -26,6 +26,8 @@ public enum ToastType
 		try {
 			inputstream = new FileInputStream(location);
 			Image img = new Image(inputstream);
+			img.heightProperty();
+			img.widthProperty();
 			return img;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
