@@ -8,12 +8,14 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
@@ -33,11 +35,15 @@ public class ToastBuilder
         
         String rgbaBackground = "";
         
+        BorderPane pane = new BorderPane();
+        ImageView icon = new ImageView();
+        
         switch(type)
         {
 	        case ERROR:
 	        	rgbaBackground = "rgba(248, 215, 218,1)";
 	        	text.setFill(Color.rgb(132,32,41));
+	        	icon.setImage(type.getIcon());
 	        	break;
 	        case INFO:
 	        	break;
@@ -46,35 +52,38 @@ public class ToastBuilder
 	        case WARNING:
 	        	break;
         }
-
-
+        
         StackPane txt = new StackPane(text);
-        txt.setStyle("-fx-background-radius: 5; -fx-background-color: "+rgbaBackground+"; -fx-padding: 15px;");
-        txt.setOpacity(1);
         
-        txt.setTranslateX(parentStage.getX()*2-(Screen.getPrimary().getBounds().getWidth()-parentStage.getWidth()));
-        txt.setTranslateY(parentStage.getY()+parentStage.getHeight()-30);
+        pane.setStyle("-fx-background-radius: 5; -fx-background-color: "+rgbaBackground+"; -fx-padding: 15px;");
+        pane.setOpacity(1);
+        
+        pane.setTranslateX(parentStage.getX()*2-(Screen.getPrimary().getBounds().getWidth()-parentStage.getWidth()));
+        pane.setTranslateY(parentStage.getY()+parentStage.getHeight()-30);
 
         
-        StackPane.setAlignment(txt, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(pane, Pos.BOTTOM_CENTER);
+        
+        pane.setLeft(icon);
+        pane.setCenter(txt);
         							  
-        Scene scene = new Scene(txt);
+        Scene scene = new Scene(pane);
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
         
         stage.show();
         
         /* CODE DE L ANIMATION DU TOAST */
-        
+    
         //Déplacement du haut vers le bas du toast
         final Timeline moveTimeline = new Timeline();
         moveTimeline.setAutoReverse(true);
-        final KeyValue kv = new KeyValue(txt.layoutYProperty(), -100);
+        final KeyValue kv = new KeyValue(pane.layoutYProperty(), -100);
         final KeyFrame kf = new KeyFrame(Duration.millis(milliSecFadeInOut), kv);
         moveTimeline.getKeyFrames().add(kf);
         
         //Fade du toast
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(milliSecFadeInOut), txt);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(milliSecFadeInOut), pane);
         fadeTransition.setFromValue(0.0f);
         fadeTransition.setToValue(1.0f);
   
@@ -97,12 +106,12 @@ public class ToastBuilder
                 } catch (InterruptedException e) { e.printStackTrace(); }
                 
 	                final Timeline moveTimelineOut = new Timeline();
-	                final KeyValue kvOut = new KeyValue(txt.layoutYProperty(), 100);
+	                final KeyValue kvOut = new KeyValue(pane.layoutYProperty(), 100);
 	                final KeyFrame kfOut = new KeyFrame(Duration.millis(milliSecFadeInOut), kvOut);
 	                moveTimelineOut.getKeyFrames().add(kfOut);
 	                
 	                //Fade du toast
-	                FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(milliSecFadeInOut), txt);
+	                FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(milliSecFadeInOut), pane);
 	                fadeTransitionOut.setFromValue(1.0f);
 	                fadeTransitionOut.setToValue(0.0f);
 	                
