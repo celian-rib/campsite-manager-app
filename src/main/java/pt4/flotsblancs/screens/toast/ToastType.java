@@ -20,10 +20,16 @@ public enum ToastType
 		this.location = location;
 	}
 	
-	public Image getIcon() throws FileNotFoundException
+	public Image getIcon()
 	{
-		FileInputStream inputstream = new FileInputStream(location); 
-		Image img = new Image(inputstream);
-		return img;
+		FileInputStream inputstream;
+		try {
+			inputstream = new FileInputStream(location);
+			Image img = new Image(inputstream);
+			return img;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+		return null;
 	}
 }

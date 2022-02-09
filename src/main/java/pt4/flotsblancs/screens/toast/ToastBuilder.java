@@ -55,11 +55,9 @@ public class ToastBuilder
         txt.setTranslateX(parentStage.getX()*2-(Screen.getPrimary().getBounds().getWidth()-parentStage.getWidth()));
         txt.setTranslateY(parentStage.getY()+parentStage.getHeight()-30);
 
-
         
         StackPane.setAlignment(txt, Pos.BOTTOM_CENTER);
         							  
-
         Scene scene = new Scene(txt);
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
