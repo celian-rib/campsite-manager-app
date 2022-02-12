@@ -10,53 +10,68 @@ import pt4.flotsblancs.screens.*;
 
 public class Router {
 
-    public final HashMap<Routes, IScreen> routes;
-    private Routes currentRoute;
-    private Stage primaryStage;
+    public static final HashMap<Routes, BaseScene> routes = new HashMap<>() {
+        {
+            put(Routes.HOME, new DashboardScene());
+            put(Routes.LOGIN, new LoginScene());
+            put(Routes.RESERVATIONS, new ReservationsScene());
+            put(Routes.CLIENTS, new ClientsScene());
+        }
+    };
 
-    private Scene rootJFXScene;
-    private IScreen currentScene;
+    /**
+     * Conteneur au plus haut niveau de l'application contenant ce routeur (La fenêtre)
+     */
+    private static Stage primaryStage;
 
-    private static Router INSTANCE;
+    /**
+     * Route actuelle affichée sur le "Stage" de l'application
+     */
+    private static Routes currentRoute;
 
-    public Router(Routes defaultRoute, Stage primaryStage) {
-        Router.INSTANCE = this;
-        this.primaryStage = primaryStage;
+    private static Scene rootScene;
 
-        this.routes = new HashMap<>();
-        this.routes.put(Routes.HOME, new HomeScreen());
-        this.routes.put(Routes.LAUNCHING, new LaunchingScreen());
-        this.routes.put(Routes.ADD_CLIENT, new AddClientScreen());
+    private static IScreen currentScene;
 
+    public static void initialize(Routes defaultRoute, Stage _primaryStage) {
+        primaryStage = _primaryStage;
         goToScreen(defaultRoute);
 
-        this.rootJFXScene = new Scene((Parent) this.currentScene, 800, 700);
+        BaseScene baseScene = new DashboardScene();
+		rootScene = new Scene(baseScene, 800, 700);
 
         routes.values().forEach(page -> page.start());
-        primaryStage.setScene(this.rootJFXScene);
+        primaryStage.setScene(rootScene);
+        baseScene.start();
+        log("Initialized");
     }
 
     public static void goToScreen(Routes newRoute) {
-        INSTANCE.loadScreen(newRoute);
-    }
-
-    public void loadScreen(Routes newRoute) {
         if (!routes.containsKey(newRoute)) {
             System.err.println("Route not implemented");
             return;
         }
 
-        this.currentRoute = newRoute;
-        this.currentScene = routes.get(newRoute);
+        log("Switch -> " + newRoute);
 
-        primaryStage.setTitle(this.currentScene.getName());
+        currentRoute = newRoute;
+        currentScene = routes.get(newRoute);
 
-        if (this.rootJFXScene != null) {
-            this.rootJFXScene.setRoot((Parent) this.currentScene);
-        }
+        primaryStage.setTitle(currentScene.getName());
+
+        if (rootScene != null)
+            rootScene.setRoot((Parent) currentScene);
     }
 
-    public Routes getCurrentRoutes() {
-        return this.currentRoute;
+    public static Routes getCurrentRoutes() {
+        return currentRoute;
+    }
+    
+    public static Scene getRootScene() {
+        return rootScene;
+    }
+
+    private static void log(String message) {
+        System.out.println("[Router] " + message);
     }
 }

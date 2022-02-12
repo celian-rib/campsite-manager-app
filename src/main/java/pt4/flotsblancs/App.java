@@ -1,9 +1,13 @@
 package pt4.flotsblancs;
 
 import pt4.flotsblancs.router.*;
+import pt4.flotsblancs.screens.TestScreen;
 import java.sql.SQLException;
 
 import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import pt4.flotsblancs.orm.Database;
 
@@ -16,11 +20,12 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws SQLException {
-		// Création routeur
-		new Router(
-			Routes.HOME,
-			primaryStage // Route par défaut
+		// // Création routeur
+		Router.initialize(
+			Routes.HOME, // Route par défaut
+			primaryStage
 		);
+
 		// Affichage de la fenêtre
 		primaryStage.show();
 	}

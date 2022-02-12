@@ -1,4 +1,4 @@
-package pt4.flotsblancs.screens;
+package pt4.flotsblancs.screens.olds;
 
 
 
@@ -13,11 +13,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import pt4.flotsblancs.orm.model.Client;
 import pt4.flotsblancs.orm.Database;
+import pt4.flotsblancs.router.BaseScene;
 import pt4.flotsblancs.router.IScreen;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Routes;
 
-public class AddClientScreen extends Group implements IScreen {
+public class AddClientScreen extends BaseScene {
 
 	@Override
 	public String getName() {
@@ -35,6 +36,7 @@ public class AddClientScreen extends Group implements IScreen {
 
 	@Override
     public void start() {
+		super.start(); // Affiche barre de navigation
 
 		QueryBuilder<Client, String> queryBuilder;
 		try {
