@@ -8,6 +8,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -23,11 +24,11 @@ import javafx.util.Duration;
 
 public class ToastBuilder 
 {
-    public static void createToast(ToastType type,Stage parentStage, String content, int milliSecDuration, int milliSecFadeInOut)
+    public static void createToast(ToastType type,Group parent, String content, int milliSecDuration, int milliSecFadeInOut)
     {
         Stage stage=new Stage();
         
-        stage.initOwner(parentStage);
+     
         stage.setResizable(false);
         stage.initStyle(StageStyle.TRANSPARENT);
 

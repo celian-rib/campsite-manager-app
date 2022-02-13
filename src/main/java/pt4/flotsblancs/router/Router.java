@@ -20,7 +20,7 @@ public class Router {
     private Scene rootJFXScene;
     private IScreen currentScene;
 
-    public static Router INSTANCE; //Passé en public pour le débug des toast
+    private static Router INSTANCE;
 
     public Router(Routes defaultRoute, Stage primaryStage) {
         Router.INSTANCE = this;
