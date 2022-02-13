@@ -22,15 +22,6 @@ public class App extends Application {
 				primaryStage, // Fenêtre contenant le routeur
 				900, 800);
 
-		// GO ON SECOND SCREEN
-		javafx.stage.Screen.getScreens().forEach(s -> System.out.println(s));
-		javafx.geometry.Rectangle2D bounds =
-				javafx.stage.Screen.getScreens().get(1).getVisualBounds();
-		primaryStage.setX(bounds.getMinX() + 100);
-		primaryStage.setY(bounds.getMinY() + 100);
-		// GO ON SECOND SCREEN
-
-
 		// Affichage de la fenêtre
 		primaryStage.show();
 	}
