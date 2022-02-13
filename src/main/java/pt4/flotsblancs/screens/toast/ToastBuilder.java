@@ -17,7 +17,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -28,6 +27,7 @@ public class ToastBuilder
     {
         Stage stage=new Stage();
         
+        stage.setScene(new Scene(parent,100,100));
      
         stage.setResizable(false);
         stage.initStyle(StageStyle.TRANSPARENT);
@@ -75,10 +75,6 @@ public class ToastBuilder
         
         pane.setStyle("-fx-background-radius: 5; -fx-background-color: "+rgbaBackground+"; -fx-padding: 15px;");
         pane.setOpacity(1);
-        
-        pane.setTranslateX(parentStage.getX()*2-(Screen.getPrimary().getBounds().getWidth()-parentStage.getWidth()));
-        pane.setTranslateY(parentStage.getY()+parentStage.getHeight()-30);
-
         
         StackPane.setAlignment(pane, Pos.BOTTOM_CENTER);
         
