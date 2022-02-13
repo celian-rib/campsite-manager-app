@@ -1,4 +1,4 @@
-package pt4.flotsblancs.screens.olds;
+package pt4.flotsblancs.scenes.olds;
 
 
 
@@ -8,15 +8,13 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import pt4.flotsblancs.orm.model.Client;
 import pt4.flotsblancs.orm.Database;
-import pt4.flotsblancs.router.BaseScene;
-import pt4.flotsblancs.router.IScreen;
 import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.router.Routes;
+import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.BaseScene;
 
 public class AddClientScreen extends BaseScene {
 
@@ -36,7 +34,6 @@ public class AddClientScreen extends BaseScene {
 
 	@Override
     public void start() {
-		super.start(); // Affiche barre de navigation
 
 		QueryBuilder<Client, String> queryBuilder;
 		try {

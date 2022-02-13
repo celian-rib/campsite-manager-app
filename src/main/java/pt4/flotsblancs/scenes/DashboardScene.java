@@ -1,19 +1,16 @@
-package pt4.flotsblancs.screens;
+package pt4.flotsblancs.scenes;
 
 import javafx.scene.control.Label;
-import pt4.flotsblancs.router.BaseScene;
 
-public class LoginScene extends BaseScene {
+public class DashboardScene extends BaseScene {
 
     @Override
     public String getName() {
-        return "Login";
+        return "Accueil";
     }
 
     @Override
     public void start() {
-        super.start(); // Appel au start de BaseScene pour afficher la barre de navigation
-
         // Création des élèments de cette page
         Label label = new Label(this.getName());
         label.setLayoutX(100);

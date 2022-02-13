@@ -1,13 +1,10 @@
 package pt4.flotsblancs;
 
 import pt4.flotsblancs.router.*;
-import pt4.flotsblancs.screens.TestScreen;
+import pt4.flotsblancs.router.Router.Routes;
 import java.sql.SQLException;
 
 import javafx.application.Application;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import pt4.flotsblancs.orm.Database;
 
@@ -20,11 +17,19 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws SQLException {
-		// // Création routeur
-		Router.initialize(
-			Routes.HOME, // Route par défaut
-			primaryStage
-		);
+		Router.initialize( // Création routeur
+				Routes.HOME, // Route par défaut
+				primaryStage, // Fenêtre contenant le routeur
+				900, 800);
+
+		// GO ON SECOND SCREEN
+		javafx.stage.Screen.getScreens().forEach(s -> System.out.println(s));
+		javafx.geometry.Rectangle2D bounds =
+				javafx.stage.Screen.getScreens().get(1).getVisualBounds();
+		primaryStage.setX(bounds.getMinX() + 100);
+		primaryStage.setY(bounds.getMinY() + 100);
+		// GO ON SECOND SCREEN
+
 
 		// Affichage de la fenêtre
 		primaryStage.show();
