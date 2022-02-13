@@ -13,22 +13,22 @@ public class RootScene extends Group {
     private boolean navBarIsActive;
 
     public RootScene() {
-        drawNav();
+        startNavBar();
     }
 
     public void changeCurrentScene(BaseScene baseScene) {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
         if (baseScene.showNavBar() == false) {
             // On efface tous les enfant
-            this.navBarIsActive = false;
             this.getChildren().clear();
+            this.navBarIsActive = false;
         } else {
             // Sinon on retire juste la scene actuelle (Et on garde la navbar)
             this.getChildren().remove(this.currentScene);
             if (this.navBarIsActive == false)
                 // Si la scène que l'on va afficher veut la navbar mais qu'elle n'est pas déjà
                 // affichée
-                drawNav();
+                startNavBar();
         }
 
         this.currentScene = baseScene;
@@ -43,7 +43,7 @@ public class RootScene extends Group {
         return button;
     }
 
-    public void drawNav() {
+    public void startNavBar() {
         this.navBarIsActive = true;
         var hbox = new HBox(8);
 
