@@ -30,8 +30,6 @@
     
     - ici LoginScene contiendra ensuite ses éléments : boutons, labels, etc...
 
-### Hiérarchie sous form d'arbre :
+### Hiérarchie sous forme d'arbre :
 
 ![](./assets/2022-02-13-12-07-28-image.png)
-
-
