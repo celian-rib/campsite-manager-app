@@ -4,7 +4,7 @@
 
 ### Élèments :
 
-![](/Users/celian/Desktop/flots-blancs/assets/2022-02-13-11-56-10-image.png)
+![](./assets/2022-02-13-11-56-10-image.png)
 
 - Le **Routeur** est une classe statique permettant de changer la page (ou scène actuellement affichée à l'écran).
 
@@ -32,6 +32,6 @@
 
 ### Hiérarchie sous form d'arbre :
 
-![](/Users/celian/Desktop/flots-blancs/assets/2022-02-13-12-07-28-image.png)
+![](./assets/2022-02-13-12-07-28-image.png)
 
 
