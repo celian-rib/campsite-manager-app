@@ -10,6 +10,7 @@ import pt4.flotsblancs.scenes.BaseScene;
 public class RootScene extends Group {
 
     private BaseScene currentScene;
+    private boolean navBarIsActive;
 
     public RootScene() {
         drawNav();
@@ -17,10 +18,18 @@ public class RootScene extends Group {
 
     public void changeCurrentScene(BaseScene baseScene) {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
-        if (baseScene.showNavBar() == false)
-            this.getChildren().clear(); // On efface tous les enfant
-        else // Sinon on retire juste la scene actuelle (Et on garde la navbar)
+        if (baseScene.showNavBar() == false) {
+            // On efface tous les enfant
+            this.navBarIsActive = false;
+            this.getChildren().clear();
+        } else {
+            // Sinon on retire juste la scene actuelle (Et on garde la navbar)
             this.getChildren().remove(this.currentScene);
+            if (this.navBarIsActive == false)
+                // Si la scène que l'on va afficher veut la navbar mais qu'elle n'est pas déjà
+                // affichée
+                drawNav();
+        }
 
         this.currentScene = baseScene;
         this.getChildren().add(this.currentScene); // On ajoute la nouvelle page
@@ -35,6 +44,7 @@ public class RootScene extends Group {
     }
 
     public void drawNav() {
+        this.navBarIsActive = true;
         var hbox = new HBox(8);
 
         MFXButton btn1 = button("Clients", 200, 40);

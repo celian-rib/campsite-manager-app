@@ -1,6 +1,9 @@
 package pt4.flotsblancs.scenes;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
 
 public class LoginScene extends BaseScene {
 
@@ -18,10 +21,15 @@ public class LoginScene extends BaseScene {
         Label label = new Label(this.getName());
         label.setLayoutX(100);
         label.setLayoutY(100);
+        
+        var btn = new Button("Login");
+        btn.setLayoutX(100);
+        btn.setLayoutY(130);
+        btn.setOnAction(e -> Router.goToScreen(Routes.HOME));
 
         // On ajoute tous les élèments de cette page comme enfant de BaseScene
         // Ils seront grace à cela affichés.
-        addAll(label);
+        addAll(label, btn);
     }
 
 }
