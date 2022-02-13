@@ -2,6 +2,7 @@ package pt4.flotsblancs.router;
 
 import java.util.HashMap;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pt4.flotsblancs.scenes.*;
 
@@ -54,7 +55,9 @@ public class Router {
         goToScreen(defaultRoute);
 
         routes.values().forEach(page -> page.start());
-        primaryStage.setScene(new Scene(rootScene, width, height));
+        var scene = new Scene(rootScene, width, height);
+        primaryStage.setScene(scene);
+        scene.setFill(Color.TRANSPARENT);
         log("Initialized");
     }
 
@@ -65,7 +68,7 @@ public class Router {
      */
     public static void goToScreen(Routes newRoute) {
         if (!routes.containsKey(newRoute)) {
-            System.err.println("Route not implemented");
+            log("Route not implemented");
             return;
         }
         currentRoute = newRoute;
@@ -76,7 +79,7 @@ public class Router {
         // Changement titre de la fenêtre
         primaryStage.setTitle(routes.get(currentRoute).getName());
 
-        log("Switch -> " + newRoute);
+        log("Switch scene -> " + newRoute);
     }
 
     public static Routes getCurrentRoutes() {
@@ -85,5 +88,9 @@ public class Router {
 
     private static void log(String message) {
         System.out.println("[Router] " + message);
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
     }
 }

@@ -1,0 +1,33 @@
+#top-bar {
+    -fx-background-radius: 0 10px 0 0;
+}
+
+#top-bar:hover {
+    -fx-background-color: rgb(241, 241, 241);
+}
+
+#minimize-btn, #close-btn, #fullscreen-btn {
+    -fx-background-radius: 5em;
+    -fx-max-width: 15px;
+    -fx-max-height: 15px;
+    -fx-min-width: 15px;
+    -fx-min-height: 15px;
+}
+
+#minimize-btn:hover, #close-btn:hover, #fullscreen-btn:hover {
+    -fx-opacity: 0.5;
+    -fx-cursor: hand;
+}
+
+#minimize-btn {
+    -fx-background-color: rgb(163, 159, 151);
+}
+
+#close-btn {
+    -fx-background-color: rgb(255, 118, 118);
+}
+
+#fullscreen-btn {
+    -fx-background-color: rgb(118, 211, 100);
+}
+

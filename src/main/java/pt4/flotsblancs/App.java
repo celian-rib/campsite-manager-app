@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import pt4.flotsblancs.orm.Database;
 
 public class App extends Application {
@@ -20,9 +21,18 @@ public class App extends Application {
 		Router.initialize( // Création routeur
 				Routes.HOME, // Route par défaut
 				primaryStage, // Fenêtre contenant le routeur
-				900, 800);
+				1200, 700);
+
+		// GO ON SECOND SCREEN
+		javafx.geometry.Rectangle2D bounds =
+				javafx.stage.Screen.getScreens().get(1).getVisualBounds();
+		primaryStage.setX(bounds.getMinX() + 100);
+		primaryStage.setY(bounds.getMinY() + 100);
+		// GO ON SECOND SCREEN
 
 		// Affichage de la fenêtre
+		primaryStage.initStyle(StageStyle.TRANSPARENT);
+		primaryStage.setResizable(true);
 		primaryStage.show();
 	}
 }

@@ -1,66 +1,71 @@
 package pt4.flotsblancs.router;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.enums.ButtonType;
-import javafx.scene.Group;
-import javafx.scene.layout.HBox;
-import pt4.flotsblancs.router.Router.Routes;
+import javafx.geometry.Insets;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import pt4.flotsblancs.components.NavBar;
+import pt4.flotsblancs.components.WindowBar;
 import pt4.flotsblancs.scenes.BaseScene;
 
-public class RootScene extends Group {
+public class RootScene extends BorderPane {
 
     private BaseScene currentScene;
+
     private boolean navBarIsActive;
 
+
+    private BorderPane sceneContainer;
+    private NavBar navBar;
+    private WindowBar windowBar;
+
+
     public RootScene() {
-        startNavBar();
+        initBackground();
+        loadStyleSheets();
+
+        navBar = new NavBar();
+        sceneContainer = createSceneContainer();
+        windowBar = new WindowBar();
+
+        sceneContainer.setTop(windowBar);
+        setLeft(navBar);
+        setCenter(sceneContainer);
+        this.navBarIsActive = true;
+    }
+
+    private void loadStyleSheets() {
+        String baseUrl = "file:src/main/java/pt4/flotsblancs/stylesheets/";
+        getStylesheets().add(baseUrl + "index.css");
+        getStylesheets().add(baseUrl + "navBar.css");
+        getStylesheets().add(baseUrl + "windowBar.css");
+    }
+
+    private void initBackground() {
+        BackgroundFill fill = new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY);
+        setBackground(new Background(fill));
+    }
+
+    private BorderPane createSceneContainer() {
+        var container = new BorderPane();
+        var fill = new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY);
+        container.setBackground(new Background(fill));
+        return container;
     }
 
     public void changeCurrentScene(BaseScene baseScene) {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
-        if (baseScene.showNavBar() == false) {
-            // On efface tous les enfant
-            this.getChildren().clear();
+        if (baseScene.showNavBar() == false && this.navBarIsActive) {
+            // On efface la navbar
+            this.getChildren().remove(navBar);
             this.navBarIsActive = false;
         } else {
-            // Sinon on retire juste la scene actuelle (Et on garde la navbar)
-            this.getChildren().remove(this.currentScene);
-            if (this.navBarIsActive == false)
-                // Si la scène que l'on va afficher veut la navbar mais qu'elle n'est pas déjà
-                // affichée
-                startNavBar();
+            // On remet la navbar
+            setLeft(navBar);
+            this.navBarIsActive = true;
         }
 
         this.currentScene = baseScene;
-        this.getChildren().add(this.currentScene); // On ajoute la nouvelle page
-    }
-
-    private MFXButton button(String content, int sizex, int sizey) {
-        MFXButton button = new MFXButton(content, sizex, sizey);
-        String style = "-fx-background-color: #5fc9fa; -fx-text-fill: #ffffff; -fx-font-size: 20";
-        button.setStyle(style);
-        button.setButtonType(ButtonType.RAISED);
-        return button;
-    }
-
-    public void startNavBar() {
-        this.navBarIsActive = true;
-        var hbox = new HBox(8);
-
-        MFXButton btn1 = button("Clients", 200, 40);
-        btn1.setOnAction(event -> Router.goToScreen(Routes.CLIENTS));
-
-        MFXButton btn2 = button("Réservations", 200, 40);
-        btn2.setOnAction(event -> Router.goToScreen(Routes.RESERVATIONS));
-
-        MFXButton btn3 = button("Login", 200, 40);
-        btn3.setOnAction(event -> Router.goToScreen(Routes.LOGIN));
-
-        MFXButton btn4 = button("Accueil", 200, 40);
-        btn4.setOnAction(event -> Router.goToScreen(Routes.HOME));
-
-        hbox.getChildren().addAll(btn1, btn2, btn3, btn4);
-        // Ajout de la navbar
-        this.getChildren().add(hbox);
+        sceneContainer.setCenter(this.currentScene);
+        windowBar.setTitle(this.currentScene.getName());
     }
 }
