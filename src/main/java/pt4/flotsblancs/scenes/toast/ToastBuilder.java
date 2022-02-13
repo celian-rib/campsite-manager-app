@@ -1,4 +1,4 @@
-package pt4.flotsblancs.screens.toast;
+package pt4.flotsblancs.scenes.toast;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;

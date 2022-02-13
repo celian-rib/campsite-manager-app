@@ -6,6 +6,8 @@ import javafx.scene.Group;
 import javafx.scene.layout.HBox;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.BaseScene;
+import pt4.flotsblancs.scenes.toast.ToastBuilder;
+import pt4.flotsblancs.scenes.toast.ToastType;
 
 public class RootScene extends Group {
 
@@ -58,8 +60,24 @@ public class RootScene extends Group {
 
         MFXButton btn4 = button("Accueil", 200, 40);
         btn4.setOnAction(event -> Router.goToScreen(Routes.HOME));
+        
+        
+        //Boutons de test à supprimer toast
+        
+        MFXButton warning = new MFXButton("Warning");
+        warning.setOnAction((arg0) -> ToastBuilder.createToast(ToastType.WARNING,this,"Message de warning",3000,800));
+        
+        MFXButton error = new MFXButton("Error");
+        error.setOnAction((arg0) -> ToastBuilder.createToast(ToastType.ERROR,this,"Message d'erreur !",3000,800));
+        
+        MFXButton info = new MFXButton("Info");
+        info.setOnAction((arg0) -> ToastBuilder.createToast(ToastType.INFO,this,"Message d'information",3000,800));
+        
+        MFXButton success = new MFXButton("Success");
+        success.setOnAction((arg0) -> ToastBuilder.createToast(ToastType.SUCCESS,this,"Message de succès :)",3000,800));
+        
 
-        hbox.getChildren().addAll(btn1, btn2, btn3, btn4);
+        hbox.getChildren().addAll(btn1, btn2, btn3, btn4, warning, error, info, success);
         // Ajout de la navbar
         this.getChildren().add(hbox);
     }
