@@ -19,7 +19,7 @@ public class App extends Application {
 	@Override
 	public void start(Stage primaryStage) throws SQLException {
 		Router.initialize( // Création routeur
-				Routes.HOME, // Route par défaut
+				Routes.LOGIN, // Route par défaut
 				primaryStage, // Fenêtre contenant le routeur
 				1200, 700);
 

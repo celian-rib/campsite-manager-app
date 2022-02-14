@@ -23,6 +23,11 @@ public class ClientsScene extends VBox implements IScene {
     }
 
     @Override
+    public void onUnfocus() {
+        
+    }
+
+    @Override
     public void start() {
         setAlignment(Pos.CENTER);
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.Getter;
 import pt4.flotsblancs.scenes.ClientsScene;
 import pt4.flotsblancs.scenes.DashboardScene;
 import pt4.flotsblancs.scenes.LoginScene;
@@ -32,6 +33,7 @@ public class Router {
     /**
      * Route actuelle affichée sur le "Stage" de l'application
      */
+    @Getter
     private static Routes currentRoute;
 
     /**
@@ -44,6 +46,7 @@ public class Router {
      * Conteneur au plus haut niveau de l'application (La fenêtre) Le stage contient la rootScene
      * qui elle contient la barre de navigation et la scene courante (page)
      */
+    @Getter
     private static Stage primaryStage;
 
 
@@ -57,17 +60,18 @@ public class Router {
         primaryStage = _primaryStage;
 
         rootScene = new RootScene();
+        routes.values().forEach(page -> page.start());
+
         goToScreen(defaultRoute);
 
-        routes.values().forEach(page -> page.start());
         var scene = new Scene(rootScene, width, height);
         primaryStage.setScene(scene);
         scene.setFill(Color.TRANSPARENT);
         log("Initialized");
     }
-    
+
     /**
-     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un toast 
+     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un toast
      * 
      * 
      * @param type
@@ -75,20 +79,19 @@ public class Router {
      * @param durationMillis
      * @param fadeinoutMillis
      */
-    public static void showToast(ToastType type, String message, int durationMillis, int fadeinoutMillis)
-    {
-    	rootScene.showToast(type, message, durationMillis, fadeinoutMillis);
+    public static void showToast(ToastType type, String message, int durationMillis,
+            int fadeinoutMillis) {
+        rootScene.showToast(type, message, durationMillis, fadeinoutMillis);
     }
-    
+
     /**
-     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un toast 
+     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un toast
      * 
      * @param type
      * @param message
      */
-    public static void showToast(ToastType type, String message)
-    {
-    	rootScene.showToast(type, message);
+    public static void showToast(ToastType type, String message) {
+        rootScene.showToast(type, message);
     }
 
     /**
@@ -101,6 +104,11 @@ public class Router {
             log("Route not implemented");
             return;
         }
+
+        // On prévient l'ancienne page qu'elle ne va plus être affiché
+        if (currentRoute != null)
+            routes.get(currentRoute).onUnfocus();
+
         currentRoute = newRoute;
 
         // On demande au conteneur de changer sa scène courante (La page qui est chargée)
@@ -109,18 +117,10 @@ public class Router {
         // Changement titre de la fenêtre
         primaryStage.setTitle(routes.get(currentRoute).getName());
 
+        // On prévient la nouvelle page qu'elle vient d'être affichée
         routes.get(currentRoute).onFocus();
-        
-        log("Switch scene -> " + newRoute);
-    }
 
-    /**
-     * Getter, retourne la route sur laquelle nous sommes actuellement 
-     * 
-     * @return currentRoute
-     */
-    public static Routes getCurrentRoutes() {
-        return currentRoute;
+        log("Switch scene -> " + newRoute);
     }
 
     /**
@@ -130,14 +130,5 @@ public class Router {
      */
     private static void log(String message) {
         System.out.println("[Router] " + message);
-    }
-
-    /**
-     * Permet de retourner notre stage primaire
-     * 
-     * @return primaryStage :  c'est la fenêtre de l'application, soit ce qui contient les boutons réduire / plein écran / fermer et la racine de la hiérarchie (RootScene)
-     */
-    public static Stage getPrimaryStage() {
-        return primaryStage;
     }
 }
