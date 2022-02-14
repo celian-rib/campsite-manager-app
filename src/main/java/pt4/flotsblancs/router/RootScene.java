@@ -101,7 +101,7 @@ public class RootScene extends StackPane {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
         if (baseScene.showNavBar() == false && this.navBarIsActive) {
             // On efface la navbar
-            this.getChildren().remove(navBar);
+            rootPane.getChildren().remove(navBar);
             this.navBarIsActive = false;
         } else {
             // On remet la navbar
