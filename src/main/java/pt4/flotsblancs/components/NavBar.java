@@ -12,9 +12,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import pt4.flotsblancs.database.UserStore;
+import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class NavBar extends BorderPane {
 
@@ -75,7 +76,7 @@ public class NavBar extends BorderPane {
         MFXButton btn4 = button("Accueil", 200, 40);
         btn4.setOnAction(event -> Router.goToScreen(Routes.HOME));
 
-        
+
 
         centerButtons.getChildren().addAll(btn1, btn2, btn3, btn4);
 
@@ -86,13 +87,13 @@ public class NavBar extends BorderPane {
         VBox bottomButtons = new VBox();
         bottomButtons.setAlignment(Pos.CENTER);
 
-        // Label title = new Label(UserStore.getUserInstance().toString());
         userLabel = new Label();
         userLabel.setTextFill(Color.WHITE);
 
         MFXButton btn5 = new MFXButton("Déconnexion", 200, 60);
         btn5.setOnAction(event -> {
-            UserStore.getInstance().setUser(null);
+            User.logOut();
+            Router.showToast(ToastType.INFO, "Deconnecté.e");
             Router.goToScreen(Routes.LOGIN);
         });
         btn5.setId("btn-logout");
@@ -100,12 +101,8 @@ public class NavBar extends BorderPane {
         bottomButtons.getChildren().addAll(userLabel, btn5);
         return bottomButtons;
     }
-    
+
     public void update() {
-        if(UserStore.getUserInstance()!=null){
-            userLabel.setText(UserStore.getUserInstance().toString());
-        } else {
-            userLabel.setText("");
-        }
+        userLabel.setText(User.isConnected() ? User.getConnected().toString() : "");
     }
 }

@@ -7,7 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import pt4.flotsblancs.database.UserStore;
+import javafx.scene.paint.Color;
+import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
@@ -17,7 +18,7 @@ public class LoginScene extends VBox implements IScene {
 
     TextField tFId;
     PasswordField pFMdp;
-    
+
     @Override
     public String getName() {
         return "Login";
@@ -29,11 +30,22 @@ public class LoginScene extends VBox implements IScene {
     }
 
     @Override
+    public void onFocus() {
+        // On clear les input de login et mdp a l'ouverture de la page
+        tFId.setText("");
+        pFMdp.setText("");
+    }
+
+    @Override
+    public void onUnfocus() {
+
+    }
+
+    @Override
     public void start() {
         setAlignment(Pos.CENTER);
         setSpacing(30);
 
-        // Création des élèments de cette page
         Label label = new Label(this.getName());
 
         tFId = new TextField();
@@ -47,28 +59,21 @@ public class LoginScene extends VBox implements IScene {
         MFXButton bValider = new MFXButton("Valider", 150, 30);
         bValider.setButtonType(ButtonType.RAISED);
         bValider.setOnAction(e -> {
-            if(UserStore.log(tFId.getText(), pFMdp.getText())){
+            if (User.logIn(tFId.getText(), pFMdp.getText())) {
                 Router.goToScreen(Routes.HOME);
-                System.out.println("bravo "+ tFId );
-                Router.showToast(ToastType.SUCCESS, "Bonjour " + UserStore.getUserInstance().getName());
+                Router.showToast(ToastType.SUCCESS,
+                        "Connecté.e en tant que " + User.getConnected().toString());
             } else {
-                System.out.println("t'es NUL "+ tFId );
                 Router.showToast(ToastType.ERROR, "Identifiant ou mot de passe incorrect.");
             }
         });
-        
-        MFXButton bRetourTest = new MFXButton("test");
-        bRetourTest.setOnAction(e-> {
-        	Router.goToScreen(Routes.HOME);
+
+        MFXButton DEVLOGIN = new MFXButton("FAST LOGIN (DEV)", 150, 30);
+        DEVLOGIN.setOnAction(e -> {
+            User.logIn("test", "plop");
+            Router.goToScreen(Routes.HOME);
         });
-        
-
-        getChildren().addAll(label, tFId, pFMdp, bValider, bRetourTest);
-    }
-
-    @Override
-    public void onFocus() {
-        tFId.setText("");
-        pFMdp.setText("");
+        DEVLOGIN.setTextFill(Color.RED);
+        getChildren().addAll(label, tFId, pFMdp, bValider, DEVLOGIN);
     }
 }
