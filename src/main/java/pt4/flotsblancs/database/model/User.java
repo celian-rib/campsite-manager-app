@@ -36,7 +36,12 @@ public class User {
     @Getter
     @Setter
     @DatabaseField(columnName = "first_name")
-    private String forstName;
+    private String firstName;
+
+    @Override
+    public String toString() {
+        return firstName +" "+ name;
+    }
 
     public User() {}
 }

@@ -109,7 +109,7 @@ public class Router {
         // Changement titre de la fenêtre
         primaryStage.setTitle(routes.get(currentRoute).getName());
 
-        //A supprimer, test des toast sur changement de page
+        routes.get(currentRoute).onFocus();
         
         log("Switch scene -> " + newRoute);
     }

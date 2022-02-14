@@ -18,6 +18,11 @@ public class ReservationsScene extends VBox implements IScene {
     }
 
     @Override
+    public void onFocus() {
+
+    }
+    
+    @Override
     public void start() {
         setAlignment(Pos.CENTER);
 

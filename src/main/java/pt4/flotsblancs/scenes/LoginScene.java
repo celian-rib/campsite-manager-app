@@ -15,6 +15,9 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class LoginScene extends VBox implements IScene {
 
+    TextField tFId;
+    PasswordField pFMdp;
+    
     @Override
     public String getName() {
         return "Login";
@@ -28,16 +31,16 @@ public class LoginScene extends VBox implements IScene {
     @Override
     public void start() {
         setAlignment(Pos.CENTER);
-        setSpacing(70);
+        setSpacing(30);
 
         // Création des élèments de cette page
         Label label = new Label(this.getName());
 
-        TextField tFId = new TextField();
+        tFId = new TextField();
         tFId.setPromptText("Identifiant");
         tFId.setMaxWidth(200);
 
-        PasswordField pFMdp = new PasswordField();
+        pFMdp = new PasswordField();
         pFMdp.setPromptText("Mot de passe");
         pFMdp.setMaxWidth(200);
 
@@ -54,12 +57,13 @@ public class LoginScene extends VBox implements IScene {
             }
         });
         
-        MFXButton bRetour = new MFXButton("Retour");
-        bRetour.setButtonType(ButtonType.RAISED);
-        bRetour.setOnAction(e -> Router.goToScreen(Routes.HOME));
 
-        // On ajoute tous les élèments de cette page comme enfant de BaseScene
-        // Ils seront grace à cela affichés.
-        getChildren().addAll(label, tFId, pFMdp, bValider, bRetour);
+        getChildren().addAll(label, tFId, pFMdp, bValider);
+    }
+
+    @Override
+    public void onFocus() {
+        tFId.setText("");
+        pFMdp.setText("");
     }
 }

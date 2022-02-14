@@ -12,10 +12,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import pt4.flotsblancs.database.UserStore;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 
 public class NavBar extends BorderPane {
+
+    private Label userLabel;
 
     private MFXButton button(String content, int sizex, int sizey) {
         MFXButton button = new MFXButton(content, sizex, sizey);
@@ -51,7 +54,7 @@ public class NavBar extends BorderPane {
         topContainer.setAlignment(Pos.CENTER);
         topContainer.setPadding(new Insets(30, 0, 0, 0));
 
-        Label title = new Label("Les Flots Blancs");
+        Label title = new Label("Les Flous Noirs");
         title.setTextFill(Color.WHITE);
         topContainer.getChildren().addAll(icon, title);
         return topContainer;
@@ -72,6 +75,8 @@ public class NavBar extends BorderPane {
         MFXButton btn4 = button("Accueil", 200, 40);
         btn4.setOnAction(event -> Router.goToScreen(Routes.HOME));
 
+        
+
         centerButtons.getChildren().addAll(btn1, btn2, btn3, btn4);
 
         return centerButtons;
@@ -81,11 +86,26 @@ public class NavBar extends BorderPane {
         VBox bottomButtons = new VBox();
         bottomButtons.setAlignment(Pos.CENTER);
 
+        // Label title = new Label(UserStore.getUserInstance().toString());
+        userLabel = new Label();
+        userLabel.setTextFill(Color.WHITE);
+
         MFXButton btn5 = new MFXButton("Déconnexion", 200, 60);
-        btn5.setOnAction(event -> Router.goToScreen(Routes.LOGIN));
+        btn5.setOnAction(event -> {
+            UserStore.getInstance().setUser(null);
+            Router.goToScreen(Routes.LOGIN);
+        });
         btn5.setId("btn-logout");
 
-        bottomButtons.getChildren().addAll(btn5);
+        bottomButtons.getChildren().addAll(userLabel, btn5);
         return bottomButtons;
+    }
+    
+    public void update() {
+        if(UserStore.getUserInstance()!=null){
+            userLabel.setText(UserStore.getUserInstance().toString());
+        } else {
+            userLabel.setText("");
+        }
     }
 }
