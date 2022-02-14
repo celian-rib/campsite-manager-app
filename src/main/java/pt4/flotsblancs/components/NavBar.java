@@ -4,11 +4,12 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 
-public class NavBar extends VBox {
+public class NavBar extends BorderPane {
 
     private MFXButton button(String content, int sizex, int sizey) {
         MFXButton button = new MFXButton(content, sizex, sizey);
@@ -20,7 +21,12 @@ public class NavBar extends VBox {
 
     public NavBar() {
         setId("nav-bar");
-        setAlignment(Pos.CENTER);
+
+        VBox centerButtons = new VBox();
+        centerButtons.setAlignment(Pos.CENTER);
+
+        VBox bottomButtons = new VBox();
+        bottomButtons.setAlignment(Pos.CENTER);
 
         MFXButton btn1 = button("Clients", 200, 40);
         btn1.setOnAction(event -> Router.goToScreen(Routes.CLIENTS));
@@ -34,6 +40,13 @@ public class NavBar extends VBox {
         MFXButton btn4 = button("Accueil", 200, 40);
         btn4.setOnAction(event -> Router.goToScreen(Routes.HOME));
 
-        getChildren().addAll(btn1, btn2, btn3, btn4);
+        MFXButton btn5 = new MFXButton("Déconnexion", 200, 60);
+        btn5.setOnAction(event -> Router.goToScreen(Routes.LOGIN));
+        btn5.setId("btn-logout");
+
+        setCenter(centerButtons);
+        setBottom(bottomButtons);
+        centerButtons.getChildren().addAll(btn1, btn2, btn3, btn4);
+        bottomButtons.getChildren().addAll(btn5);
     }
 }
