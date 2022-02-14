@@ -1,9 +1,8 @@
-package pt4.flotsblancs.scenes.toast;
+package pt4.flotsblancs.scenes.utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.scene.image.Image;
 
 public enum ToastType 

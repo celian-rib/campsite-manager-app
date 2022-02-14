@@ -1,5 +1,8 @@
 package pt4.flotsblancs.router;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.layout.Background;
@@ -8,10 +11,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import pt4.flotsblancs.components.NavBar;
 import pt4.flotsblancs.components.WindowBar;
-import pt4.flotsblancs.scenes.toast.ToastBuilder;
-import pt4.flotsblancs.scenes.toast.ToastType;
+import pt4.flotsblancs.scenes.utils.ToastBuilder;
+import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.scenes.utils.TransitionBuilder;
 
 public class RootScene extends StackPane {
 
@@ -86,10 +91,31 @@ public class RootScene extends StackPane {
             rootPane.setLeft(navBar);
             this.navBarIsActive = true;
         }
+        
+        transition(baseScene);
+    }
+    
+    public void transition(IScene baseScene)
+    {
+        FadeTransition popOut = TransitionBuilder.fadeTransition(1.0f, 0.0f, 250, sceneContainer);
+        popOut.play();
+        popOut.setOnFinished((ae) -> 
+        {
+            new Thread(() -> {
 
-        this.currentScene = baseScene;
-        sceneContainer.setCenter((Parent) this.currentScene);
-        windowBar.setTitle(this.currentScene.getName());
+            	Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+	            		currentScene = baseScene;      
+	                    sceneContainer.setCenter((Parent) currentScene);
+	                    windowBar.setTitle(currentScene.getName());
+            	    }
+            	});
+            	FadeTransition popIn = TransitionBuilder.fadeTransition(0.0f, 1.0f, 250, sceneContainer);
+                popIn.play();            
+            }).start();
+        });
+        popOut.play();
     }
     
     public void showToast(ToastType type, String message)
