@@ -1,7 +1,6 @@
 package pt4.flotsblancs.router;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -11,7 +10,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 import pt4.flotsblancs.components.NavBar;
 import pt4.flotsblancs.components.WindowBar;
 import pt4.flotsblancs.scenes.utils.Toaster;
@@ -103,7 +101,7 @@ public class RootScene extends StackPane {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
         if (baseScene.showNavBar() == false && this.navBarIsActive) {
             // On efface la navbar
-            this.getChildren().remove(navBar);
+            rootPane.getChildren().remove(navBar);
             this.navBarIsActive = false;
         } else {
             // On remet la navbar
