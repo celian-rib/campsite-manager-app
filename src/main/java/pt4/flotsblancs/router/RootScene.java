@@ -1,7 +1,6 @@
 package pt4.flotsblancs.router;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -11,11 +10,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 import pt4.flotsblancs.components.NavBar;
 import pt4.flotsblancs.components.WindowBar;
-import pt4.flotsblancs.scenes.utils.Toaster;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.scenes.utils.Toaster;
 import pt4.flotsblancs.scenes.utils.TransitionBuilder;
 
 public class RootScene extends StackPane {

@@ -110,7 +110,6 @@ public class Router {
         primaryStage.setTitle(routes.get(currentRoute).getName());
 
         //A supprimer, test des toast sur changement de page
-        rootScene.showToast(ToastType.INFO, "Est-ce que tu as le temps de tout lire avant que le message ne disparraisse automatiquement ? ");
         
         log("Switch scene -> " + newRoute);
     }
