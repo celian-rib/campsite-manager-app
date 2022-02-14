@@ -52,7 +52,6 @@ public class RootScene extends StackPane {
         rootPane.setLeft(navBar);
         rootPane.setCenter(sceneContainer);
         
-        //setBottom();
         this.navBarIsActive = true;
     }
     
@@ -108,7 +107,7 @@ public class RootScene extends StackPane {
             rootPane.setLeft(navBar);
             this.navBarIsActive = true;
         }
-        
+        navBar.update();
         transition(baseScene);
     }
     

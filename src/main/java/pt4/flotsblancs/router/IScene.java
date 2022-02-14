@@ -9,7 +9,12 @@ public interface IScene {
     public String getName();
 
     /**
-     * Appelé au moment ou cette scène est affichée à l'écran par le routeur
+     * Appelé au moment ou cette scène est chargée (Au lancement de l'app)
      */
     public abstract void start();
+
+    /**
+     * Appelé au moment ou cette scène est affichée à l'écran par le routeur
+     */
+    public abstract void onFocus();
 }

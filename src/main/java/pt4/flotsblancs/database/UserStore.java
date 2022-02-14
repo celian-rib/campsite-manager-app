@@ -34,7 +34,7 @@ public class UserStore {
     public void setUser(User u){
         user = u;
     }
-    
+
     public static boolean log(String id, String mdp){
         QueryBuilder<User, String> queryBuilder;
 		try {
