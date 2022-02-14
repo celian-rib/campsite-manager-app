@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pt4.flotsblancs.scenes.*;
+import pt4.flotsblancs.scenes.toast.ToastType;
 
 public class Router {
 
@@ -79,6 +80,9 @@ public class Router {
         // Changement titre de la fenêtre
         primaryStage.setTitle(routes.get(currentRoute).getName());
 
+        //A supprimer, test des toast sur changement de page
+        rootScene.showToast(ToastType.INFO, "Est-ce que tu as le temps de tout lire avant que le message ne disparraisse automatiquement ? ");
+        
         log("Switch scene -> " + newRoute);
     }
 
