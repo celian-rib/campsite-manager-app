@@ -1,10 +1,5 @@
 package pt4.flotsblancs.scenes;
 
-import javafx.scene.text.Font;
-import pt4.flotsblancs.router.IScene;
-import pt4.flotsblancs.scenes.toast.ToastBuilder;
-import pt4.flotsblancs.scenes.toast.ToastType;
-import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
@@ -13,6 +8,8 @@ import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import pt4.flotsblancs.router.IScene;
 
 public class DashboardScene extends VBox implements IScene {
 

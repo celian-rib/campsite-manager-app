@@ -1,4 +1,4 @@
-package pt4.flotsblancs.scenes.toast;
+package pt4.flotsblancs.scenes.utils;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -8,7 +8,6 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;

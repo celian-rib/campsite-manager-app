@@ -1,11 +1,15 @@
 package pt4.flotsblancs.router;
 
 import java.util.HashMap;
+
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import pt4.flotsblancs.scenes.*;
-import pt4.flotsblancs.scenes.toast.ToastType;
+import pt4.flotsblancs.scenes.ClientsScene;
+import pt4.flotsblancs.scenes.DashboardScene;
+import pt4.flotsblancs.scenes.LoginScene;
+import pt4.flotsblancs.scenes.ReservationsScene;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
 
