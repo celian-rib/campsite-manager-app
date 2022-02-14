@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 public enum ToastType 
 {
 	
+	//Chemin relatif vers les resources
 	ERROR("src/main/resources/ToastIcons/error.png"),
 	SUCCESS("src/main/resources/ToastIcons/success.png"),
 	INFO("src/main/resources/ToastIcons/info.png"),
@@ -20,6 +21,10 @@ public enum ToastType
 		this.location = location;
 	}
 	
+	/** Permet de récupérer l'icône associé à un toast
+	 * 
+	 * @return icon : L'icône du toast défini dans l'enum
+	 */
 	public Image getIcon()
 	{
 		FileInputStream inputstream;
@@ -35,19 +40,3 @@ public enum ToastType
 		return null;
 	}
 }
-
-/*
- * 
- *         MFXButton warning = new MFXButton("Warning");
-        warning.setOnAction((arg0) -> ToastBuilder.createToast(ToastType.WARNING,g,"Message de warning",3000,800));
-        
-        MFXButton error = new MFXButton("Error");
-        error.setOnAction((arg0) -> ToastBuilder.createToast(ToastType.ERROR,g,"Message d'erreur !",3000,800));
-        
-        MFXButton info = new MFXButton("Info");
-        info.setOnAction((arg0) -> ToastBuilder.createToast(ToastType.INFO,g,"Message d'information",3000,800));
-        
-        MFXButton success = new MFXButton("Success");
-        success.setOnAction((arg0) -> ToastBuilder.createToast(ToastType.SUCCESS,g,"Message de succès :)",3000,800));
- * 
- * */

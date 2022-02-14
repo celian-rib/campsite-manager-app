@@ -2,15 +2,12 @@ package pt4.flotsblancs.scenes.utils;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.ParallelTransition;
-import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -20,31 +17,23 @@ import javafx.util.Duration;
 public class ToastBuilder 
 {
 	
-	public static void playTransition(BorderPane toast, BorderPane container, int durationMillis, int fadeinoutMillis)
+	/** Permet de lancer l'affichage d'un toast avec sa durée et son fadein/out time
+	 * Il faut lui passer en paramètre deux Panes. Le premier, celui sur lequel le toast sera mis, et un autre,
+	 * le container de celui-ci
+	 * 
+	 * @param toast : Pane qui a été retourné par la fonction createToast 
+	 * @param container : Pane sur lequel le toast sera attaché 
+	 * @param durationMillis : Durée d'affichage du toast sans compter les fadeinout
+	 * @param fadeinoutMillis : Durée de transition pour l'affichage
+	 */
+	public static void playTransition(Pane toast, Pane container, int durationMillis, int fadeinoutMillis)
 	{
-        //Déplacement du haut vers le bas du toast
-        final Timeline moveTimeline = new Timeline();
-        moveTimeline.setAutoReverse(true);
-        final KeyValue kv = new KeyValue(container.layoutYProperty(), -100);
-        final KeyFrame kf = new KeyFrame(Duration.millis(fadeinoutMillis), kv);
-        moveTimeline.getKeyFrames().add(kf);
-        
         //Fade du toast
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(fadeinoutMillis), container);
         fadeTransition.setFromValue(0.0f);
         fadeTransition.setToValue(1.0f);
-  
-        
-        //Permet de combiner deux transitions en même temps
-        ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().addAll(
-                fadeTransition,
-                moveTimeline
-        );
-        
-        
-        
-        parallelTransition.setOnFinished((ae) -> 
+
+        fadeTransition.setOnFinished((ae) -> 
         {
             new Thread(() -> {
                 try
@@ -52,37 +41,29 @@ public class ToastBuilder
                     Thread.sleep(durationMillis);
                 } catch (InterruptedException e) { e.printStackTrace(); }
                 
-	                final Timeline moveTimelineOut = new Timeline();
-	                final KeyValue kvOut = new KeyValue(container.layoutYProperty(), 100);
-	                final KeyFrame kfOut = new KeyFrame(Duration.millis(fadeinoutMillis), kvOut);
-	                moveTimelineOut.getKeyFrames().add(kfOut);
-	                
 	                //Fade du toast
 	                FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(fadeinoutMillis), container);
 	                fadeTransitionOut.setFromValue(1.0f);
 	                fadeTransitionOut.setToValue(0.0f);
-	                
-	                ParallelTransition parallelTransition2 = new ParallelTransition();
-	                parallelTransition2.getChildren().addAll(
-	                		moveTimelineOut,
-	                		fadeTransitionOut
-	                );
-	                
-	             //   parallelTransition2.setOnFinished((aeb) -> stage.close());
-	                parallelTransition2.play();
+	               
+	                fadeTransitionOut.play();
             }).start();
         }); 
-        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
-
-        parallelTransition.play();
+        
+        fadeTransition.setInterpolator(Interpolator.EASE_BOTH);
+        fadeTransition.play();
 	}
 	
+	/** Permet de créer un toast avec le type indiqué et le contenu passé.
+	 * 
+	 * 
+	 * @param type : Type du toast à créer (Warning, info, erreur...)
+	 * @param content : Contenu du toast qui sera affiché à l'écran lors du .playTransition
+	 * @see ToastBuilder.playTransition(Pane toast, Pane container, int durationMillis, int fadeinoutMillis)
+	 * @return BorderPane : Le pane sur lequel le toast est attaché
+	 */
     public static BorderPane createToast(ToastType type, String content)
     {
-        /*Stage stage=new Stage();
-     
-        stage.setResizable(false);
-        stage.initStyle(StageStyle.TRANSPARENT);*/
         
         Text text = new Text(content);
         text.setFont(Font.font("Verdana", 15));
