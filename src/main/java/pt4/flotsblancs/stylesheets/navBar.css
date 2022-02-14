@@ -3,16 +3,22 @@
     -fx-background-radius: 10px 0 0 10px;
 }
 
-#nav-bar > .mfx-button {
+#nav-bar #btn-logout {
+    -fx-font-size: 12;
+    -fx-text-align: center;
+}
+
+#nav-bar .mfx-button {
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-font-size: 15;
-}
+} 
 
 #nav-bar .mfx-ripple-generator {
     -mfx-ripple-color: white;
 }
 
-#nav-bar > .mfx-button:hover {
+#nav-bar .mfx-button:hover {
     -fx-background-color: rgba(79, 103, 134, 0.199);
 }
+
