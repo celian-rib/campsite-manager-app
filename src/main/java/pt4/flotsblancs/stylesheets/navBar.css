@@ -5,7 +5,13 @@
 
 #nav-bar #btn-logout {
     -fx-font-size: 12;
+    -fx-opacity: 0.6;
     -fx-text-align: center;
+}
+
+#nav-bar #btn-logout:hover {
+    -fx-opacity: 8;
+    -fx-background-color: transparent;
 }
 
 #nav-bar .mfx-button {
