@@ -16,7 +16,7 @@ DB_URL=<url>
 DB_USER=<user>
 DB_PASSWORD=<password>
 ```
-7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) , pour VScode il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok)
+7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) , pour VScode il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok) (Recharger VSCode si les erreurs persistent)
 
 ## Setup tunnel SSH (Se connecter à la BD depuis chez soi)
 > La base est actuellement hébergée sur l'intranet de l'IUT, pour établir une connexion avec une machine n'étant pas sur le réseau de l'IUT il faut setup un tunnel ssh
