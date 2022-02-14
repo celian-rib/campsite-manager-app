@@ -7,6 +7,8 @@ import lombok.Getter;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.table.TableUtils;
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -49,6 +51,8 @@ public class Database {
 
 
     private Database() throws SQLException {
+        Logger.setGlobalLogLevel(Level.ERROR);
+
         // Chargement variables d'environnement
         Dotenv dotenv = Dotenv.load();
 
