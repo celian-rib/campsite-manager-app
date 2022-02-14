@@ -57,8 +57,13 @@ public class LoginScene extends VBox implements IScene {
             }
         });
         
+        MFXButton bRetourTest = new MFXButton("test");
+        bRetourTest.setOnAction(e-> {
+        	Router.goToScreen(Routes.HOME);
+        });
+        
 
-        getChildren().addAll(label, tFId, pFMdp, bValider);
+        getChildren().addAll(label, tFId, pFMdp, bValider, bRetourTest);
     }
 
     @Override
