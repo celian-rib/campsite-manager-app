@@ -8,10 +8,12 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.components.NavBar;
+import pt4.flotsblancs.components.ToastBasket;
 import pt4.flotsblancs.components.WindowBar;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.scenes.utils.Toaster;
@@ -22,10 +24,12 @@ public class RootScene extends StackPane {
     private IScene currentScene;
 
     private boolean navBarIsActive;
+    
+    private ToastBasket toastBasket;
 
     private BorderPane rootPane;
     private BorderPane toastPane;
-
+    
     private BorderPane sceneContainer;
     private NavBar navBar;
     private WindowBar windowBar;
@@ -42,6 +46,10 @@ public class RootScene extends StackPane {
         
         // Initialisation du panneau contenant les toast
         toastPane = new BorderPane();
+        
+        // Initialisation de la liste des toasts
+        toastBasket = new ToastBasket(toastPane);
+
         toastPane.mouseTransparentProperty().set(true);
         this.getChildren().add(toastPane);
         
@@ -205,14 +213,8 @@ public class RootScene extends StackPane {
     {
     	//Deux borderpane pour placer en bas à droite sinon impossible
     	BorderPane toast = Toaster.createToast(ToastType.INFO, message);
-    	BorderPane bottom = new BorderPane();
-    	
-    	//Ecarte le toast des bords pour une meilleure apparence
-    	bottom.setPadding(new Insets(15));
-    	toastPane.setBottom(bottom);
-    	bottom.setRight(toast);
-        
-    	Toaster.playTransition(toast,bottom,durationMillis,fadeinoutMillis); 	
+    	toastBasket.display(toast);
+    	Toaster.playTransition(toast,toastBasket,durationMillis,fadeinoutMillis); 	
     }
 
 }
