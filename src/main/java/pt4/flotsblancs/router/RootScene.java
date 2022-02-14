@@ -31,9 +31,6 @@ public class RootScene extends StackPane {
     private NavBar navBar;
     private WindowBar windowBar;
     
-    
-
-
     public RootScene() {
         initBackground();
         loadStyleSheets();
@@ -61,6 +58,9 @@ public class RootScene extends StackPane {
         this.navBarIsActive = true;
     }
     
+    /**
+     * Méthode pour charger les resources CSS.
+     */
     private void loadStyleSheets() {
         String baseUrl = "file:src/main/java/pt4/flotsblancs/stylesheets/";
         getStylesheets().add(baseUrl + "index.css");
@@ -68,11 +68,18 @@ public class RootScene extends StackPane {
         getStylesheets().add(baseUrl + "windowBar.css");
     }
 
+    /**
+     * Permet de définir la couleur de fond de la fenêtre
+     */
     private void initBackground() {
         BackgroundFill fill = new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY);
         setBackground(new Background(fill));
     }
 
+    /**
+     * Crée le container qui est séparé de la navbar
+     * @return BorderPane : le containeur en question
+     */
     private BorderPane createSceneContainer() {
         var container = new BorderPane();
         var fill = new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY);
@@ -80,6 +87,18 @@ public class RootScene extends StackPane {
         return container;
     }
 
+    /**
+     * Permet de changer la scène courante
+     * 
+     * Si la scène possède un attribut navBar à false et que la navbar avant 
+     * transition était présente, alors on retire la navbar (Qui est chargée 
+     * pour toute la durée de l'application) de l'affichage.
+     * 
+     * Au contraire, si la scène possède son attribut navBar à true et que 
+     * la navBar n'était pas affichée alors, on va l'afficher
+     * 
+     * @param baseScene , La nouvelle scène à afficher
+     */
     public void changeCurrentScene(IScene baseScene) {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
         if (baseScene.showNavBar() == false && this.navBarIsActive) {
@@ -95,6 +114,20 @@ public class RootScene extends StackPane {
         transition(baseScene);
     }
     
+    /**
+     * Permet de créer une transition lisse entre deux pages
+     *
+     * On passe en paramètre la nouvelle scène vers laquelle on va faire 
+     * une transition. Et comme on ne change pas la scène courante jusqu'à 
+     * la fin de la transition de disparaition de celle-ci, on peut agir
+     * sur le sceneContainer qui n'est pas modifié avant la fin de la première transition.
+     * 
+     * Donc il y a deux transitions, une pour faire disparaître la page courante, et la suivante,
+     * celle pour faire apparaître la nouvelle. Après cette dernière transition c'est là
+     * que la scène est changée.
+     *
+     * @param baseScene : La nouvelle scène vers laquelle on va transitionner
+     */
     public void transition(IScene baseScene)
     {
         FadeTransition popOut = TransitionBuilder.fadeTransition(1.0f, 0.0f, 250, sceneContainer);
@@ -118,6 +151,13 @@ public class RootScene extends StackPane {
         popOut.play();
     }
     
+    /*
+     * Permet de montrer un toast en calculant automatiquement le temps pendant lequel il sera affiché
+     * (à partir du nombre moyen de mots lu par minute par un français)
+     * @param type : Type du toast à montrer
+     * @param message : Message que le toast contiendra
+     * @see showToast(ToastType type, String message, int durationMillis, int fadeinoutMillis)
+     */
     public void showToast(ToastType type, String message)
     {
     	//En français moyenne 350 mots par minute
@@ -128,6 +168,15 @@ public class RootScene extends StackPane {
     	showToast(type,message,message.length()*60000/1750,1000);
     }
     
+    /**
+     * Permet de montrer un toast avec le message entrée et la durée 
+     * définie dans les paramètres
+     * 
+     * @param type : Type du toast à montrer
+     * @param message : Message que le toast contiendra
+     * @param durationMillis : Temps pendant lequel le toast sera affiché 
+     * @param fadeinoutMillis : Durée de la transition d'apparition / disparaition
+     */
     public void showToast(ToastType type, String message, int durationMillis, int fadeinoutMillis)
     {
     	//Deux borderpane pour placer en bas à droite sinon impossible

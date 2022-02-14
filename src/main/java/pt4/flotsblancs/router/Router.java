@@ -90,14 +90,29 @@ public class Router {
         log("Switch scene -> " + newRoute);
     }
 
+    /**
+     * Getter, retourne la route sur laquelle nous sommes actuellement 
+     * 
+     * @return currentRoute
+     */
     public static Routes getCurrentRoutes() {
         return currentRoute;
     }
 
+    /**
+     * Permet de logger les actions du routeur pour le débug
+     * 
+     * @param message : Message de débug
+     */
     private static void log(String message) {
         System.out.println("[Router] " + message);
     }
 
+    /**
+     * Permet de retourner notre stage primaire
+     * 
+     * @return primaryStage :  c'est la fenêtre de l'application, soit ce qui contient les boutons réduire / plein écran / fermer et la racine de la hiérarchie (RootScene)
+     */
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
