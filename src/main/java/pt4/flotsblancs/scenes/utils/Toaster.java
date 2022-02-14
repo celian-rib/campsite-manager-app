@@ -14,7 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class ToastBuilder 
+public class Toaster 
 {
 	
 	/** Permet de lancer l'affichage d'un toast avec sa durée et son fadein/out time

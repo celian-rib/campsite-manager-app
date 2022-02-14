@@ -14,7 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import pt4.flotsblancs.components.NavBar;
 import pt4.flotsblancs.components.WindowBar;
-import pt4.flotsblancs.scenes.utils.ToastBuilder;
+import pt4.flotsblancs.scenes.utils.Toaster;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.scenes.utils.TransitionBuilder;
 
@@ -180,7 +180,7 @@ public class RootScene extends StackPane {
     public void showToast(ToastType type, String message, int durationMillis, int fadeinoutMillis)
     {
     	//Deux borderpane pour placer en bas à droite sinon impossible
-    	BorderPane toast = ToastBuilder.createToast(ToastType.INFO, message);
+    	BorderPane toast = Toaster.createToast(ToastType.INFO, message);
     	BorderPane bottom = new BorderPane();
     	
     	//Ecarte le toast des bords pour une meilleure apparence
@@ -188,7 +188,7 @@ public class RootScene extends StackPane {
     	toastPane.setBottom(bottom);
     	bottom.setRight(toast);
         
-    	ToastBuilder.playTransition(toast,bottom,durationMillis,fadeinoutMillis); 	
+    	Toaster.playTransition(toast,bottom,durationMillis,fadeinoutMillis); 	
     }
 
 }
