@@ -13,7 +13,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import pt4.flotsblancs.components.ToastBasket;
 
 public class Toaster 
 {
@@ -27,10 +26,10 @@ public class Toaster
 	 * @param durationMillis : Durée d'affichage du toast sans compter les fadeinout
 	 * @param fadeinoutMillis : Durée de transition pour l'affichage
 	 */
-	public static void playTransition(Pane toast, ToastBasket basket,int durationMillis, int fadeinoutMillis)
+	public static void playTransition(Pane toast, Pane container, int durationMillis, int fadeinoutMillis)
 	{
         //Fade du toast
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(fadeinoutMillis), toast);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(fadeinoutMillis), container);
         fadeTransition.setFromValue(0.0f);
         fadeTransition.setToValue(1.0f);
 
@@ -43,13 +42,11 @@ public class Toaster
                 } catch (InterruptedException e) { e.printStackTrace(); }
                 
 	                //Fade du toast
-	                FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(fadeinoutMillis), toast);
+	                FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(fadeinoutMillis), container);
 	                fadeTransitionOut.setFromValue(1.0f);
 	                fadeTransitionOut.setToValue(0.0f);
 	               
 	                fadeTransitionOut.play();
-	                
-	                fadeTransitionOut.setOnFinished(aee->{ basket.remove(toast); });
             }).start();
         }); 
         
