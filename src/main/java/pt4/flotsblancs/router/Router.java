@@ -65,6 +65,31 @@ public class Router {
         scene.setFill(Color.TRANSPARENT);
         log("Initialized");
     }
+    
+    /**
+     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un toast 
+     * 
+     * 
+     * @param type
+     * @param message
+     * @param durationMillis
+     * @param fadeinoutMillis
+     */
+    public static void showToast(ToastType type, String message, int durationMillis, int fadeinoutMillis)
+    {
+    	rootScene.showToast(type, message, durationMillis, fadeinoutMillis);
+    }
+    
+    /**
+     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un toast 
+     * 
+     * @param type
+     * @param message
+     */
+    public static void showToast(ToastType type, String message)
+    {
+    	rootScene.showToast(type, message);
+    }
 
     /**
      * Permet de change la scène actuelle (La page courante)
