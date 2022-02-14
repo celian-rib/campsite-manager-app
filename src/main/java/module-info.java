@@ -11,11 +11,11 @@ module pt4.flotsblancs {
 	requires lombok;
 	
 	opens pt4.flotsblancs to javafx.graphics,ormlite.jdbc;
-	opens pt4.flotsblancs.orm to javafx.graphics,ormlite.jdbc;
-	opens pt4.flotsblancs.orm.model to ormlite.jdbc;
+	opens pt4.flotsblancs.database to javafx.graphics,ormlite.jdbc;
+	opens pt4.flotsblancs.database.model to ormlite.jdbc;
 	
 	exports pt4.flotsblancs;
-	exports pt4.flotsblancs.orm;
-	exports pt4.flotsblancs.orm.model;
+	exports pt4.flotsblancs.database;
+	exports pt4.flotsblancs.database.model;
 	requires junit;
 }

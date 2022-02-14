@@ -1,4 +1,4 @@
-package pt4.flotsblancs.orm.model;
+package pt4.flotsblancs.database.model;
 
 import java.util.Date;
 

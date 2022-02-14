@@ -1,8 +1,9 @@
-package pt4.flotsblancs.orm;
+package pt4.flotsblancs.database;
 
 import java.sql.SQLException;
 
 import lombok.Getter;
+import pt4.flotsblancs.database.model.*;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -11,8 +12,6 @@ import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.table.TableUtils;
 import io.github.cdimascio.dotenv.Dotenv;
-
-import pt4.flotsblancs.orm.model.*;
 
 public class Database {
     private static Database instance = null;
