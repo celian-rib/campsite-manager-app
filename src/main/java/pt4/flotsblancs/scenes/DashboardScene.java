@@ -1,5 +1,6 @@
 package pt4.flotsblancs.scenes;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
@@ -10,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.router.IScene;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class DashboardScene extends VBox implements IScene {
 
@@ -44,7 +47,11 @@ public class DashboardScene extends VBox implements IScene {
 
         MFXCheckbox checkBox = new MFXCheckbox("Bonsoir");
         MFXToggleButton toggle = new MFXToggleButton("Bonsoir");
+        
+        MFXButton testToast = new MFXButton("test Toast");
+        testToast.setOnAction(e -> { Router.showToast(ToastType.ERROR,"test"); });
+        
 
-        getChildren().addAll(label, slider, datePicker, checkBox, toggle, spinner);
+        getChildren().addAll(label, slider, datePicker, checkBox, toggle, spinner, testToast);
     }
 }
