@@ -8,6 +8,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.components.NavBar;
@@ -98,17 +99,27 @@ public class RootScene extends StackPane {
      */
     public void changeCurrentScene(IScene baseScene) {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
+    	
+    	//Savoir si dans la transition on inclut la barre de navigation ou pas
+    	boolean isShowbarUpdate = false;
+    	boolean removeNavBar = false;
+    	boolean setNavBar = false;
+    	
+    	if(baseScene.showNavBar() && this.navBarIsActive == false)
+    	{
+    		isShowbarUpdate = true;
+    	}
+    	
         if (baseScene.showNavBar() == false && this.navBarIsActive) {
             // On efface la navbar
-            rootPane.getChildren().remove(navBar);
-            this.navBarIsActive = false;
+        	removeNavBar = true;
+        	isShowbarUpdate = true;
         } else {
             // On remet la navbar
-            rootPane.setLeft(navBar);
-            this.navBarIsActive = true;
+        	setNavBar = true;
         }
         navBar.update();
-        transition(baseScene);
+        transition(baseScene,isShowbarUpdate,removeNavBar,setNavBar);
     }
     
     /**
@@ -123,11 +134,19 @@ public class RootScene extends StackPane {
      * celle pour faire apparaître la nouvelle. Après cette dernière transition c'est là
      * que la scène est changée.
      *
+     * @param setNavBar : Savoir si on place ou non la navBar
+     * @param removeNavBar : Savoir si on supprime ou non la navBar
+     * @param isShowBar : Savoir si la navBar a changé d'état pour faire une transition adaptée
      * @param baseScene : La nouvelle scène vers laquelle on va transitionner
      */
-    public void transition(IScene baseScene)
+    public void transition(IScene baseScene,boolean isShowBar, boolean removeNavBar, boolean setNavBar)
     {
-        FadeTransition popOut = TransitionBuilder.fadeTransition(1.0f, 0.0f, 250, sceneContainer);
+    	
+    	System.out.println(isShowBar);
+    	
+    	Pane p = isShowBar ? rootPane : sceneContainer;
+    	
+        FadeTransition popOut = TransitionBuilder.fadeTransition(1.0f, 0.0f, 250, p);
         popOut.play();
         popOut.setOnFinished((ae) -> 
         {
@@ -139,9 +158,17 @@ public class RootScene extends StackPane {
 	            		currentScene = baseScene;      
 	                    sceneContainer.setCenter((Parent) currentScene);
 	                    windowBar.setTitle(currentScene.getName());
+	                    if(removeNavBar)
+	                    {
+	                        rootPane.getChildren().remove(navBar);
+	                        navBarIsActive = false;
+	                    } else if(setNavBar) {
+	                        rootPane.setLeft(navBar);
+	                        navBarIsActive = true;
+	                    }
             	    }
             	});
-            	FadeTransition popIn = TransitionBuilder.fadeTransition(0.0f, 1.0f, 250, sceneContainer);
+            	FadeTransition popIn = TransitionBuilder.fadeTransition(0.0f, 1.0f, 250, p);
                 popIn.play();            
             }).start();
         });
