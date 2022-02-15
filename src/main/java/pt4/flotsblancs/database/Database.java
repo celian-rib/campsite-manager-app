@@ -10,6 +10,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableUtils;
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -67,6 +68,21 @@ public class Database {
         if (Database.instance == null)
             Database.instance = new Database();
         return instance;
+    }
+
+    public boolean isConnected() {
+        if (this.conn == null)
+            return false;
+        String pingQuery = this.conn.getDatabaseType().getPingStatement();
+        DatabaseConnection dbConn;
+        try {
+            dbConn = conn.getReadOnlyConnection(null);
+            dbConn.executeStatement(pingQuery, 1);
+            conn.releaseConnection(dbConn);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     private void createAllTablesIfNotExists() throws SQLException {
