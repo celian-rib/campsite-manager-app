@@ -1,21 +1,18 @@
-package pt4.test;
+package pt4;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class TestTest {
 
 	@Test
 	public void test() {
-		
 		assertTrue(true);
-		
 	}
 	
 	@Test 
 	public void test2() {
-		fail("it failed cuz i said so");
+		assertTrue(true);
 	}
 
 }

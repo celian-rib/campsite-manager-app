@@ -1,0 +1,14 @@
+image: maven:3.3.9-jdk-11
+
+stages:
+  - verify
+# Cache downloaded dependencies and plugins between builds.
+# To keep cache across branches add 'key: "$CI_JOB_NAME"'
+cache:
+  paths:
+    - .m2/repository
+
+maven_verify:
+  stage: verify
+  script:
+    - mvn verify
