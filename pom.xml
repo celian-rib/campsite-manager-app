@@ -13,35 +13,37 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<javafx.version>17.0.2</javafx.version>
+		<junit>5.6.2</junit>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.oracle.ojdbc</groupId>
-			<artifactId>ojdbc8</artifactId>
-			<version>19.3.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
-		</dependency>
+		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.22</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- MaterialFX -->
 		<dependency>
 			<groupId>io.github.palexdev</groupId>
 			<artifactId>materialfx</artifactId>
 			<version>11.13.0</version>
 		</dependency>
+
+		<!-- Dotenv -->
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
 			<version>2.2.0</version>
+		</dependency>
+
+		<!-- Base de données -->
+		<dependency>
+			<groupId>com.oracle.ojdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>19.3.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -58,6 +60,8 @@
 			<artifactId>ormlite-jdbc</artifactId>
 			<version>6.1</version>
 		</dependency>
+
+		<!-- JFX -->
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
@@ -73,6 +77,26 @@
 			<artifactId>javafx-fxml</artifactId>
 			<version>18-ea+10</version>
 		</dependency>
+
+		<!-- Junit -->
+		<dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit}</version>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 	<build>
