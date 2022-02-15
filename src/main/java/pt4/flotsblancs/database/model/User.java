@@ -2,8 +2,10 @@ package pt4.flotsblancs.database.model;
 
 import lombok.*;
 import pt4.flotsblancs.database.Database;
+
 import com.j256.ormlite.table.DatabaseTable;
-import java.sql.SQLException;
+
+import java.security.*;
 import java.util.List;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -62,6 +64,23 @@ public class User {
         connected = null;
     }
 
+    public static String sha256(final String base) {
+        try{
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            final byte[] hash = digest.digest(base.getBytes("UTF-8"));
+            final StringBuilder hexString = new StringBuilder();
+            for (int i = 0; i < hash.length; i++) {
+                final String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1) 
+                  hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch(Exception ex){
+           throw new RuntimeException(ex);
+        }
+    }
+
     public static boolean logIn(String id, String mdp) {
         if (isConnected()) {
             log("/!\\ Un utilisateur est déjà connecté");
@@ -75,12 +94,14 @@ public class User {
             List<User> accountList = Database.getInstance().getUsersDao().query(preparedQuery);
 
             for (User u : accountList) {
-                if (u.getPassword().equals(mdp)) {
+                String s = sha256(mdp);
+
+                if (u.getPassword().equals(s)) {
                     connected = u;
                     return true;
                 }
             }
-        } catch (SQLException e1) {
+        } catch (Exception e1) {
             e1.printStackTrace();
         }
         return false;
