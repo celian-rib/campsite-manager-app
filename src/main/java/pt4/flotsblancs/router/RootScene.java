@@ -8,7 +8,6 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -72,6 +71,7 @@ public class RootScene extends StackPane {
         getStylesheets().add(baseUrl + "index.css");
         getStylesheets().add(baseUrl + "navBar.css");
         getStylesheets().add(baseUrl + "windowBar.css");
+        getStylesheets().add(baseUrl + "loginPage.css");
     }
 
     /**
