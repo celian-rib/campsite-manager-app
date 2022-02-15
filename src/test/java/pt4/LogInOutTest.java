@@ -12,7 +12,7 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 
 @TestInstance(Lifecycle.PER_CLASS)
-public class LoginTest {
+public class LogInOutTest {
 
 	private static User testUser;
 
@@ -34,7 +34,7 @@ public class LoginTest {
 		// (Ca peut être le cas si un test précédent na pas fonctionné)
 		List<User> matching = Database.getInstance().getUsersDao().queryForMatching(testUser);
 		if (matching.size() > 0) {
-			System.out.println("Test user was already in database (Using it)");
+			System.out.println("Utilisateur de test déjà dans la BD (Recyclage)");
 			testUser = matching.get(0);
 		} else {
 			// Si l'utilisateur de test n'est pas dans la base on l'ajoute
@@ -46,7 +46,7 @@ public class LoginTest {
 	public void testLogin() {
 		// Force logout
 		User.logOut();
-		
+
 		boolean logInResult;
 		// Mauvais mdp
 		logInResult = User.logIn("test_user_123456789", "test_password_wrong");
@@ -65,8 +65,9 @@ public class LoginTest {
 		assertTrue(logInResult);
 		assertTrue(User.isConnected());
 		assertNotNull(User.getConnected());
-		assertEquals(User.getConnected().getUserId(), testUser.getUserId());
-		// Le equals est "deep" (Donc pas par référence) grâce au :
+		assertEquals(User.getConnected(), testUser);
+		// Le equals est "deep" (Donc pas par référence mais par certains attributs)
+		// grâce au :
 		// @EqualsAndHashCode(callSuper=false)
 		// dans User.java
 	}
