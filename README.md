@@ -1,5 +1,7 @@
 # PT4 - FlotsBlancs
 
+[![pipeline status](https://gitlab-ce.iut.u-bordeaux.fr/criboulet/pt4/badges/main/pipeline.svg)](https://gitlab-ce.iut.u-bordeaux.fr/criboulet/pt4/-/commits/main)
+
 ## Setup projet
 
 1. Clone le projet `git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
@@ -61,7 +63,9 @@ DB_PASSWORD=<password>
 
 ## Lancer les tests
 
-TO DO
+```
+mvn test
+```
 
 ## Build le projet
 

@@ -1,14 +1,23 @@
-image: maven:3.3.9-jdk-11
+image: maven:3.8.4-jdk-11
+
+variables:
+  DB_URL:  $DB_URL
+  DB_USER: $DB_USER
+  DB_PASSWORD: $DB_PASSWORD
 
 stages:
-  - verify
-# Cache downloaded dependencies and plugins between builds.
-# To keep cache across branches add 'key: "$CI_JOB_NAME"'
-cache:
-  paths:
-    - .m2/repository
+  - tests
 
-maven_verify:
-  stage: verify
+tests:
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - .m2/repository
+  stage: tests
   script:
-    - mvn verify
+    - echo "DB_URL=$DB_URL" >> .env
+    - echo "DB_USER=$DB_USER" >> .env
+    - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+    - mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar -DskipTests
+    - mvn test
+
