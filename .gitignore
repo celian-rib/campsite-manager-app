@@ -13,3 +13,6 @@ start-tunnel.sh
 go-on-second-screen
 .idea
 
+launchApp.bat
+launchApp.sh
+

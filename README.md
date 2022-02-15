@@ -65,4 +65,30 @@ TO DO
 
 ## Build le projet
 
-TO DO
+### A faire pour le premier build
+
+1. Installer le **SDK** de JavaFX depuis https://gluonhq.com/products/javafx/ et le dézipper dans une espace adapté.
+
+2. Créez vous à la racine du projet un launcher.sh ou .bat ou autre en fonction de votre OS. A l'intérieur, mettre la commande
+
+> Windows : 
+
+```bash
+java --module-path "chemin\vers\javafx\lib" --add-modules javafx.controls,javafx.fxml -jar target/flots-blancs-1.0.0-jar-with-dependencies.jar
+pause
+```
+
+> Linux : 
+
+```bash
+java --module-path "path/to/javafx/lib" --add-modules javafx.controls,javafx.fxml -jar target/flots-blancs-1.0.0-jar-with-dependencies.jar
+```
+Ne pas oublier de faire chmod u+x launcher.sh.
+
+### Les autres builds
+
+1. Aller à la racine du projet (/pt4), et effectuer la commande : mvn clean package
+
+2. L'application est build et est mise dans /target
+
+3. Pour la lancer, utilisez votre launcher avec la commande sur linux ./launcher.sh, ou sur windows en cliquant sur le .bat
