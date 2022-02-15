@@ -7,6 +7,7 @@ module pt4.flotsblancs {
 	requires java.sql;
 	requires dotenv.java;
 	
+	requires AppleJavaExtensions;
 	requires MaterialFX;
 	requires lombok;
 	
