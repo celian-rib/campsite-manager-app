@@ -54,7 +54,7 @@ public class DashboardScene extends VBox implements IScene {
         MFXToggleButton toggle = new MFXToggleButton("Bonsoir");
         
         MFXButton testToast = new MFXButton("test Toast");
-        testToast.setOnAction(e -> { Router.showToast(ToastType.ERROR,"test"); });
+        testToast.setOnAction(e -> { Router.showToast(ToastType.ERROR,"test test test test"); });
         
 
         getChildren().addAll(label, slider, datePicker, checkBox, toggle, spinner, testToast);

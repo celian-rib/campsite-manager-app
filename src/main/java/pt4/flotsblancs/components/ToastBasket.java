@@ -54,7 +54,7 @@ public class ToastBasket extends GridPane
     	    @Override
     	    public void run() {
     			toasts.remove(toast);
-    			remove(toast);
+    			getChildren().remove(toast);
     	    	updateToasts();
     	    }   
     	});
@@ -86,13 +86,18 @@ public class ToastBasket extends GridPane
 		for(Pane p : toasts)
 		{
 			substitution.add(p);
+			getChildren().remove(p);
 		}
-		
+
 		this.toasts.removeAll(toasts);
 		
+		int i=0;
+
 		for(Pane p : substitution)
 		{
 			this.toasts.add(p);
+			this.add(p,0,i);
+			i++;
 		}
 	}
 }
