@@ -32,33 +32,9 @@ public class NavBar extends BorderPane {
     public NavBar() {
         setId("nav-bar");
 
-        setTop(logoAndTitle());
+        setTop(new FlotsBlancsLogo(false, true, 50));
         setCenter(navigationButtons());
         setBottom(logOutButton());
-    }
-
-    private VBox logoAndTitle() {
-        VBox topContainer = new VBox(10);
-        ImageView icon = new ImageView();
-
-        try {
-            Image img = new Image(new FileInputStream("src/main/resources/logo.png"));
-            img.heightProperty();
-            img.widthProperty();
-            icon.setFitHeight(50);
-            icon.setFitWidth(50);
-            icon.setImage(img);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        topContainer.setAlignment(Pos.CENTER);
-        topContainer.setPadding(new Insets(30, 0, 0, 0));
-
-        Label title = new Label("Les Flous Noirs");
-        title.setTextFill(Color.WHITE);
-        topContainer.getChildren().addAll(icon, title);
-        return topContainer;
     }
 
     private VBox navigationButtons() {

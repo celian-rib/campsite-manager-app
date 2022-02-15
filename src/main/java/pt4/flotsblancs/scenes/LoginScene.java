@@ -2,19 +2,23 @@ package pt4.flotsblancs.scenes;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import pt4.flotsblancs.components.FlotsBlancsLogo;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
-public class LoginScene extends VBox implements IScene {
+public class LoginScene extends BorderPane implements IScene {
 
     TextField tFId;
     PasswordField pFMdp;
@@ -43,10 +47,30 @@ public class LoginScene extends VBox implements IScene {
 
     @Override
     public void start() {
-        setAlignment(Pos.CENTER);
-        setSpacing(30);
+        setId("login-page");
 
-        Label label = new Label(this.getName());
+        setPadding(new Insets(60));
+        setTop(new FlotsBlancsLogo(true, true, 100));
+        setCenter(loginForm());
+
+        ///// TO REMOVE ////////
+        Button DEVLOGIN = new Button("FAST LOGIN (DEV)");
+        DEVLOGIN.setOnAction(e -> {
+            User.logIn("test", "plop");
+            Router.goToScreen(Routes.HOME);
+        });
+        DEVLOGIN.setTextFill(Color.RED);
+        setBottom(DEVLOGIN);
+        ///// TO REMOVE ////////
+    }
+
+    public VBox loginForm() {
+        VBox loginForm = new VBox();
+
+        loginForm.setAlignment(Pos.CENTER);
+        loginForm.setSpacing(30);
+
+        Label label = new Label("Se connecter");
 
         tFId = new TextField();
         tFId.setPromptText("Identifiant");
@@ -68,12 +92,7 @@ public class LoginScene extends VBox implements IScene {
             }
         });
 
-        MFXButton DEVLOGIN = new MFXButton("FAST LOGIN (DEV)", 150, 30);
-        DEVLOGIN.setOnAction(e -> {
-            User.logIn("test", "plop");
-            Router.goToScreen(Routes.HOME);
-        });
-        DEVLOGIN.setTextFill(Color.RED);
-        getChildren().addAll(label, tFId, pFMdp, bValider, DEVLOGIN);
+        loginForm.getChildren().addAll(label, tFId, pFMdp, bValider);
+        return loginForm;
     }
 }
