@@ -15,6 +15,7 @@
 	</properties>
 
 	<dependencies>
+
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -100,6 +101,24 @@
 			<version>${junit}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Ikonli -->
+		<dependency>
+			<groupId>org.kordamp.ikonli</groupId>
+			<artifactId>ikonli-core</artifactId>
+			<version>12.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kordamp.ikonli</groupId>
+			<artifactId>ikonli-javafx</artifactId>
+			<version>12.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kordamp.ikonli</groupId>
+			<artifactId>ikonli-fontawesome5-pack</artifactId>
+			<version>12.3.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
