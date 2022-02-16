@@ -1,17 +1,17 @@
 package pt4.flotsblancs;
 
-import pt4.flotsblancs.router.*;
-import pt4.flotsblancs.router.Router.Routes;
 import java.sql.SQLException;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import pt4.flotsblancs.orm.Database;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
 
 public class App extends Application {
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException  {
 		Database.getInstance(); // Initialisation connexion BD
 		launch(args); // Lancement JFX
 	}
