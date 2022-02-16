@@ -48,10 +48,12 @@ public class NavBar extends BorderPane {
         centerButtons.setAlignment(Pos.CENTER);
 
         centerButtons.getChildren().addAll(
-                createNavButton("Accueil", Routes.HOME, "fas-home:24"),
-                createNavButton("Clients", Routes.CLIENTS, "far-user:24"),
-                createNavButton("Réservations", Routes.RESERVATIONS, "far-calendar-alt:24"),
-                createNavButton("Stocks", Routes.RESERVATIONS, "fas-box:22")
+            createNavButton("Accueil", Routes.HOME, "fas-home:21"),
+            createNavButton("Clients", Routes.CLIENTS, "far-user:24"),
+            createNavButton("Réservations", Routes.RESERVATIONS, "far-calendar-alt:19"),
+            createNavButton("Stocks", Routes.RESERVATIONS, "fas-box:19"),
+            createNavButton("Emplacements", Routes.RESERVATIONS, "fas-caravan:19"),
+            createNavButton("Administration", Routes.RESERVATIONS, "fas-user-cog:19")
         );
 
         return centerButtons;
