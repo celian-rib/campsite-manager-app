@@ -6,16 +6,13 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.Getter;
-import pt4.flotsblancs.scenes.ClientsScene;
-import pt4.flotsblancs.scenes.DashboardScene;
-import pt4.flotsblancs.scenes.LoginScene;
-import pt4.flotsblancs.scenes.ReservationsScene;
+import pt4.flotsblancs.scenes.*;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
 
     public enum Routes {
-        CLIENTS, RESERVATIONS, LOGIN, HOME
+        CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, ADMIN
     }
 
     /**
@@ -27,6 +24,9 @@ public class Router {
             put(Routes.LOGIN, new LoginScene());
             put(Routes.RESERVATIONS, new ReservationsScene());
             put(Routes.CLIENTS, new ClientsScene());
+            put(Routes.STOCKS, new StocksScene());
+            put(Routes.CAMPGROUNDS, new CampgroundsScene());
+            put(Routes.ADMIN, new AdminScene());
         }
     };
 

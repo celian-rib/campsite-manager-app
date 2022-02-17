@@ -98,7 +98,6 @@ public class User {
             List<User> accountList = Database.getInstance().getUsersDao().query(preparedQuery);
 
             for (User u : accountList) {
-                System.out.println(u);
                 String s = sha256(mdp);
 
                 if (u.getPassword().equals(s)) {

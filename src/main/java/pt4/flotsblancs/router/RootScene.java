@@ -149,9 +149,6 @@ public class RootScene extends StackPane {
      */
     public void transition(IScene baseScene,boolean isShowBar, boolean removeNavBar, boolean setNavBar)
     {
-    	
-    	System.out.println(isShowBar);
-    	
     	Pane p = isShowBar ? rootPane : sceneContainer;
     	
         FadeTransition popOut = TransitionBuilder.fadeTransition(1.0f, 0.0f, 250, p);
