@@ -25,7 +25,7 @@ public class LoginScene extends BorderPane implements IScene {
 
     @Override
     public String getName() {
-        return "Login";
+        return "Connexion";
     }
 
     @Override

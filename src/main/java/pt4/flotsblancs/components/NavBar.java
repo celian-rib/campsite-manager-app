@@ -1,9 +1,10 @@
 package pt4.flotsblancs.components;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -20,6 +21,7 @@ public class NavBar extends BorderPane {
 
     private Label userLabel;
 
+    private LinkedHashMap<Router.Routes, MFXButton> navButtons;
 
     public NavBar() {
         setId("nav-bar");
@@ -29,32 +31,32 @@ public class NavBar extends BorderPane {
         setBottom(logOutButton());
     }
 
-    private MFXButton createNavButton(String content, Routes route, String icon) {
+    private void addNavButton(String content, Routes route, String icon, int gap) {
         MFXButton btn = new MFXButton(content, 200, 40);
         btn.setButtonType(ButtonType.FLAT);
         btn.setAlignment(Pos.CENTER_LEFT);
         btn.setPadding(new Insets(20, 10, 20, 30));
         btn.setOnAction(event -> Router.goToScreen(route));
-
         FontIcon iconNode = new FontIcon(icon);
         iconNode.setIconColor(Color.WHITE);
         btn.setGraphic(iconNode);
-        btn.setGraphicTextGap(20);
-        return btn;
+        btn.setGraphicTextGap(gap);
+        navButtons.put(route, btn);
     }
 
     private VBox navigationButtons() {
         VBox centerButtons = new VBox();
         centerButtons.setAlignment(Pos.CENTER);
 
-        centerButtons.getChildren().addAll(
-            createNavButton("Accueil", Routes.HOME, "fas-home:21"),
-            createNavButton("Clients", Routes.CLIENTS, "far-user:24"),
-            createNavButton("Réservations", Routes.RESERVATIONS, "far-calendar-alt:19"),
-            createNavButton("Stocks", Routes.RESERVATIONS, "fas-box:19"),
-            createNavButton("Emplacements", Routes.RESERVATIONS, "fas-caravan:19"),
-            createNavButton("Administration", Routes.RESERVATIONS, "fas-user-cog:19")
-        );
+        navButtons = new LinkedHashMap<Routes, MFXButton>();
+        addNavButton("Accueil", Routes.HOME, "fas-home:18", 15);
+        addNavButton("Clients", Routes.CLIENTS, "far-user:19", 15);
+        addNavButton("Réservations", Routes.RESERVATIONS, "far-calendar-alt:19", 15);
+        addNavButton("Stocks", Routes.STOCKS, "fas-box:16", 15);
+        addNavButton("Emplacements", Routes.CAMPGROUNDS, "fas-caravan:16", 11);
+        addNavButton("Administration", Routes.ADMIN, "fas-user-cog:16", 11);
+
+        centerButtons.getChildren().addAll(navButtons.values());
 
         return centerButtons;
     }
@@ -80,5 +82,12 @@ public class NavBar extends BorderPane {
 
     public void update() {
         userLabel.setText(User.isConnected() ? User.getConnected().toString() : "");
+
+        navButtons.forEach((route, button) -> {
+            if (Router.getCurrentRoute() == route)
+                button.setStyle("-fx-background-color: rgba(255, 255, 255, 0.178);");
+            else
+                button.setStyle("-fx-background-color: transparent;");
+        });
     }
 }
