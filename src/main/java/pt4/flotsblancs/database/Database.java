@@ -1,7 +1,6 @@
 package pt4.flotsblancs.database;
 
 import java.sql.SQLException;
-
 import lombok.Getter;
 import pt4.flotsblancs.database.model.*;
 
@@ -15,6 +14,7 @@ import com.j256.ormlite.table.TableUtils;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class Database {
+
     private static Database instance = null;
 
     private JdbcPooledConnectionSource conn;
@@ -29,19 +29,13 @@ public class Database {
     private Dao<CampGround, String> campgroundDao;
 
     @Getter
-    private Dao<Bill, String> billDao;
-
-    @Getter
-    private Dao<StockBill, String> stockBillDao;
+    private Dao<ProviderBill, String> billDao;
 
     @Getter
     private Dao<Log, String> logDao;
 
     @Getter
     private Dao<Problem, String> problemDao;
-
-    @Getter
-    private Dao<ClientProblem, String> clientProblemDao;
 
     @Getter
     private Dao<Reservation, String> reservationDao;
@@ -51,14 +45,16 @@ public class Database {
 
 
     private Database() throws SQLException {
-        Logger.setGlobalLogLevel(Level.ERROR);
+        Logger.setGlobalLogLevel(Level.WARNING);
 
         // Chargement variables d'environnement
         Dotenv dotenv = Dotenv.load();
+        String url = dotenv.get("DB_URL");
+        String user = dotenv.get("DB_USER");
+        String passwd = dotenv.get("DB_PASSWORD");
 
         // Lancement de la connexion avec la BD
-        this.conn = new JdbcPooledConnectionSource(dotenv.get("DB_URL"), dotenv.get("DB_USER"),
-                dotenv.get("DB_PASSWORD"));
+        this.conn = new JdbcPooledConnectionSource(url, user, passwd);
 
         createAllTablesIfNotExists();
         createAllDAOs();
@@ -89,11 +85,9 @@ public class Database {
         TableUtils.createTableIfNotExists(conn, Client.class);
         TableUtils.createTableIfNotExists(conn, User.class);
         TableUtils.createTableIfNotExists(conn, CampGround.class);
-        TableUtils.createTableIfNotExists(conn, Bill.class);
-        TableUtils.createTableIfNotExists(conn, StockBill.class);
+        TableUtils.createTableIfNotExists(conn, ProviderBill.class);
         TableUtils.createTableIfNotExists(conn, Log.class);
         TableUtils.createTableIfNotExists(conn, Problem.class);
-        TableUtils.createTableIfNotExists(conn, ClientProblem.class);
         TableUtils.createTableIfNotExists(conn, Reservation.class);
         TableUtils.createTableIfNotExists(conn, Stock.class);
     }
@@ -102,11 +96,9 @@ public class Database {
         clientsDao = DaoManager.createDao(conn, Client.class);
         usersDao = DaoManager.createDao(conn, User.class);
         campgroundDao = DaoManager.createDao(conn, CampGround.class);
-        billDao = DaoManager.createDao(conn, Bill.class);
-        stockBillDao = DaoManager.createDao(conn, StockBill.class);
+        billDao = DaoManager.createDao(conn, ProviderBill.class);
         logDao = DaoManager.createDao(conn, Log.class);
         problemDao = DaoManager.createDao(conn, Problem.class);
-        clientProblemDao = DaoManager.createDao(conn, ClientProblem.class);
         reservationDao = DaoManager.createDao(conn, Reservation.class);
         stockDao = DaoManager.createDao(conn, Stock.class);
     }

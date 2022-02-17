@@ -1,50 +1,56 @@
 package pt4.flotsblancs.database.model;
 
 
+import java.util.Collection;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-
-
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "clients")
 public class Client {
 
     @Getter
-    @DatabaseField(generatedId = true, columnName = "client_id")
-    private int clientId;
+    @DatabaseField(generatedId = true)
+    private int id;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "name")
+    @DatabaseField(uniqueCombo = true, canBeNull = false)
     private String name;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "first_name")
+    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "first_name")
     private String firstName;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "preferences")
+    @DatabaseField
     private String preferences;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "address")
+    @DatabaseField(canBeNull = false)
     private String addresse;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "phone")
-    private int phone;
+    @DatabaseField(canBeNull = false)
+    private String phone;
 
-    public Client() {}
+    @Getter
+    @ForeignCollectionField(eager = false)
+    private Collection<Problem> problems;
 
-    public Client(String name, String firstName) {
-        this.name = name;
-        this.firstName = firstName;
-    }
+    @Getter
+    @Setter
+    @ForeignCollectionField(eager = false)
+    private ForeignCollection<Reservation> reservations;
+
 }

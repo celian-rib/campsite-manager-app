@@ -3,27 +3,28 @@ package pt4.flotsblancs.database.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-
-
 import lombok.*;
 
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "logs")
 public class Log {
 
     @Getter
-    @Setter
-    @DatabaseField(columnName = "id_historique")
-    private int id_historique;
+    @ToString.Include
+    @DatabaseField(generatedId = true)
+    private int id;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "id_compte")
-    private int id_compte;
+    @ToString.Include
+    @DatabaseField(foreign = true, canBeNull = false)
+    private User user;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "action")
+    @ToString.Include
+    @DatabaseField(canBeNull = false)
     private String action;
-
-    public Log() {}
 }
