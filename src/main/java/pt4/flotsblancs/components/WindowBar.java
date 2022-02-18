@@ -58,16 +58,13 @@ public class WindowBar extends BorderPane {
         minimize.setOnAction(e -> {
             Router.getPrimaryStage().setIconified(!Router.getPrimaryStage().isIconified());
         });
-
-        setOnMousePressed(pressEvent -> {
-            setOnMouseDragged(dragEvent -> {
-                Router.getPrimaryStage().setX(dragEvent.getScreenX() - pressEvent.getSceneX());
-                Router.getPrimaryStage().setY(dragEvent.getScreenY() - pressEvent.getSceneY());
-            });
-        });
     }
 
-    public void setTitle(String value) {
-        title.setText(value);
+    public void update(String newTitle) {
+        title.setText(newTitle);
+        if (Router.getCurrentScene().showNavBar())
+            setStyle("-fx-background-radius: 0 10px 0 0;");
+        else
+            setStyle("-fx-background-radius: 10px 10px 0 0;");
     }
 }
