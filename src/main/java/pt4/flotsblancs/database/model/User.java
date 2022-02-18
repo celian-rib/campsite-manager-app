@@ -12,50 +12,42 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 
+@EqualsAndHashCode
+@NoArgsConstructor
 @DatabaseTable(tableName = "users")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class User {
 
     @Getter
-    @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(generatedId = true, columnName = "user_id")
-    private int userId;
+    @DatabaseField(generatedId = true)
+    private int id;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(columnName = "login")
+    @DatabaseField(canBeNull = false)
     private String login;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(columnName = "password")
+    @DatabaseField(canBeNull = false)
     private String password;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "is_admin")
-    private boolean admin;
+    @DatabaseField(canBeNull = false, columnName = "is_admin")
+    private boolean isAdmin;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "name")
+    @DatabaseField(uniqueCombo = true, canBeNull = false)
     private String name;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "first_name")
+    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "first_name")
     private String firstName;
 
+    @Getter
     private static User connected;
-
-    public User() {} // Constructeur vide pour ORMLite
-
-    public static User getConnected() {
-        return connected;
-    }
 
     public static boolean isConnected() {
         return connected != null;

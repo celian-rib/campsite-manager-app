@@ -68,7 +68,7 @@ public class LogInOutTest {
 		assertEquals(User.getConnected(), testUser);
 		// Le equals est "deep" (Donc pas par référence mais par certains attributs)
 		// grâce au :
-		// @EqualsAndHashCode(callSuper=false)
+		// @EqualsAndHashCode
 		// dans User.java
 	}
 

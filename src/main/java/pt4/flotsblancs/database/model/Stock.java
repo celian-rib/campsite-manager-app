@@ -5,32 +5,34 @@ import lombok.*;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "stocks")
 public class Stock {
 
     @Getter
-    @DatabaseField(generatedId = true, columnName = "stock_id")
-    private int stockId;
+    @ToString.Include
+    @DatabaseField(generatedId = true)
+    private int id;
 
     @Getter
-    @DatabaseField(columnName = "item")
+    @ToString.Include
+    @DatabaseField(canBeNull = false)
     private String item;
 
     @Setter
     @Getter
-    @DatabaseField(columnName = "quantity")
+    @DatabaseField(canBeNull = false)
     private int quantity;
 
     @Setter
     @Getter
-    @DatabaseField(columnName = "quantity_alert_treshold")
+    @DatabaseField(canBeNull = false, columnName = "quantity_alert_threshold")
     private int quantityAlertThreshold;
 
     @Setter
     @Getter
-    @DatabaseField(columnName = "storage_location")
+    @DatabaseField(canBeNull = false, columnName = "storage_location")
     private String storageLocation;
-
-    public Stock() {}
-
 }

@@ -6,31 +6,31 @@ import com.j256.ormlite.field.DatabaseField;
 import lombok.*;
 
 
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 @DatabaseTable(tableName = "campgrounds")
 public class CampGround {
 
     @Getter
-    @DatabaseField(generatedId = true, columnName = "campground_id")
-    private int campgroundId;
+    @DatabaseField(generatedId = true)
+    @ToString.Include
+    private int id;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "description")
+    @ToString.Include
+    @DatabaseField(canBeNull = false)
     private String description;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "location_description")
-    private String lacationDescription;
-
-    @Getter
-    @Setter
-    @DatabaseField(columnName = "price_per_days")
+    @DatabaseField(canBeNull = false, columnName = "price_per_day")
     private float pricePerDays;
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "surface")
+    @DatabaseField(canBeNull = false)
     private float surface;
 
     @Getter
@@ -38,5 +38,4 @@ public class CampGround {
     @DatabaseField(columnName = "provided_equipments")
     private String providedEquipments;
 
-    public CampGround() {}
 }
