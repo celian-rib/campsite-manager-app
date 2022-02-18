@@ -3,6 +3,7 @@ package pt4.flotsblancs;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.router.*;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.utils.WindowResizer;
 import java.sql.SQLException;
 
 import javafx.application.Application;
@@ -22,6 +23,10 @@ public class App extends Application {
 				Routes.LOGIN, // Route par défaut
 				primaryStage, // Fenêtre contenant le routeur
 				1200, 700);
+
+		new WindowResizer(primaryStage, 20);
+		primaryStage.setMinWidth(800);
+		primaryStage.setMinHeight(600);
 
 		// Affichage de la fenêtre
 		primaryStage.initStyle(StageStyle.TRANSPARENT);

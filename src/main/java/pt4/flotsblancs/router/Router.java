@@ -49,6 +49,12 @@ public class Router {
     @Getter
     private static Stage primaryStage;
 
+    /**
+     * @return La scène actuellement affichée par le routeur
+     */
+    public static IScene getCurrentScene() {
+        return routes.get(currentRoute);
+    }
 
     /**
      * Charge le routeur

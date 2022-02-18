@@ -162,7 +162,7 @@ public class RootScene extends StackPane {
             	    public void run() {
 	            		currentScene = baseScene;      
 	                    sceneContainer.setCenter((Parent) currentScene);
-	                    windowBar.setTitle(currentScene.getName());
+	                    windowBar.update(currentScene.getName());
 	                    if(removeNavBar)
 	                    {
 	                        rootPane.getChildren().remove(navBar);
