@@ -16,6 +16,14 @@ public class WindowResizer {
     private double mousePressedScreenX, mousePressedScreenY;
     private double mousePressedStageWidth, mousePressedStageHeight;
 
+    /**
+     * Permet de créer une instance de WindowResizer qui se chargera de rendre possible le
+     * changement de taille pat l'utilisateur du stage donnée
+     * 
+     * @param stage stage concerné
+     * @param windowEdgeDistance distance avec les bords de la fenêtre sur lequels il devient
+     *        possible de changer la taille de la fenêtre
+     */
     public WindowResizer(Stage stage, int windowEdgeDistance) {
         this.rootScene = stage.getScene();
 

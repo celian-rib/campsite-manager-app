@@ -11,6 +11,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class FlotsBlancsLogo extends VBox {
+
+    /**
+     * Permet de créer une Node contenant le logo et le titre de l'application
+     * 
+     * @param isDark vrai si le logo et titre doivent être noir
+     * @param showTitle vrai si l'on veut afficher le titre
+     * @param size taille du logo
+     */
     public FlotsBlancsLogo(boolean isDark, boolean showTitle, int size) {
         setSpacing(10);
         ImageView icon = new ImageView();
@@ -25,6 +33,7 @@ public class FlotsBlancsLogo extends VBox {
             icon.setFitWidth(size);
             icon.setImage(img);
         } catch (FileNotFoundException e) {
+            System.err.println("Erreur chargement logo");
             e.printStackTrace();
         }
 
