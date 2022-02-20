@@ -60,6 +60,11 @@ public class WindowBar extends BorderPane {
         });
     }
 
+    /**
+     * Met à jour l'affichage de la barre de fenêtre, Soit le titre affiché au milieu
+     * 
+     * @param newTitle nouveau titre a afficher
+     */
     public void update(String newTitle) {
         title.setText(newTitle);
         if (Router.getCurrentScene().showNavBar())

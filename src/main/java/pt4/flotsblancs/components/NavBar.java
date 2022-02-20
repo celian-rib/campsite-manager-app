@@ -1,6 +1,5 @@
 package pt4.flotsblancs.components;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -19,11 +18,18 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class NavBar extends BorderPane {
 
+    /**
+     * Label affichant l'utilisateur actuellement connecté
+     */
     private Label userLabel;
 
+    /**
+     * Map avec les boutons de navigation associées à leur route
+     */
     private LinkedHashMap<Router.Routes, MFXButton> navButtons;
 
     public NavBar() {
+        // link au css de la navbar
         setId("nav-bar");
 
         setTop(new FlotsBlancsLogo(false, true, 50));
@@ -80,6 +86,14 @@ public class NavBar extends BorderPane {
         return bottomButtons;
     }
 
+    /**
+     * Met à jour l'affichage de la barre de navigation
+     * 
+     * - Rafraichit l'affichage de l'utilisateur actuellement connecté
+     * 
+     * - Met à jour le boutons sélectionné dans la navbar (En fonction de la route actuellement
+     * chargée)
+     */
     public void update() {
         userLabel.setText(User.isConnected() ? User.getConnected().toString() : "");
 
