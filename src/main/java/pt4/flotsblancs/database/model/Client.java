@@ -8,14 +8,13 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.*;
+import pt4.flotsblancs.scenes.items.Item;
 
 @NoArgsConstructor
 @EqualsAndHashCode
-@ToString(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "clients")
-public class Client {
+public class Client implements Item {
 
-    @Getter
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -52,5 +51,25 @@ public class Client {
     @Setter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Reservation> reservations;
+
+    public Client(String name, String firstName) {
+        this.name = name;
+        this.firstName = firstName;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return toString();
+    }
+
+    @Override
+    public String getID() {
+        return Integer.toString(this.id);
+    }
+
+    @Override
+    public String toString() {
+        return this.firstName + " " + this.name;
+    }
 
 }
