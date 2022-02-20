@@ -1,18 +1,23 @@
 image: maven:3.8.4-jdk-11
 
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+cache:
+  paths:
+    - .m2/repository
+
 variables:
   DB_URL:  $DB_URL
   DB_USER: $DB_USER
   DB_PASSWORD: $DB_PASSWORD
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
 stages:
   - tests
 
 tests:
-  cache:
-    key: "$CI_JOB_NAME"
-    paths:
-      - .m2/repository
   stage: tests
   script:
     - echo "DB_URL=$DB_URL" >> .env

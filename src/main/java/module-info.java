@@ -9,7 +9,8 @@ module pt4.flotsblancs {
 
 	requires MaterialFX;
 	requires lombok;
-
+	requires javafaker;
+	
 	requires org.kordamp.ikonli.core;
 	requires org.kordamp.ikonli.fontawesome5;
 	requires org.kordamp.ikonli.javafx;

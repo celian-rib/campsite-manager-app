@@ -1,9 +1,10 @@
 package pt4.flotsblancs.database;
 
-import java.sql.SQLException;
-import lombok.Getter;
 import pt4.flotsblancs.database.model.*;
+import io.github.cdimascio.dotenv.Dotenv;
+import lombok.Getter;
 
+import java.sql.SQLException;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
@@ -11,7 +12,8 @@ import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableUtils;
-import io.github.cdimascio.dotenv.Dotenv;
+
+
 
 public class Database {
 
@@ -42,7 +44,6 @@ public class Database {
 
     @Getter
     private Dao<Stock, String> stockDao;
-
 
     private Database() throws SQLException {
         Logger.setGlobalLogLevel(Level.WARNING);
