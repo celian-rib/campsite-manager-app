@@ -56,7 +56,7 @@ public class LoginScene extends BorderPane implements IScene {
         ///// TO REMOVE ////////
         Button DEVLOGIN = new Button("FAST LOGIN (DEV)");
         DEVLOGIN.setOnAction(e -> {
-            User.logIn("test", "plop");
+            User.logIn("test", "test");
             Router.goToScreen(Routes.HOME);
         });
         DEVLOGIN.setTextFill(Color.RED);
