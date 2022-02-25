@@ -15,6 +15,7 @@ import pt4.flotsblancs.scenes.items.Item;
 @DatabaseTable(tableName = "clients")
 public class Client implements Item {
 
+    @Getter
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -63,13 +64,7 @@ public class Client implements Item {
     }
 
     @Override
-    public String getID() {
-        return Integer.toString(this.id);
-    }
-
-    @Override
     public String toString() {
         return this.firstName + " " + this.name;
     }
-
 }

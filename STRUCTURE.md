@@ -46,85 +46,51 @@ Router.goToScreen(Routes.HOME);
 
 ![](./assets/structure-diag.jpg)
 
-# 2/ ItemList & ItemContainer
+# 2/ ItemScene
 
-> Système utilisé par certaines IScene pour afficher une liste d'Item (Réservation / Clients / ...) à gauche de la page et un conteneur avec les infos de l'Item sélectionné à droite de la page.
+> Les Scene héritant de ItemScene sont des scène avec la structure suivante :
+> - Une liste d'Item à gauche (Ex : Liste de réservations)
+> - Un panel à droite affichant en détail l'item sélectionné dans la liste de gauche
 
-![](./assets/itemlist_reu.jpg)
+![](./assets/itemScene.png)
 
-## Ajouter une ItemList/Container à une scène
-> Exemple de ClientScene.java
+## Créer une ItemScene
+
+1. La scène doit hériter de ItemScene en spécifiant quel type d'Item sera utilisé :
 
 ```java
-// Création du panel à droite qui affiche les information d'un client en particulié
-ClientItemContainer itemContainer = new ClientItemContainer();
-
-// Récupération de tous les clients
-List<Client> clients = Database.getInstance().getClientsDao().queryForAll();
-
-// Création panel à gauche qui affiche la liste de clients
-ItemList<Client> itemList = new ItemList<Client>(clients, itemContainer);
-
-// On ajoute les 2 panels à la page
-setLeft(itemList);
-setCenter(itemContainer);
-
-setMargin(itemList, new Insets(30));
-setPadding(new Insets(30));
-```
-Cette implémentation va surrement changer plus tard pour plusieurs raisons :
-- Très génériques (Toutes les pages vont avoir un code similaire).
-- Les données sont récupérées au chargement de l'appli et non à l'ouverture de la page.
-
-## Créer un ItemContainer
-
-> Un itemContainer affiche donc les informations d'un Item
-
-
-> Exemple : ClientItemContainer affiche les information d'un seul Client
-```java
-public class ClientItemContainer extends VBox implements ItemContainer<Client> {
-  ...
-}
+public class ReservationsScene extends ItemScene<Reservation>
 ```
 
-- extends : Le type de Node a utiliser pour le container (Voir doc [JAVAFX](./JAVAFX.md))
-- implements `ItemContainer<Item>`
+2. On utilise pas la méthode start contrairement aux autres pages mais la méthode `createContainer`
+> Cette dernière définit le rendu du panel de droite et est donc à implémenter pour cette page, le reste de l'affichage est déjà géré (Liste à droite se créé automatiquement sur la page).
 
-La classe doit ensuite implémenter la méthodes `changeItem(Item)` :
+3. On doit implémenter la méthode `queryAll` qui permet à la liste de récupérer tous les Items de la BD.
 
-> Cette méthode est appelée à chaque fois que ce container doit afficher un nouvel Item
+4. C'est tout. Il reste juste à bien implémenter le panel de droite en codant la fonction `createContainer`
 
-Exemple complet pour le container de l'Item Client
+> Exemple complet d'ItemScene pour les réservations :
 ```java
-public class ClientItemContainer extends VBox implements ItemContainer<Client> {
+public class ReservationsScene extends ItemScene<Reservation> {
 
-    private Client client;
-
-    public ClientItemContainer() {
-        setAlignment(Pos.CENTER);
-        refresh();
+    @Override
+    public String getName() { // On donne le nom de la page
+        return "Réservations";
     }
 
     @Override
-    public void changeItem(Client newItem) {
-        client = newItem;
-        refresh();
+    protected Region createContainer(Reservation item) { 
+        // Création du panel de droite qui affiche l'item sélectionné
+        var container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        container.getChildren().addAll(new Label(item.getDisplayName()));
+        container.getChildren().addAll(new Label("Client : " + item.getClient().getName()));
+        return container;
     }
 
-    private void refresh() {
-        this.getChildren().clear();
-
-        if (client == null) {
-            Label noClientLabel = new Label("Aucun client sélctionné");
-            getChildren().addAll(noClientLabel);
-            return;
-        }
-
-        Label name = new Label("Nom : " + client.getName());
-        Label firstName = new Label("Prénom : " + client.getFirstName());
-
-        this.getChildren().addAll(name, firstName);
+    @Override
+    protected List<Reservation> queryAll() throws SQLException {
+        return Database.getInstance().getReservationDao().queryForAll();
     }
 }
 ```

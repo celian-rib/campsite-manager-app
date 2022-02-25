@@ -48,17 +48,17 @@ public class Problem {
 
     @Getter
     @Setter
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Client client;
 
     @Getter
     @Setter
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private CampGround campground;
 
     @Getter
     @Setter
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Reservation reservation;
 
     public void setStatus(ProblemStatus newStatus) {

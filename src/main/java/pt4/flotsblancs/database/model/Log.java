@@ -19,7 +19,7 @@ public class Log {
     @Getter
     @Setter
     @ToString.Include
-    @DatabaseField(foreign = true, canBeNull = false)
+    @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private User user;
 
     @Getter
