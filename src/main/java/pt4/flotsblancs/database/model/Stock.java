@@ -16,6 +16,7 @@ public class Stock {
     @DatabaseField(generatedId = true)
     private int id;
 
+    @Setter
     @Getter
     @ToString.Include
     @DatabaseField(canBeNull = false)

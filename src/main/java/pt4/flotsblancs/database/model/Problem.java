@@ -34,7 +34,6 @@ public class Problem {
     private ProblemStatus status = ProblemStatus.OPEN;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false, columnName = "start_date")
     private Date startDate = new Date();
 
@@ -43,6 +42,7 @@ public class Problem {
     private Date endDate;
 
     @Getter
+    @Setter
     @DatabaseField(columnName = "last_update_date")
     private Date lastUpdateDate;
 
@@ -65,8 +65,14 @@ public class Problem {
         this.status = newStatus;
         if (newStatus == ProblemStatus.SOLVED) {
             this.endDate = new Date();
+            this.lastUpdateDate = this.endDate;
         } else {
             this.endDate = null;
         }
+    }
+
+    public void setStartDate(Date date){
+        this.startDate =  date;
+        this.lastUpdateDate = date;
     }
 }
