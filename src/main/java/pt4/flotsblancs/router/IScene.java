@@ -7,12 +7,16 @@ public interface IScene {
      * 
      * @return true si la navbar doit être affichée
      */
-    public boolean showNavBar();
+    public default boolean showNavBar() {
+        return true;
+    }
 
     /**
      * @return le nom de cette scène (Page). Ce nom sera affiché en haut de l'écran
      */
-    public String getName();
+    public default String getName() {
+        return null;
+    };
 
     /**
      * Appelée au moment ou cette scène est chargée (Au lancement de l'app)
@@ -22,10 +26,10 @@ public interface IScene {
     /**
      * Appelée au moment ou cette scène est affichée à l'écran par le routeur
      */
-    public void onFocus();
-    
+    public default void onFocus() {};
+
     /**
      * Appelée au moment ou cette scène est retiré de l'écran par le routeur
      */
-    public void onUnfocus();
+    public default void onUnfocus() {};
 }

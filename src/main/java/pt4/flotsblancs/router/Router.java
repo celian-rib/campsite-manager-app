@@ -12,7 +12,7 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 public class Router {
 
     public enum Routes {
-        CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, ADMIN
+        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, ADMIN
     }
 
     /**
@@ -20,6 +20,7 @@ public class Router {
      */
     public static final HashMap<Routes, IScene> routes = new HashMap<>() {
         {
+            put(Routes.CONN_FALLBACK, new ConnectionFallbackScene());
             put(Routes.HOME, new DashboardScene());
             put(Routes.LOGIN, new LoginScene());
             put(Routes.RESERVATIONS, new ReservationsScene());
