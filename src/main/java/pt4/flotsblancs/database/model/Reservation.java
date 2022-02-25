@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pt4.flotsblancs.scenes.items.Item;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -15,7 +17,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "reservations")
-public class Reservation {
+public class Reservation implements Item {
 
     @Getter
     @ToString.Include
@@ -44,15 +46,22 @@ public class Reservation {
     @Getter
     @Setter
     @ToString.Include
-    @DatabaseField(foreign = true, canBeNull = false)
+    @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private Client client;
     
     @Getter
     @Setter
-    @DatabaseField(foreign = true, canBeNull = false)
+    @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private CampGround campground;
     
     @Getter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Problem> problems;
+
+    @Override
+    public String getDisplayName() {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM");
+
+        return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
+    }
 }

@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ConnectionFallbackScene extends VBox implements IScene {
@@ -42,12 +43,14 @@ public class ConnectionFallbackScene extends VBox implements IScene {
         refreshBtn.setOnAction(e -> {
             System.out.println("Trying to reconnect");
             try {
-                Database.getInstance().isConnected();
+                if(Database.getInstance().isConnected()) {
+                    Router.goToScreen(Routes.HOME);
+                }
             } catch (SQLException e1) {
                 Router.showToast(ToastType.ERROR, "Impossible de se connecter");
             }
         });
-
+        
         getChildren().addAll(handIcon, labels, refreshBtn);
     }
 }
