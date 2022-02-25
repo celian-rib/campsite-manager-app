@@ -1,13 +1,16 @@
 package pt4.flotsblancs.scenes.utils;
 
 import java.util.HashMap;
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class WindowResizer {
+public class WindowManager {
 
     private final HashMap<Cursor, EventHandler<MouseEvent>> dragActions = new HashMap<>();
     private final Scene rootScene;
@@ -16,15 +19,15 @@ public class WindowResizer {
     private double mousePressedScreenX, mousePressedScreenY;
     private double mousePressedStageWidth, mousePressedStageHeight;
 
-    /**
-     * Permet de créer une instance de WindowResizer qui se chargera de rendre possible le
-     * changement de taille pat l'utilisateur du stage donnée
-     * 
-     * @param stage stage concerné
-     * @param windowEdgeDistance distance avec les bords de la fenêtre sur lequels il devient
-     *        possible de changer la taille de la fenêtre
-     */
-    public WindowResizer(Stage stage, int windowEdgeDistance) {
+    public WindowManager(Stage stage, int windowEdgeDistance) {
+
+        Dotenv dotenv = Dotenv.load();
+        if (Integer.parseInt(dotenv.get("SECOND_SCREEN")) == 1) {
+            Rectangle2D bounds = Screen.getScreens().get(1).getVisualBounds();
+            stage.setX(bounds.getMinX() + 100);
+            stage.setY(bounds.getMinY() + 100);
+        }
+
         this.rootScene = stage.getScene();
 
         // On stock les infos de position de la souris au moment ou elle est "drag"
