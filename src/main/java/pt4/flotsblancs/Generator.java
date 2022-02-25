@@ -27,13 +27,13 @@ public class Generator {
 
         generateAdmin();
         
-        // generateStocks(f, 10);
-        // generateClients(f, 50);
-        // generateCampGrounds(f, 50);
-        // generateReservations(f, 3);
-        // generateProblemsResa(f, 5);
-        // generateProblemsCg(f, 3);
-        // generateProblemsClient(f, 3);
+        generateStocks(f, 10);
+        generateClients(f, 50);
+        generateCampGrounds(f, 50);
+        generateReservations(f, 10);
+        generateProblemsResa(f, 5);
+        generateProblemsCg(f, 3);
+        generateProblemsClient(f, 3);
     }
     
     private static int rdmNbrBtwn(int min, int max){
@@ -59,7 +59,7 @@ public class Generator {
             resa.setCampground(CGlist.get(rdmNbrBtwn(0,CGlist.size())));
             resa.setClient(ClientsList.get(rdmNbrBtwn(0,ClientsList.size())));
             resa.setDepositDate(f.date().past(50, TimeUnit.DAYS));
-            resa.setStartDate(f.date().future(200, TimeUnit.DAYS, resa.getDepositDate()));
+            resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
             Database.getInstance().getReservationDao().create(resa);
             System.out.println(resa);
@@ -82,7 +82,7 @@ public class Generator {
         for(int i = 0; i < nbr; i++) {
             var c = new Client();
             c.setAddresse(f.address().fullAddress());
-            c.setPhone(f.phoneNumber().cellPhone());
+            c.setPhone(f.phoneNumber().cellPhone().toString());
             String hp = f.harryPotter().character();
             c.setName((hp.split(" ").length>1)?hp.split(" ")[1]:hp.split(" ")[0]);
             c.setFirstName(f.dragonBall().character().split(" ")[0]);
