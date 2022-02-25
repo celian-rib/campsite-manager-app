@@ -4,7 +4,6 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -18,8 +17,6 @@ public class WindowBar extends BorderPane {
         button.setAlignment(Pos.BASELINE_CENTER);
         return button;
     }
-
-    Label title;
 
     public WindowBar() {
         setId("top-bar");
@@ -40,9 +37,6 @@ public class WindowBar extends BorderPane {
 
         hbox.getChildren().addAll(fullscreen, minimize, close);
         hbox.setPadding(new Insets(10));
-
-        title = new Label();
-        setCenter(title);
 
         setRight(hbox);
         toFront();
@@ -65,8 +59,7 @@ public class WindowBar extends BorderPane {
      * 
      * @param newTitle nouveau titre a afficher
      */
-    public void update(String newTitle) {
-        title.setText(newTitle);
+    public void update() {
         if (Router.getCurrentScene().showNavBar())
             setStyle("-fx-background-radius: 0 10px 0 0;");
         else

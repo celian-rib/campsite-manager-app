@@ -1,6 +1,5 @@
 package pt4.flotsblancs.scenes;
 
-import java.sql.SQLException;
 import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
@@ -45,8 +44,11 @@ public class ConnectionFallbackScene extends VBox implements IScene {
             try {
                 if(Database.getInstance().isConnected()) {
                     Router.goToScreen(Routes.HOME);
+                } else {
+                    throw new Exception("getInstance error");
                 }
-            } catch (SQLException e1) {
+            } catch (Exception ex) {
+                System.err.println(ex);
                 Router.showToast(ToastType.ERROR, "Impossible de se connecter");
             }
         });
