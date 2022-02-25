@@ -13,10 +13,12 @@
 4. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
 5. Lancer un serveur sql en local
 6. Editer le fichier `.env` et mettre les informations de connexion au serveur SQL
-```
+```bash
 DB_URL=<url>
 DB_USER=<user>
 DB_PASSWORD=<password>
+SECOND_SCREEN=1 # Ajouter si l'on veut démarrer l'app en plein écran
+FULL_SCREEN=1 # Ajouter si l'on veut démarrer l'app sur l'écran secondaire
 ```
 7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) , pour VScode il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok) (Recharger VSCode si les erreurs persistent)
 
@@ -69,7 +71,7 @@ mvn test
 
 ## Build le projet
 
-### A faire pour le premier build
+### A faire pour le premier build
 
 1. Installer le **SDK** de JavaFX depuis https://gluonhq.com/products/javafx/ et le dézipper dans une espace adapté.
 

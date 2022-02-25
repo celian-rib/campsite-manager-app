@@ -22,10 +22,13 @@ public class WindowManager {
     public WindowManager(Stage stage, int windowEdgeDistance) {
 
         Dotenv dotenv = Dotenv.load();
-        if (Integer.parseInt(dotenv.get("SECOND_SCREEN")) == 1) {
+        if (dotenv.get("SECOND_SCREEN") != null) {
             Rectangle2D bounds = Screen.getScreens().get(1).getVisualBounds();
             stage.setX(bounds.getMinX() + 100);
             stage.setY(bounds.getMinY() + 100);
+        }
+        if (dotenv.get("FULL_SCREEN") != null) {
+            stage.setFullScreen(true);
         }
 
         this.rootScene = stage.getScene();

@@ -50,8 +50,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
         setLeft(itemList);
         setCenter(null);
 
-        setPadding(new Insets(20));
-        BorderPane.setMargin(itemList, new Insets(0, 20, 0, 0));
+        setPadding(new Insets(70));
+        BorderPane.setMargin(itemList, new Insets(0, 50, 0, 0));
     }
 
     @Override
