@@ -5,14 +5,13 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.database.model.Client;
 
-public class ClientCard extends BorderPane {
+public class ClientCard extends HBox {
     public ClientCard(Client client) {
         HBox logoAndName = new HBox(10);
 
@@ -36,9 +35,8 @@ public class ClientCard extends BorderPane {
         openBtn.setGraphic(openIcon);
         openBtn.setGraphicTextGap(10);
 
-        setLeft(logoAndName);
-        setRight(openBtn);
-
+        setSpacing(10);
         setPadding(new Insets(30));
+        getChildren().addAll(logoAndName, openBtn);
     }
 }

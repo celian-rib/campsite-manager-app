@@ -5,7 +5,7 @@ import pt4.flotsblancs.router.*;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.utils.WindowManager;
 import java.sql.SQLException;
-
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -20,6 +20,12 @@ public class App extends Application {
 	public void start(Stage primaryStage) throws SQLException {
 
 		Routes defaultRoute = Routes.LOGIN;
+
+		Dotenv dotenv = Dotenv.load();
+		if (dotenv.get("DEFAULT_ROUTE") != null) {
+			System.out.println("DEFAULT ROUTE OVERRIDE");
+			defaultRoute = Routes.valueOf(dotenv.get("DEFAULT_ROUTE"));
+		}
 
 		try {
 			Database.getInstance(); // Initialisation connexion BD

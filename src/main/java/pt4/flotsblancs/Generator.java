@@ -25,15 +25,15 @@ public class Generator {
 
         var f = new Faker();
 
-        generateAdmin();
+        // generateAdmin();
         
-        generateStocks(f, 10);
-        generateClients(f, 50);
-        generateCampGrounds(f, 50);
+        // generateStocks(f, 10);
+        // generateClients(f, 50);
+        // generateCampGrounds(f, 50);
         generateReservations(f, 10);
-        generateProblemsResa(f, 5);
-        generateProblemsCg(f, 3);
-        generateProblemsClient(f, 3);
+        // generateProblemsResa(f, 5);
+        // generateProblemsCg(f, 3);
+        // generateProblemsClient(f, 3);
     }
     
     private static int rdmNbrBtwn(int min, int max){
@@ -58,6 +58,8 @@ public class Generator {
             var resa = new Reservation();
             resa.setCampground(CGlist.get(rdmNbrBtwn(0,CGlist.size())));
             resa.setClient(ClientsList.get(rdmNbrBtwn(0,ClientsList.size())));
+            resa.setNbPersons(rdmNbrBtwn(1, 5));
+            resa.setCashBack(rdmNbrBtwn(0, 10) > 8 ? 20 : 0);
             resa.setDepositDate(f.date().past(50, TimeUnit.DAYS));
             resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
