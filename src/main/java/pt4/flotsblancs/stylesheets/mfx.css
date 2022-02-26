@@ -1,0 +1,36 @@
+* {
+    -mfx-main: #5965a0;
+    -mfx-purple: -mfx-main;
+
+    -mfx-blue: #2196f3;
+    -mfx-charcoal: #445055;
+    -mfx-green: #4caf50;
+    -mfx-onyx: #353935;
+    -mfx-orange: #ff9800;
+    -mfx-red: #EF6E6B;
+    -mfx-yellow: #FFEA00;
+
+    -mfx-main-color: -mfx-main;
+    -mfx-main-color-hover: #4558b623;
+    -mfx-main-color-pressed: #4558b675;
+    -mfx-disabled-color: rgb(102, 101, 101);
+
+    -mfx-text-disabled: rgba(0, 0, 0, 0.6);
+}
+
+.mfx-date-cell:current {
+    -fx-text-fill: -mfx-main;
+}
+
+.mfx-combo-box-cell {
+    -mfx-hover: -mfx-main-color-hover;
+    -mfx-selected: -mfx-main-color-pressed;
+}
+
+.action-button {
+    -fx-background-color: #5965a0;
+    -fx-background-radius: 10px;
+    -fx-text-fill: white;
+    -fx-padding: 5px 15px;
+    -mfx-button-type: raised;
+}

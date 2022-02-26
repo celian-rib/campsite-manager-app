@@ -2,13 +2,14 @@ package pt4.flotsblancs.components;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 import pt4.flotsblancs.database.model.Client;
 
 public class ClientCard extends HBox {
@@ -16,7 +17,7 @@ public class ClientCard extends HBox {
         HBox logoAndName = new HBox(10);
 
         FontIcon icon = new FontIcon("far-user-circle:30");
-        icon.setIconColor(Color.GREY);
+        icon.setIconColor(Color.rgb(51, 59, 97));
 
         VBox clientInfos = new VBox(2);
         Label name = new Label(client.getFirstName() + " " + client.getName());
@@ -29,14 +30,18 @@ public class ClientCard extends HBox {
         logoAndName.getChildren().addAll(icon, clientInfos);
         logoAndName.setAlignment(Pos.CENTER);
 
-        MFXButton openBtn = new MFXButton("Voir la fiche client");
-        FontIcon openIcon = new FontIcon("far-caret-square-right:15");
-        openIcon.setIconColor(Color.GREY);
+        MFXButton openBtn = new MFXButton("");
+        var tooltip = new Tooltip("Voir la fiche client");
+        tooltip.setShowDelay(new Duration(0));
+        openBtn.setTooltip(tooltip);
+
+        FontIcon openIcon = new FontIcon("far-caret-square-right:20");
+        openIcon.setIconColor(Color.rgb(51, 59, 97));
         openBtn.setGraphic(openIcon);
         openBtn.setGraphicTextGap(10);
 
         setSpacing(10);
-        setPadding(new Insets(30));
+        setAlignment(Pos.CENTER_LEFT);
         getChildren().addAll(logoAndName, openBtn);
     }
 }

@@ -73,6 +73,7 @@ public class RootScene extends StackPane {
      */
     private void loadStyleSheets() {
         String baseUrl = "file:src/main/java/pt4/flotsblancs/stylesheets/";
+        getStylesheets().add(baseUrl + "mfx.css");
         getStylesheets().add(baseUrl + "index.css");
         getStylesheets().add(baseUrl + "navBar.css");
         getStylesheets().add(baseUrl + "windowBar.css");
