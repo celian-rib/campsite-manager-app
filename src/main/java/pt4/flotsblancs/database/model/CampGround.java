@@ -1,5 +1,7 @@
 package pt4.flotsblancs.database.model;
 
+import pt4.flotsblancs.database.model.types.*;
+
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.field.DatabaseField;
 
@@ -35,7 +37,12 @@ public class CampGround {
 
     @Getter
     @Setter
-    @DatabaseField(columnName = "provided_equipments")
-    private String providedEquipments;
+    @DatabaseField(canBeNull = false, columnName = "provided_services")
+    private Service providedServices;
+
+    @Getter
+    @Setter
+    @DatabaseField(canBeNull = false, columnName = "allowed_equipments")
+    private Equipment allowedEquipments;
 
 }

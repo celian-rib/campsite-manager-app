@@ -14,6 +14,7 @@ import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Problem.ProblemStatus;
+import pt4.flotsblancs.database.model.types.Equipment;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class ORMTest {
@@ -30,7 +31,7 @@ public class ORMTest {
         testReservationCampground.setDescription("Belle vue sur les poubelles");
         testReservationCampground.setPricePerDays(28);
         testReservationCampground.setSurface(34.5f);
-        testReservationCampground.setProvidedEquipments("Electricité et eau");
+        testReservationCampground.setAllowedEquipments(Equipment.MOBILHOME);
         Database.getInstance().getCampgroundDao().create(testReservationCampground);
 
         System.out.println("Création réservation de test");

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pt4.flotsblancs.database.model.types.*;
 import pt4.flotsblancs.scenes.items.Item;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,7 +46,7 @@ public class Reservation implements Item {
     @ToString.Include
     @DatabaseField(columnName = "deposit_date")
     private Date depositDate;
-   
+
     @Getter
     @Setter
     @ToString.Include
@@ -63,6 +64,21 @@ public class Reservation implements Item {
     @ToString.Include
     @DatabaseField(canBeNull = false, columnName = "end_date")
     private Date endDate;
+
+    @Getter
+    @Setter
+    @DatabaseField(canBeNull = false, defaultValue = "false")
+    private Boolean canceled;
+
+    @Getter
+    @Setter
+    @DatabaseField(canBeNull = false, defaultValue = "NONE", columnName = "selected_services")
+    private Service selectedServices;
+
+    @Getter
+    @Setter
+    @DatabaseField(canBeNull = false, columnName = "equipments")
+    private Equipment equipments;
 
     @Getter
     @Setter

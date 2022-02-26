@@ -1,21 +1,21 @@
 package pt4.flotsblancs.components;
 
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.CampGround;
 
-public class ClientCard extends BorderPane {
+public class CampgroundCard extends BorderPane {
 
-    private Client client;
+    private CampGround camp;
 
     private MFXButton createOpenButton() {
         MFXButton openBtn = new MFXButton("");
@@ -30,16 +30,17 @@ public class ClientCard extends BorderPane {
         return openBtn;
     }
 
-    private HBox createClientInfos() {
+    private HBox createCampgroundInfos() {
         HBox container = new HBox(10);
 
-        FontIcon icon = new FontIcon("far-user-circle:30");
+        FontIcon icon = new FontIcon("fas-campground:30");
         icon.setIconColor(Color.rgb(51, 59, 97));
 
         VBox clientInfos = new VBox(2);
-        Label name = new Label(client.getFirstName() + " " + client.getName());
+        Label name = new Label("Emplacement #" + camp.getId());
         name.setFont(new Font(15));
-        Label id = new Label("#" + client.getId() + " - " + client.getPhone());
+
+        Label id = new Label("Prix / Jours : " + camp.getPricePerDays() + "€");
         id.setFont(new Font(11));
         id.setTextFill(Color.GRAY);
         clientInfos.getChildren().addAll(name, id);
@@ -49,9 +50,9 @@ public class ClientCard extends BorderPane {
         return container;
     }
 
-    public ClientCard(Client client, int width) {
-        this.client = client;
-        setLeft(createClientInfos());
+    public CampgroundCard(CampGround camp, int width) {
+        this.camp = camp;
+        setLeft(createCampgroundInfos());
         setRight(createOpenButton());
         setMaxWidth(width);
     }

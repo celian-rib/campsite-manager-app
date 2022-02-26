@@ -29,7 +29,7 @@
 
 .action-button {
     -fx-background-color: #5965a0;
-    -fx-background-radius: 10px;
+    -fx-background-radius: 5px;
     -fx-text-fill: white;
     -fx-padding: 5px 15px;
     -mfx-button-type: raised;

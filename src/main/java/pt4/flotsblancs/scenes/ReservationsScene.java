@@ -16,12 +16,15 @@ import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import pt4.flotsblancs.components.CampgroundCard;
 import pt4.flotsblancs.components.ClientCard;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
@@ -119,17 +122,15 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     private HBox createActionsButtonsSlot(Reservation reservation) {
-        var container = new HBox(5);
+        var container = new HBox(10);
 
         var bill = new MFXButton("Envoyer facture");
-        var cashback = new MFXButton("Faire une remise");
-        var cancel = new MFXButton("Annuler réservation");
+        var cancel = new MFXButton("Annuler la réservation");
         bill.getStyleClass().add("action-button");
-        cashback.getStyleClass().add("action-button");
         cancel.getStyleClass().add("action-button");
 
         container.setAlignment(Pos.CENTER_RIGHT);
-        container.getChildren().addAll(bill, cashback, cancel);
+        container.getChildren().addAll(bill, cancel);
         return container;
     }
 
@@ -191,7 +192,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
      * 
      * - emplacement(modifiable)
      * 
-     * - equipement (modifiable)
+     * - equipement client (modifiable)
+     * 
+     * - services supplémentaires (raccordement eau / électricité)
      * 
      * ok - début (modifiable)
      * 
@@ -215,15 +218,20 @@ public class ReservationsScene extends ItemScene<Reservation> {
      * 
      * ok - annuler
      */
+    // TODO -> ranger + ajouter controls manquants + faire le layout
     @Override
     protected Region createContainer(Reservation reservation) {
-        VBox container = new VBox(20);
-        container.setAlignment(Pos.TOP_CENTER);
+        VBox container = new VBox();
 
         var header = createHeader(reservation);
+        var clientCard = new ClientCard(reservation.getClient(), 300);
 
-        var clientCard = new ClientCard(reservation.getClient());
+        BorderPane topContainer = new BorderPane();
+        topContainer.setTop(header);
+        topContainer.setCenter(clientCard);
+        BorderPane.setMargin(header, new Insets(0, 0, 20, 0));
 
+        VBox centerContainer = new VBox(20);
         var startDatePicker = createDatePicker(reservation.getStartDate(), "Date de début");
         createStartDateListener(startDatePicker, reservation);
 
@@ -236,6 +244,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
         var personCountSlider = createPersonCountComboBox(reservation);
 
+        var campCard = new CampgroundCard(reservation.getCampground(), 300);
+
         var deposit = createPriceComboBox(reservation, "Acompte");
         deposit.selectIndex(reservation.getDepositDate() == null ? 1 : 0);
         createDepositListener(deposit, reservation);
@@ -243,15 +253,36 @@ public class ReservationsScene extends ItemScene<Reservation> {
         var payment = createPriceComboBox(reservation, "Réglement complet");
         payment.selectIndex(reservation.getPaymentDate() == null ? 1 : 0);
         createPayementListener(payment, reservation);
+        centerContainer.setAlignment(Pos.CENTER);
+        centerContainer.getChildren().addAll(campCard, startDatePicker, endDatePicker, dayCount,
+                depositPrice, totalPrice, personCountSlider, deposit, payment);
 
         var actionButtons = createActionsButtonsSlot(reservation);
 
         refreshControls(reservation, false);
-        container.getChildren().addAll(header, clientCard, startDatePicker, endDatePicker);
-        container.getChildren().addAll(dayCount, depositPrice, totalPrice, personCountSlider);
-        container.getChildren().addAll(deposit, payment, actionButtons);
+
+
+        // container.setTop(topContainer);
+        // container.setCenter(centerContainer);
+        // container.setBottom(actionButtons);
+
+        container.getChildren().add(header);
+        container.getChildren().add(createSpacer());
+        container.getChildren().add(centerContainer);
+        container.getChildren().add(createSpacer());
+        container.getChildren().add(actionButtons);
+
+        // container.getChildren().addAll(header, clientCard, startDatePicker, endDatePicker);
+        // container.getChildren().addAll(dayCount, depositPrice, totalPrice, personCountSlider);
+        // container.getChildren().addAll(deposit, payment, actionButtons);
         container.setPadding(new Insets(50));
         return container;
+    }
+
+    private Region createSpacer() {
+        final Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+        return spacer;
     }
 
     private void refreshControls(Reservation reservation, boolean updateDatabase) {

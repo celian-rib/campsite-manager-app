@@ -17,6 +17,8 @@ import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.database.model.Problem.ProblemStatus;
+import pt4.flotsblancs.database.model.types.Equipment;
+import pt4.flotsblancs.database.model.types.Service;
 
 
 public class Generator {
@@ -29,8 +31,8 @@ public class Generator {
         
         // generateStocks(f, 10);
         // generateClients(f, 50);
-        // generateCampGrounds(f, 50);
-        generateReservations(f, 10);
+        generateCampGrounds(f, 100);
+        generateReservations(f, 20);
         // generateProblemsResa(f, 5);
         // generateProblemsCg(f, 3);
         // generateProblemsClient(f, 3);
@@ -63,6 +65,8 @@ public class Generator {
             resa.setDepositDate(f.date().past(50, TimeUnit.DAYS));
             resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+            // TODO -> random enum selection
+            resa.setEquipments(Equipment.TENT);
             Database.getInstance().getReservationDao().create(resa);
             System.out.println(resa);
         }
@@ -74,7 +78,10 @@ public class Generator {
             cg.setDescription(f.country().name());
             cg.setPricePerDays(f.number().randomDigitNotZero());
             cg.setSurface(f.number().randomDigitNotZero());
-            cg.setProvidedEquipments(f.animal().name());
+            // TODO -> random enum selection
+            cg.setAllowedEquipments(Equipment.TENT_AND_CAMPINGCAR);
+            // TODO -> random enum selection
+            cg.setProvidedServices(Service.WATER_AND_ELECTRICITY);
             Database.getInstance().getCampgroundDao().create(cg);
             System.out.println(cg);
         }
