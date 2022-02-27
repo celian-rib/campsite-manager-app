@@ -19,7 +19,7 @@ public class ClientCard extends BorderPane {
 
     private MFXButton createOpenButton() {
         MFXButton openBtn = new MFXButton("");
-        var tooltip = new Tooltip("Voir la fiche de l'emplacement");
+        var tooltip = new Tooltip("Voir la fiche du client");
         tooltip.setShowDelay(new Duration(0));
         openBtn.setTooltip(tooltip);
 
