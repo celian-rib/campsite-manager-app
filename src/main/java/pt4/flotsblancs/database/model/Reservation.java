@@ -38,8 +38,8 @@ public class Reservation implements Item {
     @Setter
     @ToString.Include
     @EqualsAndHashCode.Include
-    @DatabaseField(canBeNull = true, columnName = "cash_back")
-    private int cashBack;
+    @DatabaseField(canBeNull = true, columnName = "cash_back_percent")
+    private int cashBackPercent;
 
     @Getter
     @Setter
@@ -107,7 +107,11 @@ public class Reservation implements Item {
     }
 
     public float getTotalPrice() {
-        return campground.getPricePerDays() * nbPersons * getDayCount();
+        var dayCount = getDayCount();
+        var rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
+        var withService = rawPrice + selectedServices.getPricePerDay() * dayCount;
+        var cashback = cashBackPercent == 0 ? 1 : (100 - (100 / cashBackPercent)) / 100;
+        return withService * cashback;
     }
 
     public float getDepositPrice() {

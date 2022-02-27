@@ -31,7 +31,7 @@ public class Generator {
         
         // generateStocks(f, 10);
         // generateClients(f, 50);
-        generateCampGrounds(f, 100);
+        // generateCampGrounds(f, 100);
         generateReservations(f, 20);
         // generateProblemsResa(f, 5);
         // generateProblemsCg(f, 3);
@@ -61,7 +61,7 @@ public class Generator {
             resa.setCampground(CGlist.get(rdmNbrBtwn(0,CGlist.size())));
             resa.setClient(ClientsList.get(rdmNbrBtwn(0,ClientsList.size())));
             resa.setNbPersons(rdmNbrBtwn(1, 5));
-            resa.setCashBack(rdmNbrBtwn(0, 10) > 8 ? 20 : 0);
+            resa.setCashBackPercent(rdmNbrBtwn(0, 10) > 8 ? 20 : 0);
             resa.setDepositDate(f.date().past(50, TimeUnit.DAYS));
             resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));

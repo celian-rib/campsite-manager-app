@@ -16,7 +16,6 @@ import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -28,6 +27,8 @@ import pt4.flotsblancs.components.CampgroundCard;
 import pt4.flotsblancs.components.ClientCard;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.types.Equipment;
+import pt4.flotsblancs.database.model.types.Service;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.items.ItemScene;
@@ -41,7 +42,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private Label totalPrice;
 
-    Label datesLabel;
+    private Label datesLabel;
+
+    private Reservation reservation;
 
     @Override
     public String getName() {
@@ -73,7 +76,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         return picker;
     }
 
-    private void createStartDateListener(MFXDatePicker picker, Reservation reservation) {
+    private void createStartDateListener(MFXDatePicker picker) {
         picker.valueProperty().addListener((obs, oldDate, newDate) -> {
             if (newDate.isBefore(LocalDate.now())) {
                 Router.showToast(ToastType.ERROR,
@@ -86,12 +89,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
             } else {
                 Date old = reservation.getEndDate();
                 reservation.setStartDate(fromLocale(newDate));
-                refreshControls(reservation, !isSameDay(old, fromLocale(newDate)));
+                refreshControls(!isSameDay(old, fromLocale(newDate)));
             }
         });
     }
 
-    private void createEndDateListener(MFXDatePicker picker, Reservation reservation) {
+    private void createEndDateListener(MFXDatePicker picker) {
         picker.valueProperty().addListener((obs, oldDate, newDate) -> {
             if (newDate.isBefore(toLocale(reservation.getStartDate()))) {
                 Router.showToast(ToastType.ERROR,
@@ -100,12 +103,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
             } else {
                 Date old = reservation.getEndDate();
                 reservation.setEndDate(fromLocale(newDate));
-                refreshControls(reservation, !isSameDay(old, fromLocale(newDate)));
+                refreshControls(!isSameDay(old, fromLocale(newDate)));
             }
         });
     }
 
-    private BorderPane createHeader(Reservation reservation) {
+    private BorderPane createHeader() {
         BorderPane container = new BorderPane();
 
         Label title = new Label("Réservation  #" + reservation.getId());
@@ -121,7 +124,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         return container;
     }
 
-    private HBox createActionsButtonsSlot(Reservation reservation) {
+    private HBox createActionsButtonsSlot() {
         var container = new HBox(10);
 
         var bill = new MFXButton("Envoyer facture");
@@ -134,7 +137,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         return container;
     }
 
-    private MFXComboBox<String> createPriceComboBox(Reservation reservation, String typeName) {
+    private MFXComboBox<String> createPriceComboBox(String typeName) {
         var combo = new MFXComboBox<String>();
         combo.setFloatingText(typeName);
         combo.setFloatMode(FloatMode.INLINE);
@@ -143,7 +146,17 @@ public class ReservationsScene extends ItemScene<Reservation> {
         return combo;
     }
 
-    private void createDepositListener(MFXComboBox<String> comboBox, Reservation reservation) {
+    private MFXComboBox<String> createCashbackComboBox() {
+        var combo = new MFXComboBox<String>();
+        combo.setFloatingText("Remise");
+        combo.setFloatMode(FloatMode.INLINE);
+        combo.getItems().addAll("Aucune", "10%", "20%", "50%");
+        combo.selectIndex(0);
+        combo.setMinWidth(180);
+        return combo;
+    }
+
+    private void createDepositListener(MFXComboBox<String> comboBox) {
         comboBox.valueProperty().addListener((obs, oldPrice, newPrice) -> {
             if (oldPrice == null)
                 return;
@@ -151,11 +164,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
                 reservation.setDepositDate(new Date());
             else
                 reservation.setDepositDate(null);
-            refreshControls(reservation, true);
+            refreshControls(true);
         });
     }
 
-    private void createPayementListener(MFXComboBox<String> comboBox, Reservation reservation) {
+    private void createPayementListener(MFXComboBox<String> comboBox) {
         comboBox.valueProperty().addListener((obs, oldPrice, newPrice) -> {
             if (oldPrice == null)
                 return;
@@ -163,11 +176,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
                 reservation.setPaymentDate(new Date());
             else
                 reservation.setPaymentDate(null);
-            refreshControls(reservation, true);
+            refreshControls(true);
         });
     }
 
-    private MFXComboBox<Integer> createPersonCountComboBox(Reservation reservation) {
+    private MFXComboBox<Integer> createPersonCountComboBox() {
         var combo = new MFXComboBox<Integer>();
         combo.setFloatingText("Nombre de personnes");
         combo.setFloatMode(FloatMode.INLINE);
@@ -178,7 +191,41 @@ public class ReservationsScene extends ItemScene<Reservation> {
             if (oldValue == null)
                 return;
             reservation.setNbPersons(newValue.intValue());
-            refreshControls(reservation, oldValue.intValue() != newValue.intValue());
+            refreshControls(oldValue.intValue() != newValue.intValue());
+        });
+        return combo;
+    }
+
+    private MFXComboBox<Service> createServiceComboBox() {
+        var combo = new MFXComboBox<Service>();
+        combo.setFloatingText("Services demandés");
+        combo.setFloatMode(FloatMode.INLINE);
+        combo.getItems().addAll(Service.NONE, Service.WATER_ONLY, Service.ELECTRICITY_ONLY,
+                Service.WATER_AND_ELECTRICITY);
+        combo.setMinWidth(180);
+        combo.selectItem(reservation.getSelectedServices());
+        combo.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (oldValue == null)
+                return;
+            reservation.setSelectedServices(newValue);
+            refreshControls(oldValue != newValue);
+        });
+        return combo;
+    }
+
+    private MFXComboBox<Equipment> createEquipmentComboBox() {
+        var combo = new MFXComboBox<Equipment>();
+        combo.setFloatingText("Equipements client");
+        combo.setFloatMode(FloatMode.INLINE);
+        combo.getItems().addAll(Equipment.CAMPINGCAR, Equipment.MOBILHOME, Equipment.TENT,
+                Equipment.TENT_AND_CAMPINGCAR);
+        combo.setMinWidth(180);
+        combo.selectItem(reservation.getEquipments());
+        combo.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (oldValue == null)
+                return;
+            reservation.setEquipments(newValue);
+            refreshControls(oldValue != newValue);
         });
         return combo;
     }
@@ -192,9 +239,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
      * 
      * - emplacement(modifiable)
      * 
-     * - equipement client (modifiable)
+     * ok - equipement client (modifiable)
      * 
-     * - services supplémentaires (raccordement eau / électricité)
+     * ok - services supplémentaires (raccordement eau / électricité)
      * 
      * ok - début (modifiable)
      * 
@@ -218,74 +265,110 @@ public class ReservationsScene extends ItemScene<Reservation> {
      * 
      * ok - annuler
      */
-    // TODO -> ranger + ajouter controls manquants + faire le layout
-    @Override
-    protected Region createContainer(Reservation reservation) {
-        VBox container = new VBox();
 
-        var header = createHeader(reservation);
-        var clientCard = new ClientCard(reservation.getClient(), 300);
-
-        BorderPane topContainer = new BorderPane();
-        topContainer.setTop(header);
-        topContainer.setCenter(clientCard);
-        BorderPane.setMargin(header, new Insets(0, 0, 20, 0));
-
-        VBox centerContainer = new VBox(20);
-        var startDatePicker = createDatePicker(reservation.getStartDate(), "Date de début");
-        createStartDateListener(startDatePicker, reservation);
-
-        var endDatePicker = createDatePicker(reservation.getEndDate(), "Date de fin");
-        createEndDateListener(endDatePicker, reservation);
-
-        dayCount = new Label();
-        depositPrice = new Label();
-        totalPrice = new Label();
-
-        var personCountSlider = createPersonCountComboBox(reservation);
-
-        var campCard = new CampgroundCard(reservation.getCampground(), 300);
-
-        var deposit = createPriceComboBox(reservation, "Acompte");
-        deposit.selectIndex(reservation.getDepositDate() == null ? 1 : 0);
-        createDepositListener(deposit, reservation);
-
-        var payment = createPriceComboBox(reservation, "Réglement complet");
-        payment.selectIndex(reservation.getPaymentDate() == null ? 1 : 0);
-        createPayementListener(payment, reservation);
-        centerContainer.setAlignment(Pos.CENTER);
-        centerContainer.getChildren().addAll(campCard, startDatePicker, endDatePicker, dayCount,
-                depositPrice, totalPrice, personCountSlider, deposit, payment);
-
-        var actionButtons = createActionsButtonsSlot(reservation);
-
-        refreshControls(reservation, false);
-
-
-        // container.setTop(topContainer);
-        // container.setCenter(centerContainer);
-        // container.setBottom(actionButtons);
-
-        container.getChildren().add(header);
-        container.getChildren().add(createSpacer());
-        container.getChildren().add(centerContainer);
-        container.getChildren().add(createSpacer());
-        container.getChildren().add(actionButtons);
-
-        // container.getChildren().addAll(header, clientCard, startDatePicker, endDatePicker);
-        // container.getChildren().addAll(dayCount, depositPrice, totalPrice, personCountSlider);
-        // container.getChildren().addAll(deposit, payment, actionButtons);
-        container.setPadding(new Insets(50));
+    private VBox cardsContainer() {
+        VBox container = new VBox(50);
+        container.setAlignment(Pos.CENTER);
+        container.setMinWidth(220);
+        var clientCard = new ClientCard(reservation.getClient(), 220);
+        var campCard = new CampgroundCard(reservation.getCampground(), 220);
+        container.getChildren().addAll(clientCard, campCard);
         return container;
     }
 
-    private Region createSpacer() {
-        final Region spacer = new Region();
+    private VBox datesContainer() {
+        VBox container = new VBox(30);
+        dayCount = new Label();
+        var startDatePicker = createDatePicker(reservation.getStartDate(), "Date de début");
+        createStartDateListener(startDatePicker);
+        var endDatePicker = createDatePicker(reservation.getEndDate(), "Date de fin");
+        createEndDateListener(endDatePicker);
+        container.getChildren().addAll(startDatePicker, endDatePicker, dayCount);
+        return container;
+    }
+
+    private VBox selectedGearContainer() {
+        VBox container = new VBox(30);
+        var personCount = createPersonCountComboBox();
+        var service = createServiceComboBox();
+        var equipments = createEquipmentComboBox();
+        container.getChildren().addAll(personCount, service, equipments);
+        return container;
+    }
+
+
+    private HBox createTopSlot() {
+        HBox container = new HBox(10);
+        container.setPadding(new Insets(50));
+
+        var cards = cardsContainer();
+        var gear = selectedGearContainer();
+        var dates = datesContainer();
+
+        container.getChildren().add(cards);
+        container.getChildren().add(createHorizontaleSpacer());
+        container.getChildren().add(gear);
+        container.getChildren().add(createHorizontaleSpacer());
+        container.getChildren().add(dates);
+
+        return container;
+    }
+
+    private HBox createBottomSlot() {
+        HBox container = new HBox(10);
+        container.setPadding(new Insets(50));
+
+        depositPrice = new Label();
+        totalPrice = new Label();
+        container.getChildren().addAll();
+
+        var deposit = createPriceComboBox("Acompte");
+        deposit.selectIndex(reservation.getDepositDate() == null ? 1 : 0);
+        createDepositListener(deposit);
+
+        var payment = createPriceComboBox("Réglement complet");
+        payment.selectIndex(reservation.getPaymentDate() == null ? 1 : 0);
+        createPayementListener(payment);
+
+        var cashback = createCashbackComboBox();
+
+        container.getChildren().addAll(depositPrice, totalPrice, deposit, payment, cashback);
+
+        return container;
+    }
+
+    @Override
+    protected Region createContainer(Reservation reservation) {
+        this.reservation = reservation;
+
+        VBox container = new VBox();
+        container.setPadding(new Insets(50));
+
+        container.getChildren().add(createHeader());
+        container.getChildren().add(createVerticalSpacer());
+        container.getChildren().add(createTopSlot());
+        container.getChildren().add(createVerticalSpacer());
+        container.getChildren().add(createBottomSlot());
+        container.getChildren().add(createVerticalSpacer());
+        container.getChildren().add(createActionsButtonsSlot());
+
+        refreshControls(false);
+        return container;
+    }
+
+    private Region createVerticalSpacer() {
+        Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
         return spacer;
     }
 
-    private void refreshControls(Reservation reservation, boolean updateDatabase) {
+    private Region createHorizontaleSpacer() {
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        return spacer;
+    }
+
+    private void refreshControls(boolean updateDatabase) {
         dayCount.setText("Nombre de jours : " + reservation.getDayCount());
         depositPrice.setText("Prix acompte : " + reservation.getDepositPrice());
         totalPrice.setText("Prix total : " + reservation.getTotalPrice());

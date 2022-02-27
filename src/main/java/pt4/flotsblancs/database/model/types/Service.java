@@ -15,4 +15,9 @@ public enum Service {
 
     @Getter
     private int pricePerDay;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
