@@ -47,6 +47,6 @@ public class CampGround {
 
     @Override
     public String toString() {
-        return "#" + id + "   " + pricePerDays + "€/j";
+        return "#" + id + "   " + pricePerDays + "€/j  " + allowedEquipments.getChar();
     }
 }

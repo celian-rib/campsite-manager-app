@@ -55,3 +55,10 @@
 .mfx-text-field:disabled .text-field {
 	-fx-text-inner-color: rgb(39, 39, 39);
 }
+
+.mfx-list-view {
+    -fx-background-radius: 5;
+	-fx-border-color: #ebebeb;
+	-fx-border-radius: 10;
+    -fx-padding: 10px;
+}

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.controls.MFXListView;
+import io.github.palexdev.materialfx.effects.DepthLevel;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
@@ -17,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.components.*;
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
@@ -24,6 +27,9 @@ import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ReservationsScene extends ItemScene<Reservation> {
+
+    private final int INNER_PADDING = 10;
+    private final int CONTENT_SPACING = 20;
 
     private Label dayCount;
 
@@ -36,9 +42,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private Reservation reservation;
 
     private CampgroundCard campCard;
-
-    private final int INNER_PADDING = 10;
-    private final int CONTENT_SPACING = 20;
 
     private MFXComboBox<String> depositComboBox;
 
@@ -62,7 +65,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private MFXButton cancelBtn;
 
-
     ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         // Check if we need to refresh the page and the database
         if (oldValue == newValue || oldValue == null)
@@ -73,7 +75,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private void refreshPage() {
         // Rafraichit tous les labels de la page ayant une valeur calculé
-        dayCount.setText("Nombre de jours : " + reservation.getDayCount() + "€");
+        dayCount.setText(reservation.getDayCount() + " jours");
         depositPrice.setText("Prix acompte : " + reservation.getDepositPrice() + "€");
         totalPrice.setText("Prix total : " + reservation.getTotalPrice() + "€");
         campCard.refresh(reservation.getCampground());
@@ -81,7 +83,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E dd MMM", Locale.FRANCE);
         String startStr = simpleDateFormat.format(reservation.getStartDate());
         String endStr = simpleDateFormat.format(reservation.getEndDate());
+        datesLabel.setText(startStr + " - " + endStr);
 
+        equipmentsComboBox.refresh();
+        campComboBox.refresh();
+
+        // Active / Desactive les contrôle en fonction de l'état de la réservation
         boolean isDeposited = reservation.getDepositDate() != null;
         boolean isPaid = reservation.getPaymentDate() != null;
         startDatePicker.setDisable(isDeposited || isPaid);
@@ -95,15 +102,13 @@ public class ReservationsScene extends ItemScene<Reservation> {
         paymentComboBox.setDisable(!isDeposited);
         sendBillBtn.setDisable(!isPaid);
         cancelBtn.setDisable(isPaid);
-
-        datesLabel.setText(startStr + " - " + endStr);
     }
 
     private void refreshDatabase() {
         try {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
-        } catch (SQLException e) {
+        } catch (SQLException e) { // TODO gérer erreurs de conn en +
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
         }
@@ -164,18 +169,29 @@ public class ReservationsScene extends ItemScene<Reservation> {
         // TODO Responsive padding
         // container.setPadding(new Insets(50));
         container.setPadding(new Insets(INNER_PADDING));
+        container.setAlignment(Pos.BOTTOM_CENTER);
 
-        container.getChildren().addAll(createPaymentContainer());
+        var test = new MFXListView<Problem>();
+        test.setDepthLevel(DepthLevel.LEVEL0);
 
+        test.getItems().addAll(reservation.getProblems());
+        test.setMinWidth(300);
+
+        test.setPrefWidth(400);
+        test.setMaxHeight(140);
+
+        container.getChildren().add(createPaymentContainer());
+        container.getChildren().add(new HBoxSpacer());
+        container.getChildren().add(test);
         return container;
     }
 
-    private VBox createPaymentContainer() {
-        VBox container = new VBox(CONTENT_SPACING);
+    private HBox createPaymentContainer() {
+        HBox container = new HBox(CONTENT_SPACING);
 
-        depositPrice = new Label();
-        totalPrice = new Label();
 
+
+        VBox btnContainer = new VBox(CONTENT_SPACING);
         depositComboBox = createPriceComboBox("Acompte");
         depositComboBox.selectIndex(reservation.getDepositDate() == null ? 1 : 0);
         createDepositListener(depositComboBox);
@@ -186,9 +202,14 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
         cashBackComboBox = createCashbackComboBox();
         // TODO Listener
+        btnContainer.getChildren().addAll(depositComboBox, paymentComboBox, cashBackComboBox);
 
-        container.getChildren().addAll(depositPrice, totalPrice, depositComboBox, paymentComboBox,
-                cashBackComboBox);
+        VBox labelsContainer = new VBox(CONTENT_SPACING);
+        depositPrice = new Label();
+        totalPrice = new Label();
+        labelsContainer.getChildren().addAll(depositPrice, totalPrice);
+
+        container.getChildren().addAll(btnContainer, labelsContainer);
         return container;
     }
 
@@ -217,8 +238,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
         endDatePicker = new ReservationDatePicker(reservation, false);
         endDatePicker.addListener(changeListener);
-
-        dayCount = new Label();
 
         container.getChildren().addAll(startDatePicker, endDatePicker);
 
@@ -264,12 +283,19 @@ public class ReservationsScene extends ItemScene<Reservation> {
         title.setFont(new Font(24));
         title.setTextFill(Color.rgb(51, 59, 97));
 
+        VBox datesInfosContainer = new VBox(5);
         datesLabel = new Label();
-        datesLabel.setFont(new Font(20));
+        datesLabel.setFont(new Font(17));
         datesLabel.setTextFill(Color.GREY);
 
+        dayCount = new Label();
+        dayCount.setFont(new Font(13));
+        dayCount.setTextFill(Color.DARKGREY);
+
+        datesInfosContainer.getChildren().addAll(datesLabel, dayCount);
+
         container.setLeft(title);
-        container.setRight(datesLabel);
+        container.setRight(datesInfosContainer);
         return container;
     }
 

@@ -27,7 +27,7 @@ public class Generator {
 
         var f = new Faker();
 
-        generateAdmin();
+        // generateAdmin();
         
         generateStocks(f, 10);
         generateClients(f, 50);
@@ -62,11 +62,11 @@ public class Generator {
             resa.setClient(ClientsList.get(rdmNbrBtwn(0,ClientsList.size())));
             resa.setNbPersons(rdmNbrBtwn(1, 5));
             resa.setCashBackPercent(rdmNbrBtwn(0, 10) > 8 ? 20 : 0);
-            resa.setDepositDate(f.date().past(50, TimeUnit.DAYS));
+            resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
             resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
-            // TODO -> random enum selection
-            resa.setEquipments(Equipment.TENT);
+            var equipments = resa.getCampground().getAllowedEquipments().getCompatibles();
+            resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
             Database.getInstance().getReservationDao().create(resa);
             System.out.println(resa);
         }
@@ -78,10 +78,8 @@ public class Generator {
             cg.setDescription(f.country().name());
             cg.setPricePerDays(f.number().randomDigitNotZero());
             cg.setSurface(f.number().randomDigitNotZero());
-            // TODO -> random enum selection
-            cg.setAllowedEquipments(Equipment.TENT_AND_CAMPINGCAR);
-            // TODO -> random enum selection
-            cg.setProvidedServices(Service.WATER_AND_ELECTRICITY);
+            cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);
+            cg.setProvidedServices(Service.values()[rdmNbrBtwn(0, Service.values().length)]);
             Database.getInstance().getCampgroundDao().create(cg);
             System.out.println(cg);
         }
@@ -120,7 +118,7 @@ public class Generator {
             p.setReservation(resaList.get(rdmNbrBtwn(0, resaList.size())));
             p.setCampground(p.getReservation().getCampground());
             p.setClient(p.getReservation().getClient());
-            p.setDescription(f.elderScrolls().city());
+            p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().between(p.getReservation().getStartDate(), p.getReservation().getEndDate()));
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){
@@ -143,7 +141,7 @@ public class Generator {
         for(int i = 0; i < nbr; i++) {
             var p = new Problem();
             p.setClient(ClientsList.get(rdmNbrBtwn(0,ClientsList.size())));
-            p.setDescription(f.elderScrolls().city());
+            p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().past(30, TimeUnit.DAYS));
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){
@@ -166,7 +164,7 @@ public class Generator {
         for(int i = 0; i < nbr; i++) {
             var p = new Problem();
             p.setCampground(CGlist.get(rdmNbrBtwn(0,CGlist.size())));
-            p.setDescription(f.elderScrolls().city());
+            p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().past(30, TimeUnit.DAYS));
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){

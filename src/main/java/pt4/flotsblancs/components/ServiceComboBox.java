@@ -12,6 +12,7 @@ public class ServiceComboBox extends MFXComboBox<Service> {
     public ServiceComboBox(Reservation reservation) {
         setFloatingText("Services demandés");
         setFloatMode(FloatMode.INLINE);
+        // TODO afficher uniquement les services dispo
         getItems().addAll(Service.values());
         setMinWidth(180);
         setAnimated(false);
@@ -19,6 +20,7 @@ public class ServiceComboBox extends MFXComboBox<Service> {
         valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue == null)
                 return;
+            // TODO check si le service est dispo
             reservation.setSelectedServices(newValue);
         });
     }
