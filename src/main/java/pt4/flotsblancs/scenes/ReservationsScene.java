@@ -35,6 +35,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private Reservation reservation;
 
+    private final int INNER_PADDING = 10;
+
     ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         // Check if we need to refresh the page and the database
         if (oldValue == newValue || oldValue == null)
@@ -94,7 +96,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
      */
     private HBox createTopSlot() {
         HBox container = new HBox(10);
-        container.setPadding(new Insets(50));
+        // TODO Responsive padding
+        // container.setPadding(new Insets(50));
+        container.setPadding(new Insets(INNER_PADDING));
 
         var cards = cardsContainer();
         var gear = selectedEquipmentAndServicesContainer();
@@ -114,7 +118,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
      */
     private HBox createBottomSlot() {
         HBox container = new HBox(10);
-        container.setPadding(new Insets(50));
+        // TODO Responsive padding
+        // container.setPadding(new Insets(50));
+        container.setPadding(new Insets(INNER_PADDING));
 
         depositPrice = new Label();
         totalPrice = new Label();
@@ -140,8 +146,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
      *         réservation
      */
     private VBox cardsContainer() {
-        VBox container = new VBox(50);
-        container.setAlignment(Pos.CENTER);
+        VBox container = new VBox(35);
+        container.setPadding(new Insets(10, 0, 0, 0));
         container.setMinWidth(220);
         var clientCard = new ClientCard(reservation.getClient(), 220);
         var campCard = new CampgroundCard(reservation.getCampground(), 220);

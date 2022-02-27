@@ -27,15 +27,15 @@ public class Generator {
 
         var f = new Faker();
 
-        // generateAdmin();
+        generateAdmin();
         
-        // generateStocks(f, 10);
-        // generateClients(f, 50);
-        // generateCampGrounds(f, 100);
+        generateStocks(f, 10);
+        generateClients(f, 50);
+        generateCampGrounds(f, 100);
         generateReservations(f, 20);
-        // generateProblemsResa(f, 5);
-        // generateProblemsCg(f, 3);
-        // generateProblemsClient(f, 3);
+        generateProblemsResa(f, 5);
+        generateProblemsCg(f, 3);
+        generateProblemsClient(f, 3);
     }
     
     private static int rdmNbrBtwn(int min, int max){
