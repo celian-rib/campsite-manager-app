@@ -171,18 +171,19 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.BOTTOM_CENTER);
 
-        var test = new MFXListView<Problem>();
-        test.setDepthLevel(DepthLevel.LEVEL0);
-
-        test.getItems().addAll(reservation.getProblems());
-        test.setMinWidth(300);
-
-        test.setPrefWidth(400);
-        test.setMaxHeight(140);
+        var problemsList = new MFXListView<Problem>();
+        problemsList.setDepthLevel(DepthLevel.LEVEL0);
+        
+        problemsList.getItems().addAll(reservation.getProblems());
+        
+        // TODO responsive
+        problemsList.setMaxWidth(300);
+        
+        problemsList.setMaxHeight(140);
 
         container.getChildren().add(createPaymentContainer());
         container.getChildren().add(new HBoxSpacer());
-        container.getChildren().add(test);
+        container.getChildren().add(problemsList);
         return container;
     }
 

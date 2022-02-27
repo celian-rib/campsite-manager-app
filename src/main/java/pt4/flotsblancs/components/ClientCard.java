@@ -12,6 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ClientCard extends BorderPane {
 
@@ -27,6 +29,11 @@ public class ClientCard extends BorderPane {
         openIcon.setIconColor(Color.rgb(51, 59, 97));
         openBtn.setGraphic(openIcon);
         openBtn.setGraphicTextGap(10);
+
+        openBtn.setOnAction(e -> {
+            // TODO linking
+            Router.showToast(ToastType.INFO, "TODO");
+        });
         return openBtn;
     }
 
