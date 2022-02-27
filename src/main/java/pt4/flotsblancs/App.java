@@ -34,11 +34,11 @@ public class App extends Application {
 			defaultRoute = Routes.CONN_FALLBACK;
 		}
 
-		Router.initialize(defaultRoute, primaryStage, 1200, 700);
+		Router.initialize(defaultRoute, primaryStage, 1400, 850);
 
 		new WindowManager(primaryStage, 20);
-		primaryStage.setMinWidth(800);
-		primaryStage.setMinHeight(600);
+		primaryStage.setMinWidth(1400);
+		primaryStage.setMinHeight(850);
 
 		// Affichage de la fenêtre
 		primaryStage.initStyle(StageStyle.TRANSPARENT);

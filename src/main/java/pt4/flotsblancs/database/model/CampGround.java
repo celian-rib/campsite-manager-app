@@ -10,12 +10,12 @@ import lombok.*;
 
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString
 @DatabaseTable(tableName = "campgrounds")
 public class CampGround {
 
     @Getter
     @DatabaseField(generatedId = true)
+    @EqualsAndHashCode.Include
     @ToString.Include
     private int id;
 
@@ -45,4 +45,8 @@ public class CampGround {
     @DatabaseField(canBeNull = false, columnName = "allowed_equipments")
     private Equipment allowedEquipments;
 
+    @Override
+    public String toString() {
+        return "#" + id + "   " + pricePerDays + "€/j";
+    }
 }

@@ -35,7 +35,33 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private Reservation reservation;
 
+    private CampgroundCard campCard;
+
     private final int INNER_PADDING = 10;
+    private final int CONTENT_SPACING = 20;
+
+    private MFXComboBox<String> depositComboBox;
+
+    private MFXComboBox<String> paymentComboBox;
+
+    private MFXComboBox<String> cashBackComboBox;
+
+    private ReservationDatePicker startDatePicker;
+
+    private ReservationDatePicker endDatePicker;
+
+    private CampGroundComboBox campComboBox;
+
+    private ServiceComboBox serviceComboBox;
+
+    private PersonCountComboBox personCountComboBox;
+
+    private EquipmentComboBox equipmentsComboBox;
+
+    private MFXButton sendBillBtn;
+
+    private MFXButton cancelBtn;
+
 
     ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         // Check if we need to refresh the page and the database
@@ -47,13 +73,29 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private void refreshPage() {
         // Rafraichit tous les labels de la page ayant une valeur calculé
-        dayCount.setText("Nombre de jours : " + reservation.getDayCount());
-        depositPrice.setText("Prix acompte : " + reservation.getDepositPrice());
-        totalPrice.setText("Prix total : " + reservation.getTotalPrice());
+        dayCount.setText("Nombre de jours : " + reservation.getDayCount() + "€");
+        depositPrice.setText("Prix acompte : " + reservation.getDepositPrice() + "€");
+        totalPrice.setText("Prix total : " + reservation.getTotalPrice() + "€");
+        campCard.refresh(reservation.getCampground());
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E dd MMM", Locale.FRANCE);
         String startStr = simpleDateFormat.format(reservation.getStartDate());
         String endStr = simpleDateFormat.format(reservation.getEndDate());
+
+        boolean isDeposited = reservation.getDepositDate() != null;
+        boolean isPaid = reservation.getPaymentDate() != null;
+        startDatePicker.setDisable(isDeposited || isPaid);
+        endDatePicker.setDisable(isDeposited || isPaid);
+        campComboBox.setDisable(isDeposited || isPaid);
+        serviceComboBox.setDisable(isDeposited || isPaid);
+        personCountComboBox.setDisable(isDeposited || isPaid);
+        equipmentsComboBox.setDisable(isDeposited || isPaid);
+        cashBackComboBox.setDisable(isPaid);
+        depositComboBox.setDisable(isPaid);
+        paymentComboBox.setDisable(!isDeposited);
+        sendBillBtn.setDisable(!isPaid);
+        cancelBtn.setDisable(isPaid);
+
         datesLabel.setText(startStr + " - " + endStr);
     }
 
@@ -77,6 +119,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         this.reservation = reservation;
 
         VBox container = new VBox();
+
         container.setPadding(new Insets(50));
 
         container.getChildren().add(createHeader());
@@ -122,22 +165,30 @@ public class ReservationsScene extends ItemScene<Reservation> {
         // container.setPadding(new Insets(50));
         container.setPadding(new Insets(INNER_PADDING));
 
+        container.getChildren().addAll(createPaymentContainer());
+
+        return container;
+    }
+
+    private VBox createPaymentContainer() {
+        VBox container = new VBox(CONTENT_SPACING);
+
         depositPrice = new Label();
         totalPrice = new Label();
-        container.getChildren().addAll();
 
-        var deposit = createPriceComboBox("Acompte");
-        deposit.selectIndex(reservation.getDepositDate() == null ? 1 : 0);
-        createDepositListener(deposit);
+        depositComboBox = createPriceComboBox("Acompte");
+        depositComboBox.selectIndex(reservation.getDepositDate() == null ? 1 : 0);
+        createDepositListener(depositComboBox);
 
-        var payment = createPriceComboBox("Réglement complet");
-        payment.selectIndex(reservation.getPaymentDate() == null ? 1 : 0);
-        createPayementListener(payment);
+        paymentComboBox = createPriceComboBox("Réglement complet");
+        paymentComboBox.selectIndex(reservation.getPaymentDate() == null ? 1 : 0);
+        createPayementListener(paymentComboBox);
 
-        var cashback = createCashbackComboBox();
+        cashBackComboBox = createCashbackComboBox();
+        // TODO Listener
 
-        container.getChildren().addAll(depositPrice, totalPrice, deposit, payment, cashback);
-
+        container.getChildren().addAll(depositPrice, totalPrice, depositComboBox, paymentComboBox,
+                cashBackComboBox);
         return container;
     }
 
@@ -146,11 +197,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
      *         réservation
      */
     private VBox cardsContainer() {
-        VBox container = new VBox(35);
+        VBox container = new VBox(CONTENT_SPACING);
         container.setPadding(new Insets(10, 0, 0, 0));
         container.setMinWidth(220);
         var clientCard = new ClientCard(reservation.getClient(), 220);
-        var campCard = new CampgroundCard(reservation.getCampground(), 220);
+        campCard = new CampgroundCard(reservation.getCampground(), 220);
         container.getChildren().addAll(clientCard, campCard);
         return container;
     }
@@ -159,13 +210,26 @@ public class ReservationsScene extends ItemScene<Reservation> {
      * @return Conteneur contenant les ComboBox des dates de début de fin de la réservation
      */
     private VBox datesContainer() {
-        VBox container = new VBox(30);
-        dayCount = new Label();
-        var startDatePicker = new ReservationDatePicker(reservation, true);
+        VBox container = new VBox(CONTENT_SPACING);
+
+        startDatePicker = new ReservationDatePicker(reservation, true);
         startDatePicker.addListener(changeListener);
-        var endDatePicker = new ReservationDatePicker(reservation, false);
+
+        endDatePicker = new ReservationDatePicker(reservation, false);
         endDatePicker.addListener(changeListener);
-        container.getChildren().addAll(startDatePicker, endDatePicker, dayCount);
+
+        dayCount = new Label();
+
+        container.getChildren().addAll(startDatePicker, endDatePicker);
+
+        try {
+            campComboBox = new CampGroundComboBox(reservation);
+            campComboBox.addListener(changeListener);
+            container.getChildren().add(campComboBox);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return container;
     }
 
@@ -175,18 +239,18 @@ public class ReservationsScene extends ItemScene<Reservation> {
      *         personnes
      */
     private VBox selectedEquipmentAndServicesContainer() {
-        VBox container = new VBox(30);
+        VBox container = new VBox(CONTENT_SPACING);
 
-        var personCount = new PersonCountComboBox(reservation);
-        personCount.addListener(changeListener);
+        personCountComboBox = new PersonCountComboBox(reservation);
+        personCountComboBox.addListener(changeListener);
 
-        var service = new ServiceComboBox(reservation);
-        service.addListener(changeListener);
+        serviceComboBox = new ServiceComboBox(reservation);
+        serviceComboBox.addListener(changeListener);
 
-        var equipments = new EquipmentComboBox(reservation);
-        equipments.addListener(changeListener);
+        equipmentsComboBox = new EquipmentComboBox(reservation);
+        equipmentsComboBox.addListener(changeListener);
 
-        container.getChildren().addAll(personCount, service, equipments);
+        container.getChildren().addAll(personCountComboBox, serviceComboBox, equipmentsComboBox);
         return container;
     }
 
@@ -215,13 +279,13 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private HBox createActionsButtonsSlot() {
         var container = new HBox(10);
 
-        var bill = new MFXButton("Envoyer facture");
-        var cancel = new MFXButton("Annuler la réservation");
-        bill.getStyleClass().add("action-button");
-        cancel.getStyleClass().add("action-button");
+        sendBillBtn = new MFXButton("Envoyer facture");
+        cancelBtn = new MFXButton("Annuler la réservation");
+        sendBillBtn.getStyleClass().add("action-button");
+        cancelBtn.getStyleClass().add("action-button");
 
         container.setAlignment(Pos.CENTER_RIGHT);
-        container.getChildren().addAll(bill, cancel);
+        container.getChildren().addAll(sendBillBtn, cancelBtn);
         return container;
     }
 

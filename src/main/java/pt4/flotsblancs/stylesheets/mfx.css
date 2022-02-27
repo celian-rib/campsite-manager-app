@@ -13,9 +13,9 @@
     -mfx-main-color: -mfx-main;
     -mfx-main-color-hover: #4558b623;
     -mfx-main-color-pressed: #4558b675;
-    -mfx-disabled-color: rgb(102, 101, 101);
+    -mfx-disabled-color: rgb(54, 54, 54);
 
-    -mfx-text-disabled: rgba(0, 0, 0, 0.6);
+    -mfx-text-disabled: rgba(0, 0, 0, 0.7);
 }
 
 .mfx-date-cell:current {
@@ -33,4 +33,25 @@
     -fx-text-fill: white;
     -fx-padding: 5px 15px;
     -mfx-button-type: raised;
+}
+
+.mfx-date-picker .date-picker-popup .left-arrow:disabled,
+.mfx-date-picker .date-picker-popup .right-arrow:disabled {
+	-fx-opacity: 0.8;
+}
+
+.mfx-date-picker:disabled .icon {
+	-mfx-color: #818181;
+}
+
+.mfx-text-field:disabled {
+	-fx-border-color: rgba(0, 0, 0, 0.1);
+}
+
+.mfx-text-field:disabled .floating-text {
+	-fx-text-fill: rgba(0, 0, 0, 0.7);
+}
+
+.mfx-text-field:disabled .text-field {
+	-fx-text-inner-color: rgb(39, 39, 39);
 }

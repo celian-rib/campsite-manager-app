@@ -29,6 +29,8 @@ public class ReservationDatePicker extends MFXDatePicker {
         String text = isStartDate ? "Date de début" : "Date de fin";
         setPromptText(text);
         setFloatingText(text);
+        setMaxWidth(180);
+        setMinHeight(42);
         setFloatMode(FloatMode.BORDER);
         setAnimated(false);
 

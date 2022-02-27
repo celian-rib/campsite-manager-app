@@ -33,7 +33,7 @@ public class CampgroundCard extends BorderPane {
     private HBox createCampgroundInfos() {
         HBox container = new HBox(10);
 
-        FontIcon icon = new FontIcon("fas-campground:30");
+        FontIcon icon = new FontIcon("fas-campground:25");
         icon.setIconColor(Color.rgb(51, 59, 97));
 
         VBox clientInfos = new VBox(2);
@@ -51,9 +51,13 @@ public class CampgroundCard extends BorderPane {
     }
 
     public CampgroundCard(CampGround camp, int width) {
+        setMaxWidth(width);
+        refresh(camp);
+    }
+
+    public void refresh(CampGround camp) {
         this.camp = camp;
         setLeft(createCampgroundInfos());
         setRight(createOpenButton());
-        setMaxWidth(width);
     }
 }
