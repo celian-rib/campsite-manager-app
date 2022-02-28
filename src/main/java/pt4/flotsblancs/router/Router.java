@@ -25,7 +25,7 @@ public class Router {
             put(Routes.LOGIN, new LoginScene());
             put(Routes.RESERVATIONS, new ReservationsScene());
             put(Routes.CLIENTS, new ClientsScene());
-            put(Routes.STOCKS, new StocksScene());
+            put(Routes.STOCKS, (IScene) new StocksScene());
             put(Routes.CAMPGROUNDS, new CampgroundsScene());
             put(Routes.ADMIN, new AdminScene());
         }

@@ -1,6 +1,7 @@
 package pt4.flotsblancs.database.model;
 
 import lombok.*;
+import pt4.flotsblancs.scenes.items.Item;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -9,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 @EqualsAndHashCode
 @ToString(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "stocks")
-public class Stock {
+public class Stock implements Item{
 
     @Getter
     @ToString.Include
@@ -36,4 +37,9 @@ public class Stock {
     @Getter
     @DatabaseField(canBeNull = false, columnName = "storage_location")
     private String storageLocation;
+
+    @Override
+    public String getDisplayName() {
+        return item;
+    }
 }
