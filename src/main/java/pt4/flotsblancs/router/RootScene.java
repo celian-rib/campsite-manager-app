@@ -227,7 +227,7 @@ public class RootScene extends StackPane {
      */
     public void showToast(ToastType type, String message, int durationMillis, int fadeinoutMillis) {
         // Deux borderpane pour placer en bas à droite sinon impossible
-        BorderPane toast = Toaster.createToast(ToastType.INFO, message);
+        BorderPane toast = Toaster.createToast(type, message);
         toastBasket.display(toast);
         Toaster.playTransition(toast, toastBasket, durationMillis, fadeinoutMillis);
     }
