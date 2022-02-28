@@ -37,8 +37,9 @@ public class App extends Application {
 		Router.initialize(defaultRoute, primaryStage, 1400, 850);
 
 		new WindowManager(primaryStage, 20);
-		primaryStage.setMinWidth(1400);
-		primaryStage.setMinHeight(850);
+		// TODO responsive
+		// primaryStage.setMinWidth(1400);
+		// primaryStage.setMinHeight(850);
 
 		// Affichage de la fenêtre
 		primaryStage.initStyle(StageStyle.TRANSPARENT);

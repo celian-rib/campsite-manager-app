@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXListView;
@@ -14,6 +15,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -21,6 +23,7 @@ import pt4.flotsblancs.components.*;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.items.ItemScene;
@@ -30,6 +33,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private final int INNER_PADDING = 10;
     private final int CONTENT_SPACING = 20;
+
+    private Label title;
 
     private Label dayCount;
 
@@ -47,7 +52,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private MFXComboBox<String> paymentComboBox;
 
-    private MFXComboBox<String> cashBackComboBox;
+    private MFXComboBox<CashBack> cashBackComboBox;
 
     private ReservationDatePicker startDatePicker;
 
@@ -63,7 +68,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private MFXButton sendBillBtn;
 
-    private MFXButton cancelBtn;
+    private ConfirmButton cancelBtn;
+
+    private VBox noProblemContainer;
+
+    private Label noProblemLabel;
 
     ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         // Check if we need to refresh the page and the database
@@ -75,10 +84,14 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private void refreshPage() {
         // Rafraichit tous les labels de la page ayant une valeur calculé
+        String cancelStr = reservation.getCanceled() ? " (Annulée)" : "";
+        title.setText("Réservation  #" + reservation.getId() + cancelStr);
+
         dayCount.setText(reservation.getDayCount() + " jours");
         depositPrice.setText("Prix acompte : " + reservation.getDepositPrice() + "€");
         totalPrice.setText("Prix total : " + reservation.getTotalPrice() + "€");
         campCard.refresh(reservation.getCampground());
+        noProblemContainer.setVisible(reservation.getProblems().size() == 0);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E dd MMM", Locale.FRANCE);
         String startStr = simpleDateFormat.format(reservation.getStartDate());
@@ -91,17 +104,18 @@ public class ReservationsScene extends ItemScene<Reservation> {
         // Active / Desactive les contrôle en fonction de l'état de la réservation
         boolean isDeposited = reservation.getDepositDate() != null;
         boolean isPaid = reservation.getPaymentDate() != null;
-        startDatePicker.setDisable(isDeposited || isPaid);
-        endDatePicker.setDisable(isDeposited || isPaid);
-        campComboBox.setDisable(isDeposited || isPaid);
-        serviceComboBox.setDisable(isDeposited || isPaid);
-        personCountComboBox.setDisable(isDeposited || isPaid);
-        equipmentsComboBox.setDisable(isDeposited || isPaid);
-        cashBackComboBox.setDisable(isPaid);
-        depositComboBox.setDisable(isPaid);
-        paymentComboBox.setDisable(!isDeposited);
-        sendBillBtn.setDisable(!isPaid);
-        cancelBtn.setDisable(isPaid);
+        boolean canceled = reservation.getCanceled();
+        startDatePicker.setDisable(isDeposited || isPaid || canceled);
+        endDatePicker.setDisable(isDeposited || isPaid || canceled);
+        campComboBox.setDisable(isDeposited || isPaid || canceled);
+        serviceComboBox.setDisable(isDeposited || isPaid || canceled);
+        personCountComboBox.setDisable(isDeposited || isPaid || canceled);
+        equipmentsComboBox.setDisable(isDeposited || isPaid || canceled);
+        cashBackComboBox.setDisable(isPaid || canceled);
+        depositComboBox.setDisable(isPaid || canceled);
+        paymentComboBox.setDisable(!isDeposited || canceled);
+        sendBillBtn.setDisable(!isPaid || canceled);
+        cancelBtn.setDisable(isPaid || canceled);
     }
 
     private void refreshDatabase() {
@@ -171,26 +185,38 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.BOTTOM_CENTER);
 
+        var problemsContainer = new StackPane();
+
         var problemsList = new MFXListView<Problem>();
         problemsList.setDepthLevel(DepthLevel.LEVEL0);
-        
+
         problemsList.getItems().addAll(reservation.getProblems());
-        
-        // TODO responsive
-        problemsList.setMaxWidth(300);
-        
+        problemsList.setMaxWidth(500);
+        problemsList.setPrefWidth(500);
+        problemsList.setMinWidth(100);
         problemsList.setMaxHeight(140);
+
+        noProblemContainer = new VBox(30);
+        noProblemLabel = new Label("Aucun problème pour cette réservation");
+        var addProblemBtn = new MFXButton("Ajouter un problème");
+        noProblemContainer.getChildren().addAll(noProblemLabel, addProblemBtn);
+        noProblemContainer.setAlignment(Pos.CENTER);
+        addProblemBtn.getStyleClass().add("action-button-outlined");
+        addProblemBtn.setOnAction(e -> {
+            // TODO linking
+            Router.showToast(ToastType.WARNING, "LINKING TO DO");
+        });
+
+        problemsContainer.getChildren().addAll(problemsList, noProblemContainer);
 
         container.getChildren().add(createPaymentContainer());
         container.getChildren().add(new HBoxSpacer());
-        container.getChildren().add(problemsList);
+        container.getChildren().add(problemsContainer);
         return container;
     }
 
     private HBox createPaymentContainer() {
         HBox container = new HBox(CONTENT_SPACING);
-
-
 
         VBox btnContainer = new VBox(CONTENT_SPACING);
         depositComboBox = createPriceComboBox("Acompte");
@@ -202,12 +228,20 @@ public class ReservationsScene extends ItemScene<Reservation> {
         createPayementListener(paymentComboBox);
 
         cashBackComboBox = createCashbackComboBox();
-        // TODO Listener
+        createCashbackListener(cashBackComboBox);
+
         btnContainer.getChildren().addAll(depositComboBox, paymentComboBox, cashBackComboBox);
 
         VBox labelsContainer = new VBox(CONTENT_SPACING);
         depositPrice = new Label();
+        depositPrice.setMinWidth(110);
+        depositPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
+
         totalPrice = new Label();
+        totalPrice.setMinWidth(110);
+        totalPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
+
+
         labelsContainer.getChildren().addAll(depositPrice, totalPrice);
 
         container.getChildren().addAll(btnContainer, labelsContainer);
@@ -243,6 +277,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.getChildren().addAll(startDatePicker, endDatePicker);
 
         try {
+            // TODO ne pas fetch les emplacements à chaque fois
             campComboBox = new CampGroundComboBox(reservation);
             campComboBox.addListener(changeListener);
             container.getChildren().add(campComboBox);
@@ -280,7 +315,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private BorderPane createHeader() {
         BorderPane container = new BorderPane();
 
-        Label title = new Label("Réservation  #" + reservation.getId());
+        title = new Label();
         title.setFont(new Font(24));
         title.setTextFill(Color.rgb(51, 59, 97));
 
@@ -307,7 +342,16 @@ public class ReservationsScene extends ItemScene<Reservation> {
         var container = new HBox(10);
 
         sendBillBtn = new MFXButton("Envoyer facture");
-        cancelBtn = new MFXButton("Annuler la réservation");
+        cancelBtn = new ConfirmButton("Annuler la réservation");
+        FontIcon icon = new FontIcon("fas-exclamation-triangle:10");
+        icon.setIconColor(Color.WHITE);
+        cancelBtn.setGraphic(icon);
+        cancelBtn.setOnConfirmedAction(e -> {
+            reservation.setCanceled(true);
+            refreshPage();
+            refreshDatabase();
+        });
+
         sendBillBtn.getStyleClass().add("action-button");
         cancelBtn.getStyleClass().add("action-button");
 
@@ -334,11 +378,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
      * @param typeName
      * @return ComboBox pour choisir une remise
      */
-    private MFXComboBox<String> createCashbackComboBox() {
-        var combo = new MFXComboBox<String>();
+    private MFXComboBox<CashBack> createCashbackComboBox() {
+        var combo = new MFXComboBox<CashBack>();
         combo.setFloatingText("Remise");
         combo.setFloatMode(FloatMode.INLINE);
-        combo.getItems().addAll("Aucune", "10%", "20%", "50%");
+        combo.getItems().addAll(CashBack.values());
         combo.selectIndex(0);
         combo.setMinWidth(180);
         combo.setAnimated(false);
@@ -380,6 +424,23 @@ public class ReservationsScene extends ItemScene<Reservation> {
                 reservation.setPaymentDate(new Date());
             else
                 reservation.setPaymentDate(null);
+            refreshPage();
+            refreshDatabase();
+        });
+    }
+
+    /**
+     * Listener de la ComboBox de paiement
+     * 
+     * Lance la mise à jour de l'interface et de la BD si la valeur change
+     * 
+     * @param comboBox
+     */
+    private void createCashbackListener(MFXComboBox<CashBack> comboBox) {
+        comboBox.valueProperty().addListener((obs, oldPrice, newPrice) -> {
+            if (oldPrice == null)
+                return;
+            reservation.setCashBack(newPrice);
             refreshPage();
             refreshDatabase();
         });

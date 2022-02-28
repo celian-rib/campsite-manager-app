@@ -15,6 +15,8 @@ public class ReservationDatePicker extends MFXDatePicker {
 
     private Reservation reservation;
 
+    private LocalDate skipNotif;
+
     private static LocalDate toLocale(Date dateToConvert) {
         return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
@@ -25,6 +27,7 @@ public class ReservationDatePicker extends MFXDatePicker {
 
     public ReservationDatePicker(Reservation reservation, boolean isStartDate) {
         this.reservation = reservation;
+        this.skipNotif = null;
 
         String text = isStartDate ? "Date de début" : "Date de fin";
         setPromptText(text);
@@ -49,10 +52,12 @@ public class ReservationDatePicker extends MFXDatePicker {
     private void createStartDateListener() {
         valueProperty().addListener((obs, oldDate, newDate) -> {
             if (newDate.isBefore(LocalDate.now())) {
+                this.skipNotif = oldDate;
                 Router.showToast(ToastType.ERROR,
-                        "La date de début sélectionnée est antérieur à la date actuelle");
+                "La date de début sélectionnée est antérieur à la date actuelle");
                 setValue(oldDate);
             } else if (newDate.isAfter(toLocale(reservation.getEndDate()))) {
+                this.skipNotif = oldDate;
                 Router.showToast(ToastType.ERROR,
                         "La date de début sélectionnée est ultérieure à la date de fin");
                 setValue(oldDate);
@@ -65,6 +70,7 @@ public class ReservationDatePicker extends MFXDatePicker {
     private void createEndDateListener() {
         valueProperty().addListener((obs, oldDate, newDate) -> {
             if (newDate.isBefore(toLocale(reservation.getStartDate()))) {
+                this.skipNotif = oldDate;
                 Router.showToast(ToastType.ERROR,
                         "La date de fin sélectionnée est antérieure à la date de début de la réservation.");
                 setValue(oldDate);
@@ -75,6 +81,14 @@ public class ReservationDatePicker extends MFXDatePicker {
     }
 
     public void addListener(ChangeListener<? super LocalDate> listener) {
-        valueProperty().addListener(listener);
+        valueProperty().addListener((obs, oldDate, newDate) -> {
+            if (this.skipNotif ==  newDate) {
+                this.skipNotif = null;
+                System.out.println("Skipped");
+            } else {
+                listener.changed(obs, oldDate, newDate);
+                System.out.println("Notified");
+            }
+        });
     }
 }

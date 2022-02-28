@@ -38,8 +38,8 @@ public class Reservation implements Item {
     @Setter
     @ToString.Include
     @EqualsAndHashCode.Include
-    @DatabaseField(canBeNull = true, columnName = "cash_back_percent")
-    private int cashBackPercent;
+    @DatabaseField(canBeNull = true, columnName = "cash_back")
+    private CashBack cashBack;
 
     @Getter
     @Setter
@@ -98,6 +98,8 @@ public class Reservation implements Item {
     @Override
     public String getDisplayName() {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM");
+        if (canceled)
+            return "[Annulée] " + client.getName();
         return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
     }
 
@@ -110,8 +112,7 @@ public class Reservation implements Item {
         var dayCount = getDayCount();
         var rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
         var withService = rawPrice + selectedServices.getPricePerDay() * dayCount;
-        var cashback = cashBackPercent == 0 ? 1 : (100 - (100 / cashBackPercent)) / 100;
-        return withService * cashback;
+        return withService * cashBack.getReduction();
     }
 
     public float getDepositPrice() {
