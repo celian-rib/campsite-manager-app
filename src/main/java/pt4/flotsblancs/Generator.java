@@ -27,11 +27,11 @@ public class Generator {
 
         var f = new Faker();
 
-        // generateAdmin();
+        generateAdmin();
         
         generateStocks(f, 10);
         generateClients(f, 50);
-        generateCampGrounds(f, 100);
+        generateCampGrounds(f, 20);
         generateReservations(f, 20);
         generateProblemsResa(f, 5);
         generateProblemsCg(f, 3);
