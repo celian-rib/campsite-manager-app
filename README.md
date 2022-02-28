@@ -17,8 +17,9 @@
 DB_URL=<url>
 DB_USER=<user>
 DB_PASSWORD=<password>
-SECOND_SCREEN=1 # Ajouter si l'on veut démarrer l'app en plein écran
-FULL_SCREEN=1 # Ajouter si l'on veut démarrer l'app sur l'écran secondaire
+SECOND_SCREEN=1 # Ajouter si l'on veut démarrer l'app sur l'écran secondaire
+FULL_SCREEN=1 # Ajouter si l'on veut démarrer l'app en plein écran
+DEFAULT_ROUTE=<ROUTENAME> # Ajouter pour changer la route par défaut (Permet de gagner du temps en développement)
 ```
 7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) , pour VScode il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok) (Recharger VSCode si les erreurs persistent)
 
