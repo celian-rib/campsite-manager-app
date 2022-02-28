@@ -2,7 +2,11 @@ package pt4.flotsblancs.scenes.items;
 
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.effect.BlurType;
@@ -47,7 +51,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
     public void start() {
         itemList = new ItemList<I>(this);
 
-        setLeft(itemList);
+        setLeft(null);
         setCenter(null);
 
         // TODO Responsive padding
@@ -60,17 +64,48 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
 
     @Override
     public void onFocus() {
-        try {
-            // Mise à jour de la liste
-            itemList.updateItems(queryAll());
-        } catch (SQLRecoverableException e) {
-            System.err.println(e);
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
-        } catch (SQLException e) {
-            System.err.println(e);
-            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
-        }
+        final Task<List<I>> updateListTask = new Task<List<I>>() {
+            protected java.util.List<I> call() throws Exception {
+                for (int iterations = 0; iterations < 100000; iterations++) {
+                    // ! Simulation de latence À SUPPRIMER
+                    if (isCancelled()) {
+                        break;
+                    }
+                    System.out.println("Iteration " + iterations);
+                }
+                var allItems = queryAll();
+                Platform.runLater(() -> {
+                    try {
+                        // Mise à jour de la liste
+                        itemList.updateItems(allItems);
+                        setLeft(itemList);
+                    } catch (Exception e) {
+                        System.err.println(e);
+                    }
+                });
+                return allItems;
+            };
+
+            protected void succeeded() {
+                
+            };
+
+            protected void failed() {};
+
+            
+        };
+        
+        new Thread(updateListTask).start();
+
+        // catch (SQLRecoverableException e) {
+        //     System.err.println(e);
+        //     Router.showToast(ToastType.ERROR, "Erreur de connexion");
+        //     Router.goToScreen(Routes.CONN_FALLBACK);
+        // } catch (SQLException e) {
+        //     System.err.println(e);
+        //     Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
+        // } 
+        
     }
 
     /**
