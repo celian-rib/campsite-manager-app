@@ -9,7 +9,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @EqualsAndHashCode
 @NoArgsConstructor
-@ToString(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "problems")
 public class Problem {
 
@@ -18,18 +17,15 @@ public class Problem {
     }
 
     @Getter
-    @ToString.Include
     @DatabaseField(generatedId = true)
     private int id;
 
     @Getter
     @Setter
-    @ToString.Include
     @DatabaseField(canBeNull = false)
     private String description;
 
     @Getter
-    @ToString.Include
     @DatabaseField(canBeNull = false)
     private ProblemStatus status = ProblemStatus.OPEN;
 
@@ -74,5 +70,10 @@ public class Problem {
     public void setStartDate(Date date){
         this.startDate =  date;
         this.lastUpdateDate = date;
+    }
+
+    @Override
+    public String toString() {
+        return "Problème #" + id + "  " + description;
     }
 }

@@ -17,6 +17,8 @@ import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.database.model.Problem.ProblemStatus;
+import pt4.flotsblancs.database.model.types.Equipment;
+import pt4.flotsblancs.database.model.types.Service;
 
 
 public class Generator {
@@ -25,15 +27,15 @@ public class Generator {
 
         var f = new Faker();
 
-        generateAdmin();
+        // generateAdmin();
         
-        // generateStocks(f, 10);
-        // generateClients(f, 50);
-        // generateCampGrounds(f, 50);
-        // generateReservations(f, 3);
-        // generateProblemsResa(f, 5);
-        // generateProblemsCg(f, 3);
-        // generateProblemsClient(f, 3);
+        generateStocks(f, 10);
+        generateClients(f, 50);
+        generateCampGrounds(f, 100);
+        generateReservations(f, 20);
+        generateProblemsResa(f, 5);
+        generateProblemsCg(f, 3);
+        generateProblemsClient(f, 3);
     }
     
     private static int rdmNbrBtwn(int min, int max){
@@ -58,9 +60,13 @@ public class Generator {
             var resa = new Reservation();
             resa.setCampground(CGlist.get(rdmNbrBtwn(0,CGlist.size())));
             resa.setClient(ClientsList.get(rdmNbrBtwn(0,ClientsList.size())));
-            resa.setDepositDate(f.date().past(50, TimeUnit.DAYS));
-            resa.setStartDate(f.date().future(200, TimeUnit.DAYS, resa.getDepositDate()));
+            resa.setNbPersons(rdmNbrBtwn(1, 5));
+            resa.setCashBackPercent(rdmNbrBtwn(0, 10) > 8 ? 20 : 0);
+            resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
+            resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+            var equipments = resa.getCampground().getAllowedEquipments().getCompatibles();
+            resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
             Database.getInstance().getReservationDao().create(resa);
             System.out.println(resa);
         }
@@ -72,7 +78,8 @@ public class Generator {
             cg.setDescription(f.country().name());
             cg.setPricePerDays(f.number().randomDigitNotZero());
             cg.setSurface(f.number().randomDigitNotZero());
-            cg.setProvidedEquipments(f.animal().name());
+            cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);
+            cg.setProvidedServices(Service.values()[rdmNbrBtwn(0, Service.values().length)]);
             Database.getInstance().getCampgroundDao().create(cg);
             System.out.println(cg);
         }
@@ -82,7 +89,7 @@ public class Generator {
         for(int i = 0; i < nbr; i++) {
             var c = new Client();
             c.setAddresse(f.address().fullAddress());
-            c.setPhone(f.phoneNumber().cellPhone());
+            c.setPhone(f.phoneNumber().cellPhone().toString());
             String hp = f.harryPotter().character();
             c.setName((hp.split(" ").length>1)?hp.split(" ")[1]:hp.split(" ")[0]);
             c.setFirstName(f.dragonBall().character().split(" ")[0]);
@@ -111,7 +118,7 @@ public class Generator {
             p.setReservation(resaList.get(rdmNbrBtwn(0, resaList.size())));
             p.setCampground(p.getReservation().getCampground());
             p.setClient(p.getReservation().getClient());
-            p.setDescription(f.elderScrolls().city());
+            p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().between(p.getReservation().getStartDate(), p.getReservation().getEndDate()));
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){
@@ -134,7 +141,7 @@ public class Generator {
         for(int i = 0; i < nbr; i++) {
             var p = new Problem();
             p.setClient(ClientsList.get(rdmNbrBtwn(0,ClientsList.size())));
-            p.setDescription(f.elderScrolls().city());
+            p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().past(30, TimeUnit.DAYS));
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){
@@ -157,7 +164,7 @@ public class Generator {
         for(int i = 0; i < nbr; i++) {
             var p = new Problem();
             p.setCampground(CGlist.get(rdmNbrBtwn(0,CGlist.size())));
-            p.setDescription(f.elderScrolls().city());
+            p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().past(30, TimeUnit.DAYS));
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){

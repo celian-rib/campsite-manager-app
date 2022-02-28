@@ -10,6 +10,7 @@ module pt4.flotsblancs {
 	requires MaterialFX;
 	requires lombok;
 	requires javafaker;
+	requires virtualizedfx;
 	
 	opens pt4.flotsblancs to javafx.graphics,ormlite.jdbc;
 	opens pt4.flotsblancs.database to javafx.graphics,ormlite.jdbc;
