@@ -32,7 +32,7 @@ public class ClientCard extends BorderPane {
 
         openBtn.setOnAction(e -> {
             // TODO linking
-            Router.showToast(ToastType.INFO, "TODO");
+            Router.showToast(ToastType.WARNING, "LINKING TODO");
         });
         return openBtn;
     }
