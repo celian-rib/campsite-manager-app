@@ -6,13 +6,21 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.Getter;
-import pt4.flotsblancs.scenes.*;
+import pt4.flotsblancs.scenes.AdminScene;
+import pt4.flotsblancs.scenes.CampgroundsScene;
+import pt4.flotsblancs.scenes.ClientsScene;
+import pt4.flotsblancs.scenes.ConnectionFallbackScene;
+import pt4.flotsblancs.scenes.DashboardScene;
+import pt4.flotsblancs.scenes.LoginScene;
+import pt4.flotsblancs.scenes.ProblemesScene;
+import pt4.flotsblancs.scenes.ReservationsScene;
+import pt4.flotsblancs.scenes.StocksScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
 
     public enum Routes {
-        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, ADMIN
+        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, ADMIN, PROBLEMES
     }
 
     /**
@@ -28,6 +36,7 @@ public class Router {
             put(Routes.STOCKS, new StocksScene());
             put(Routes.CAMPGROUNDS, new CampgroundsScene());
             put(Routes.ADMIN, new AdminScene());
+            put(Routes.PROBLEMES, new ProblemesScene());
         }
     };
 

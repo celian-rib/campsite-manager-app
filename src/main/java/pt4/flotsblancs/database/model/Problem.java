@@ -2,16 +2,20 @@ package pt4.flotsblancs.database.model;
 
 import java.util.Date;
 
-import lombok.*;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import pt4.flotsblancs.scenes.items.Item;
 
 @EqualsAndHashCode
 @NoArgsConstructor
 @DatabaseTable(tableName = "problems")
-public class Problem {
-
+public class Problem implements Item
+{
     public enum ProblemStatus {
         OPEN, OPEN_URGENT, SOLVED
     }
@@ -76,4 +80,21 @@ public class Problem {
     public String toString() {
         return "Problème #" + id + "  " + description;
     }
+
+	@Override
+	public String getDisplayName() {
+		if(client!=null) {
+			String returnMsg = "Problème concernant "+client;
+			if(returnMsg.length() > 30 )
+				return returnMsg.substring(0, 30)+" [...]";
+			return returnMsg;
+		} else {
+			return "Problème sans client";
+		}
+	}
+
+	public void setEndDate(Date fromLocale) {
+        this.endDate =  fromLocale;
+        this.lastUpdateDate = fromLocale;
+	}
 }

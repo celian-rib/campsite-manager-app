@@ -60,7 +60,9 @@ public class NavBar extends BorderPane {
         addNavButton("Réservations", Routes.RESERVATIONS, "far-calendar-alt:19", 15);
         addNavButton("Stocks", Routes.STOCKS, "fas-box:16", 15);
         addNavButton("Emplacements", Routes.CAMPGROUNDS, "fas-caravan:16", 11);
+        addNavButton("Problèmes", Routes.PROBLEMES, "fas-exclamation-triangle:16", 11);
         addNavButton("Administration", Routes.ADMIN, "fas-user-cog:16", 11);
+        
 
         centerButtons.getChildren().addAll(navButtons.values());
 
