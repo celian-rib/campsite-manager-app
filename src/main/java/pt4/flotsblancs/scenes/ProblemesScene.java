@@ -134,6 +134,12 @@ public class ProblemesScene extends ItemScene<Problem>
 
         container.getChildren().addAll(startDatePicker, endDatePicker);
 
+        /*
+         * 
+         * ICI AFFICHER LA DATE DE LAST UPDATE EN INMODIFIABLE
+         * 
+         * 
+         */
         try {
             campComboBox = new CampGroundComboBox(item.getReservation());
             container.getChildren().add(campComboBox);

@@ -40,7 +40,6 @@ public class ProblemDatePicker extends MFXDatePicker {
         Date defaultDate = isStartDate ? problem.getStartDate() : problem.getEndDate();
         if(defaultDate == null)
         	defaultDate = Date.from(Instant.now());
-        
         setValue(toLocale(defaultDate));
         setText(toLocale(defaultDate).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
 
