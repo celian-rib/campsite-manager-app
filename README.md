@@ -5,14 +5,15 @@
 ## Setup projet
 
 1. Clone le projet `git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
-2. Installer dépendances `mvn clean package`
-3. Installer ojdbc (Gestionnaire base de donnée pour l'ORM)
+2. Installer ojdbc (Gestionnaire base de donnée pour l'ORM) (Ajout -Dmaven.test.skip si les tets ne passent pas)
     ```
     mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar
     ```
-4. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
-5. Lancer un serveur sql en local
-6. Editer le fichier `.env` et mettre les informations de connexion au serveur SQL
+3. Installer dépendances `mvn clean package` (Ajout -Dmaven.test.skip si les tets ne passent pas)
+4. reload vscode
+5. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
+6. Lancer un serveur sql en local
+7. Editer le fichier `.env` et mettre les informations de connexion au serveur SQL
 ```bash
 DB_URL=<url>
 DB_USER=<user>
