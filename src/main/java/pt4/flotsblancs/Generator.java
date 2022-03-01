@@ -30,13 +30,13 @@ public class Generator {
 
         generateAdmin();
         
-        generateStocks(f, 10);
-        generateClients(f, 50);
-        generateCampGrounds(f, 100);
-        generateReservations(f, 20);
-        generateProblemsResa(f, 5);
-        generateProblemsCg(f, 3);
-        generateProblemsClient(f, 3);
+        // generateStocks(f, 10);
+        // generateClients(f, 50);
+        // generateCampGrounds(f, 100);
+        // generateReservations(f, 20);
+        // generateProblemsResa(f, 5);
+        // generateProblemsCg(f, 3);
+        // generateProblemsClient(f, 3);
     }
     
     private static int rdmNbrBtwn(int min, int max){
@@ -51,7 +51,10 @@ public class Generator {
         u.setName("ogba");
         u.setPassword(User.sha256("test"));
         u.setLogin("test");
-        Database.getInstance().getUsersDao().create(u);
+        var existing = Database.getInstance().getUsersDao().queryForMatching(u);
+        if (existing.size() == 0){
+            Database.getInstance().getUsersDao().create(u);
+        }
     }
 
     private static void generateReservations(Faker f, int nbr) throws SQLException{
