@@ -5,6 +5,8 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.palexdev.materialfx.controls.MFXProgressBar;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -28,6 +30,7 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 public abstract class ItemScene<I extends Item> extends BorderPane implements IScene {
 
     private ItemList<I> itemList;
+    private MFXProgressSpinner loading;
 
     /**
      * Permet de créer le conteneur affichant l'item actuellement sélectionné
@@ -50,8 +53,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
     @Override
     public void start() {
         itemList = new ItemList<I>(this);
-
-        setLeft(null);
+        loading = new MFXProgressSpinner();
+        setLeft(loading);
         setCenter(null);
 
         // TODO Responsive padding
@@ -66,13 +69,6 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
     public void onFocus() {
         final Task<List<I>> updateListTask = new Task<List<I>>() {
             protected java.util.List<I> call() throws Exception {
-                for (int iterations = 0; iterations < 100000; iterations++) {
-                    // ! Simulation de latence À SUPPRIMER
-                    if (isCancelled()) {
-                        break;
-                    }
-                    System.out.println("Iteration " + iterations);
-                }
                 var allItems = queryAll();
                 Platform.runLater(() -> {
                     try {
