@@ -19,9 +19,13 @@ import pt4.flotsblancs.components.ItemList;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
+import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
-public abstract class ItemScene<I extends Item> extends BorderPane implements IScene {
+public abstract class ItemScene<I extends Item> extends BorderPane
+        implements IScene, BreakPointListener {
 
     private ItemList<I> itemList;
 
@@ -50,12 +54,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
         setLeft(itemList);
         setCenter(null);
 
-        // TODO Responsive padding
-        // setPadding(new Insets(70));
-        setPadding(new Insets(40));
-        // TODO Responsive margin
-        // BorderPane.setMargin(itemList, new Insets(0, 50, 0, 0));
         BorderPane.setMargin(itemList, new Insets(0, 40, 0, 0));
+        BreakPointManager.addListener(this);
     }
 
     @Override
@@ -100,5 +100,14 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
         stack.getChildren().addAll(shadowPane, container);
 
         setCenter((Parent) stack);
+    }
+
+    @Override
+    public void onHorizontalBreak(HBreakPoint oldBp, HBreakPoint newBp) {
+        if (newBp.getWidth() <= HBreakPoint.LARGE.getWidth()) {
+            setPadding(new Insets(5));
+        } else {
+            setPadding(new Insets(50));
+        }
     }
 }

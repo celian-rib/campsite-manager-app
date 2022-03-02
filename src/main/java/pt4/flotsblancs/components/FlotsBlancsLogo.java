@@ -42,6 +42,8 @@ public class FlotsBlancsLogo extends VBox {
 
         Label title = new javafx.scene.control.Label("Les Flots Blancs");
         title.setTextFill(isDark ? Color.BLACK : Color.WHITE);
-        getChildren().addAll(icon, title);
+        getChildren().add(icon);
+        if (showTitle)
+            getChildren().add(title);
     }
 }

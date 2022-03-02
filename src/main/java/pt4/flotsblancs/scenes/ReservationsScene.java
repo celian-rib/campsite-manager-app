@@ -1,6 +1,7 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,7 @@ import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.breakpoints.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
@@ -34,44 +36,40 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private final int INNER_PADDING = 10;
     private final int CONTENT_SPACING = 20;
 
-    private Label title;
+    private Reservation reservation;
 
+    private Label title;
     private Label dayCount;
 
-    private Label depositPrice;
+    private HBox topSlot;
+    private VBox cardsContainer;
+    private CampgroundCard campCard;
+    private HBoxSpacer topSlotFirstSpacer;
 
+    private HBox bottomSlot;
+    private StackPane problemsContainer;
+
+    private Label depositPrice;
     private Label totalPrice;
 
     private Label datesLabel;
 
-    private Reservation reservation;
-
-    private CampgroundCard campCard;
-
     private MFXComboBox<String> depositComboBox;
-
     private MFXComboBox<String> paymentComboBox;
-
     private MFXComboBox<CashBack> cashBackComboBox;
 
     private ReservationDatePicker startDatePicker;
-
     private ReservationDatePicker endDatePicker;
 
     private CampGroundComboBox campComboBox;
-
     private ServiceComboBox serviceComboBox;
-
     private PersonCountComboBox personCountComboBox;
-
     private EquipmentComboBox equipmentsComboBox;
 
     private MFXButton sendBillBtn;
-
     private ConfirmButton cancelBtn;
 
     private VBox noProblemContainer;
-
     private Label noProblemLabel;
 
     ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
@@ -122,7 +120,13 @@ public class ReservationsScene extends ItemScene<Reservation> {
         try {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
-        } catch (SQLException e) { // TODO gérer erreurs de conn en +
+        } catch (SQLRecoverableException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de connexion");
+            Router.goToScreen(Routes.CONN_FALLBACK);
+        } catch (SQLException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
         }
@@ -138,14 +142,16 @@ public class ReservationsScene extends ItemScene<Reservation> {
         this.reservation = reservation;
 
         VBox container = new VBox();
-
         container.setPadding(new Insets(50));
+
+        topSlot = createTopSlot();
+        bottomSlot = createBottomSlot();
 
         container.getChildren().add(createHeader());
         container.getChildren().add(new VBoxSpacer());
-        container.getChildren().add(createTopSlot());
+        container.getChildren().add(topSlot);
         container.getChildren().add(new VBoxSpacer());
-        container.getChildren().add(createBottomSlot());
+        container.getChildren().add(bottomSlot);
         container.getChildren().add(new VBoxSpacer());
         container.getChildren().add(createActionsButtonsSlot());
 
@@ -158,16 +164,18 @@ public class ReservationsScene extends ItemScene<Reservation> {
      */
     private HBox createTopSlot() {
         HBox container = new HBox(10);
-        // TODO Responsive padding
-        // container.setPadding(new Insets(50));
         container.setPadding(new Insets(INNER_PADDING));
 
-        var cards = cardsContainer();
+        cardsContainer = cardsContainer();
         var gear = selectedEquipmentAndServicesContainer();
         var dates = datesContainer();
 
-        container.getChildren().add(cards);
-        container.getChildren().add(new HBoxSpacer());
+        topSlotFirstSpacer = new HBoxSpacer();
+
+        if (!isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint())) {
+            container.getChildren().add(cardsContainer);
+            container.getChildren().add(topSlotFirstSpacer);
+        }
         container.getChildren().add(gear);
         container.getChildren().add(new HBoxSpacer());
         container.getChildren().add(dates);
@@ -180,12 +188,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
      */
     private HBox createBottomSlot() {
         HBox container = new HBox(10);
-        // TODO Responsive padding
-        // container.setPadding(new Insets(50));
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.BOTTOM_CENTER);
 
-        var problemsContainer = new StackPane();
+        problemsContainer = new StackPane();
 
         var problemsList = new MFXListView<Problem>();
         problemsList.setDepthLevel(DepthLevel.LEVEL0);
@@ -207,7 +213,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
             Router.showToast(ToastType.WARNING, "LINKING TO DO");
         });
 
-        problemsContainer.getChildren().addAll(problemsList, noProblemContainer);
+        if (!isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint()))
+            problemsContainer.getChildren().add(problemsList);
+        if (!isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint()))
+            problemsContainer.getChildren().add(noProblemContainer);
 
         container.getChildren().add(createPaymentContainer());
         container.getChildren().add(new HBoxSpacer());
@@ -449,5 +458,30 @@ public class ReservationsScene extends ItemScene<Reservation> {
     @Override
     protected List<Reservation> queryAll() throws SQLException {
         return Database.getInstance().getReservationDao().queryForAll();
+    }
+
+    private boolean isReducedSize(HBreakPoint currentBp) {
+        return currentBp.getWidth() <= HBreakPoint.LARGE.getWidth();
+    }
+
+    @Override
+    public void onHorizontalBreak(HBreakPoint oldBp, HBreakPoint newBp) {
+        super.onHorizontalBreak(oldBp, newBp); // Implémentation de ItemScene
+
+        if (cardsContainer == null || topSlot == null || problemsContainer == null)
+            return;
+
+        if (isReducedSize(newBp)) {
+            topSlot.getChildren().remove(cardsContainer);
+            topSlot.getChildren().remove(topSlotFirstSpacer);
+            bottomSlot.getChildren().remove(problemsContainer);
+        } else {
+            if (!topSlot.getChildren().contains(cardsContainer))
+                topSlot.getChildren().add(0, cardsContainer);
+            if (!topSlot.getChildren().contains(topSlotFirstSpacer))
+                topSlot.getChildren().add(1, topSlotFirstSpacer);
+            if (!bottomSlot.getChildren().contains(problemsContainer))
+                bottomSlot.getChildren().add(problemsContainer);
+        }
     }
 }
