@@ -47,7 +47,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private HBoxSpacer topSlotFirstSpacer;
 
     private HBox bottomSlot;
-    private StackPane problemsContainer;
 
     private Label depositPrice;
     private Label totalPrice;
@@ -69,8 +68,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private MFXButton sendBillBtn;
     private ConfirmButton cancelBtn;
 
-    private VBox noProblemContainer;
-    private Label noProblemLabel;
+    ProblemsListCard problemsContainer;
+
+
 
     ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         // Check if we need to refresh the page and the database
@@ -89,7 +89,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
         depositPrice.setText("Prix acompte : " + reservation.getDepositPrice() + "€");
         totalPrice.setText("Prix total : " + reservation.getTotalPrice() + "€");
         campCard.refresh(reservation.getCampground());
-        noProblemContainer.setVisible(reservation.getProblems().size() == 0);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E dd MMM", Locale.FRANCE);
         String startStr = simpleDateFormat.format(reservation.getStartDate());
@@ -191,36 +190,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.BOTTOM_CENTER);
 
-        problemsContainer = new StackPane();
-
-        var problemsList = new MFXListView<Problem>();
-        problemsList.setDepthLevel(DepthLevel.LEVEL0);
-
-        problemsList.getItems().addAll(reservation.getProblems());
-        problemsList.setMaxWidth(500);
-        problemsList.setPrefWidth(500);
-        problemsList.setMinWidth(100);
-        problemsList.setMaxHeight(140);
-
-        noProblemContainer = new VBox(30);
-        noProblemLabel = new Label("Aucun problème pour cette réservation");
-        var addProblemBtn = new MFXButton("Ajouter un problème");
-        noProblemContainer.getChildren().addAll(noProblemLabel, addProblemBtn);
-        noProblemContainer.setAlignment(Pos.CENTER);
-        addProblemBtn.getStyleClass().add("action-button-outlined");
-        addProblemBtn.setOnAction(e -> {
-            // TODO linking
-            Router.showToast(ToastType.WARNING, "LINKING TO DO");
-        });
-
-        if (!isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint()))
-            problemsContainer.getChildren().add(problemsList);
-        if (!isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint()))
-            problemsContainer.getChildren().add(noProblemContainer);
+        problemsContainer = new ProblemsListCard(reservation.getProblems());
 
         container.getChildren().add(createPaymentContainer());
         container.getChildren().add(new HBoxSpacer());
-        container.getChildren().add(problemsContainer);
+        if (!isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint()))
+            container.getChildren().add(problemsContainer);
         return container;
     }
 
