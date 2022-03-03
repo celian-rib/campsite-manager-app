@@ -2,10 +2,13 @@ package pt4.flotsblancs.components;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -16,13 +19,16 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.items.ItemScene;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ItemList<I extends Item> extends StackPane {
 
@@ -45,9 +51,11 @@ public class ItemList<I extends Item> extends StackPane {
 
         borderPane.setTop(searchBar);
         borderPane.setCenter(scrollPane);
+        borderPane.setBottom(createAddButton());
         borderPane.setPadding(new Insets(10));
         borderPane.setBackground(background);
-        BorderPane.setMargin(searchBar, new Insets(0, 0, 10, 0));
+
+        BorderPane.setMargin(scrollPane, new Insets(10, 0, 10, 0));
 
         Shadow shadow = new Shadow();
         shadow.setBlurType(BlurType.GAUSSIAN);
@@ -73,6 +81,24 @@ public class ItemList<I extends Item> extends StackPane {
         TextField searchBar = new TextField();
         searchBar.setPromptText("Rechercher");
         return searchBar;
+    }
+
+    private HBox createAddButton() {
+        var container = new HBox();
+        BackgroundFill fill = new BackgroundFill(Color.RED, new CornerRadii(10), Insets.EMPTY);
+        Background background = new Background(fill);
+        container.setBackground(background);
+        var btn = new MFXButton("Ajouter");
+        // btn.getStyleClass().add("action-button-outlined");
+        // btn.setOnAction(e -> {
+        //     // TODO linking
+        //     Router.showToast(ToastType.WARNING, "LINKING TO DO");
+        // });
+        btn.setPrefWidth(100);
+        container.getChildren().add(btn);
+        System.out.println(container.getWidth());
+        // btn.setPrefWidth(container.getWidth());
+        return container;
     }
 
     private ItemPane<I> createListButton(I item) {
