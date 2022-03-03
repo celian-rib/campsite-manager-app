@@ -7,7 +7,8 @@ import lombok.Getter;
 public class BreakPointManager {
 
     /**
-     * Liste des élèments ayant besoin d'écouter les événèments de changement de taille de la
+     * Liste des élèments ayant besoin d'écouter les événèments de changement de
+     * taille de la
      * fenêtre
      */
     private final static HashSet<BreakPointListener> listeners = new HashSet<BreakPointListener>();
@@ -22,7 +23,8 @@ public class BreakPointManager {
     }
 
     /**
-     * Permet de supprimer un élèment de la liste des listener de changements de taille de la
+     * Permet de supprimer un élèment de la liste des listener de changements de
+     * taille de la
      * fenêtre
      * 
      * @param listener
@@ -55,33 +57,46 @@ public class BreakPointManager {
     private static void setupPropertiesListener() {
         // Gestion Width (Horizontal)
         stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-            var old = currentHorizontalBreakPoint;
-            if (newVal.intValue() < HBreakPoint.SMALL.getWidth())
-                currentHorizontalBreakPoint = HBreakPoint.SMALL;
-            else if (newVal.intValue() < HBreakPoint.MEDIUM.getWidth())
-                currentHorizontalBreakPoint = HBreakPoint.MEDIUM;
-            else if (newVal.intValue() < HBreakPoint.LARGE.getWidth())
-                currentHorizontalBreakPoint = HBreakPoint.LARGE;
-            else
-                currentHorizontalBreakPoint = HBreakPoint.NONE;
-            if (currentHorizontalBreakPoint != old)
-                notifyAllHorizontalBp(old);
+            handleWidthProperty(oldVal.intValue(), newVal.intValue());
         });
 
         // Gestion height (Vertical)
         stage.heightProperty().addListener((obs, oldVal, newVal) -> {
-            var old = currentVerticalBreakPoint;
-            if (newVal.intValue() < VBreakPoint.SMALL.getHeight())
-                currentVerticalBreakPoint = VBreakPoint.SMALL;
-            else if (newVal.intValue() < VBreakPoint.MEDIUM.getHeight())
-                currentVerticalBreakPoint = VBreakPoint.MEDIUM;
-            else if (newVal.intValue() < VBreakPoint.LARGE.getHeight())
-                currentVerticalBreakPoint = VBreakPoint.LARGE;
-            else
-                currentVerticalBreakPoint = VBreakPoint.NONE;
-            if (currentVerticalBreakPoint != old)
-                notifyAllVerticalBp(old);
+            handleHeightPorperty(oldVal.intValue(), newVal.intValue());
         });
+
+        stage.fullScreenProperty().addListener((obs, oldVal, newVal) -> {
+            handleWidthProperty((int) stage.getWidth(), (int) stage.getWidth());
+            handleHeightPorperty((int) stage.getWidth(), (int) stage.getWidth());
+        });
+    }
+
+    private static void handleWidthProperty(int oldVal, int newVal) {
+        var old = currentHorizontalBreakPoint;
+        if (newVal < HBreakPoint.SMALL.getWidth())
+            currentHorizontalBreakPoint = HBreakPoint.SMALL;
+        else if (newVal < HBreakPoint.MEDIUM.getWidth())
+            currentHorizontalBreakPoint = HBreakPoint.MEDIUM;
+        else if (newVal < HBreakPoint.LARGE.getWidth())
+            currentHorizontalBreakPoint = HBreakPoint.LARGE;
+        else
+            currentHorizontalBreakPoint = HBreakPoint.NONE;
+        if (currentHorizontalBreakPoint != old)
+            notifyAllHorizontalBp(old);
+    }
+
+    private static void handleHeightPorperty(int oldVal, int newVal) {
+        var old = currentVerticalBreakPoint;
+        if (newVal < VBreakPoint.SMALL.getHeight())
+            currentVerticalBreakPoint = VBreakPoint.SMALL;
+        else if (newVal < VBreakPoint.MEDIUM.getHeight())
+            currentVerticalBreakPoint = VBreakPoint.MEDIUM;
+        else if (newVal < VBreakPoint.LARGE.getHeight())
+            currentVerticalBreakPoint = VBreakPoint.LARGE;
+        else
+            currentVerticalBreakPoint = VBreakPoint.NONE;
+        if (currentVerticalBreakPoint != old)
+            notifyAllVerticalBp(old);
     }
 
     private static void notifyAllHorizontalBp(HBreakPoint old) {
