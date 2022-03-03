@@ -9,27 +9,57 @@ import javafx.geometry.Insets;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.Shadow;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.items.ItemScene;
 
-public class ItemList<I extends Item> extends BorderPane {
+public class ItemList<I extends Item> extends StackPane {
 
     private ItemScene<I> itemScene;
+
+    private BorderPane borderPane;
     private ScrollPane scrollPane;
 
     public ItemList(ItemScene<I> itemScene) {
+        borderPane = new BorderPane();
+
         this.itemScene = itemScene;
         scrollPane = createScrollPane();
 
         TextField searchBar = createSearchBar();
         setMargin(searchBar, new Insets(0, 0, 10, 0));
 
-        setTop(searchBar);
-        setCenter(scrollPane);
+        BackgroundFill fill = new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY);
+        Background background = new Background(fill);
+
+        borderPane.setTop(searchBar);
+        borderPane.setCenter(scrollPane);
+        borderPane.setPadding(new Insets(10));
+        borderPane.setBackground(background);
+        BorderPane.setMargin(searchBar, new Insets(0, 0, 10, 0));
+
+        Shadow shadow = new Shadow();
+        shadow.setBlurType(BlurType.GAUSSIAN);
+        shadow.setColor(Color.LIGHTGRAY);
+        shadow.setRadius(15);
+
+        Pane shadowPane = new Pane();
+        shadowPane.setBackground(background);
+        shadowPane.setEffect(shadow);
+
+        setBackground(background);
+        getChildren().addAll(shadowPane, borderPane);
     }
 
     private ScrollPane createScrollPane() {
@@ -70,8 +100,7 @@ public class ItemList<I extends Item> extends BorderPane {
             listButtons.add(createListButton(i));
 
         ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
-        ObservableList<ItemPane<I>> itemsListContainer =
-                FXCollections.observableArrayList(listButtons);
+        ObservableList<ItemPane<I>> itemsListContainer = FXCollections.observableArrayList(listButtons);
 
         listView.setFocusTraversable(false);
         listView.setStyle(

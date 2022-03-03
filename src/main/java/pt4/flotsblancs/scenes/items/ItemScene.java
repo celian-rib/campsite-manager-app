@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import pt4.flotsblancs.components.EmptyItemContainer;
 import pt4.flotsblancs.components.ItemList;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
@@ -54,8 +55,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         setLeft(itemList);
         setCenter(null);
 
-        BorderPane.setMargin(itemList, new Insets(0, 40, 0, 0));
         BreakPointManager.addListener(this);
+        updateContainer(null);
     }
 
     @Override
@@ -94,7 +95,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         shadowPane.setBackground(background);
         shadowPane.setEffect(shadow);
 
-        Region container = createContainer(item);
+        Region container = item == null ? new EmptyItemContainer() : createContainer(item);
         container.setBackground(background);
 
         stack.getChildren().addAll(shadowPane, container);
@@ -106,8 +107,10 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     public void onHorizontalBreak(HBreakPoint oldBp, HBreakPoint newBp) {
         if (newBp.getWidth() <= HBreakPoint.LARGE.getWidth()) {
             setPadding(new Insets(5));
+            BorderPane.setMargin(itemList, new Insets(0, 20, 0, 0));
         } else {
             setPadding(new Insets(50));
+            BorderPane.setMargin(itemList, new Insets(0, 40, 0, 0));
         }
     }
 }
