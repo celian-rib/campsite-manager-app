@@ -48,5 +48,7 @@ public class App extends Application {
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 		primaryStage.setResizable(true);
 		primaryStage.show();
+
+		
 	}
 }
