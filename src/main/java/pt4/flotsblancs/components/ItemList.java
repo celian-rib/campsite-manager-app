@@ -20,6 +20,9 @@ public class ItemList<I extends Item> extends BorderPane {
 
     private ItemScene<I> itemScene;
     private ScrollPane scrollPane;
+    private ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
+    private ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
+    private I selected = null;
 
     public ItemList(ItemScene<I> itemScene) {
         this.itemScene = itemScene;
@@ -64,12 +67,12 @@ public class ItemList<I extends Item> extends BorderPane {
     }
 
     public void updateItems(List<I> items) {
-        ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
+        listButtons = new ArrayList<ItemPane<I>>();
 
         for (I i : items)
             listButtons.add(createListButton(i));
 
-        ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
+        listView = new ListView<ItemPane<I>>();
         ObservableList<ItemPane<I>> itemsListContainer =
                 FXCollections.observableArrayList(listButtons);
 
@@ -87,8 +90,19 @@ public class ItemList<I extends Item> extends BorderPane {
             }
         });
 
+        if (selected != null) {
+            listView.getSelectionModel().select(new ItemPane<I>(selected));
+            itemScene.updateContainer(selected);
+            selected = null;
+        }
+
         listView.setItems(itemsListContainer);
         scrollPane.setContent(listView);
+        selected = null;
+    }
+
+    public void selectItem(I item) {
+        selected = item;
     }
 
     private class ItemPane<T extends Item> extends BorderPane {
@@ -102,5 +116,16 @@ public class ItemList<I extends Item> extends BorderPane {
         public T getItem() {
             return this.item;
         }
+
+        @Override
+        public boolean equals(Object anObject) {    
+            if (this == anObject) {    
+                return true;    
+            }
+            return anObject instanceof Item && this.getItem().equals(anObject);
+            
+        }    
     }
+
+    
 }

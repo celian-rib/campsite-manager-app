@@ -141,4 +141,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane
             setPadding(new Insets(50));
         }
     }
+
+    public void selectItem(Item item) {
+        itemList.selectItem((I)item);
+    }
 }
