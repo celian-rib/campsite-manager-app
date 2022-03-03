@@ -1,10 +1,12 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXListView;
@@ -14,6 +16,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -21,8 +24,10 @@ import pt4.flotsblancs.components.*;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.breakpoints.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
@@ -31,39 +36,41 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private final int INNER_PADDING = 10;
     private final int CONTENT_SPACING = 20;
 
+    private Reservation reservation;
+
+    private Label title;
     private Label dayCount;
 
-    private Label depositPrice;
+    private HBox topSlot;
+    private VBox cardsContainer;
+    private CampgroundCard campCard;
+    private HBoxSpacer topSlotFirstSpacer;
 
+    private HBox bottomSlot;
+
+    private Label depositPrice;
     private Label totalPrice;
 
     private Label datesLabel;
 
-    private Reservation reservation;
-
-    private CampgroundCard campCard;
-
     private MFXComboBox<String> depositComboBox;
-
     private MFXComboBox<String> paymentComboBox;
-
-    private MFXComboBox<String> cashBackComboBox;
+    private MFXComboBox<CashBack> cashBackComboBox;
 
     private ReservationDatePicker startDatePicker;
-
     private ReservationDatePicker endDatePicker;
 
     private CampGroundComboBox campComboBox;
-
     private ServiceComboBox serviceComboBox;
-
     private PersonCountComboBox personCountComboBox;
-
     private EquipmentComboBox equipmentsComboBox;
 
     private MFXButton sendBillBtn;
+    private ConfirmButton cancelBtn;
 
-    private MFXButton cancelBtn;
+    ProblemsListCard problemsContainer;
+
+
 
     ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         // Check if we need to refresh the page and the database
@@ -75,6 +82,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     private void refreshPage() {
         // Rafraichit tous les labels de la page ayant une valeur calculé
+        String cancelStr = reservation.getCanceled() ? " (Annulée)" : "";
+        title.setText("Réservation  #" + reservation.getId() + cancelStr);
+
         dayCount.setText(reservation.getDayCount() + " jours");
         depositPrice.setText("Prix acompte : " + reservation.getDepositPrice() + "€");
         totalPrice.setText("Prix total : " + reservation.getTotalPrice() + "€");
@@ -91,24 +101,31 @@ public class ReservationsScene extends ItemScene<Reservation> {
         // Active / Desactive les contrôle en fonction de l'état de la réservation
         boolean isDeposited = reservation.getDepositDate() != null;
         boolean isPaid = reservation.getPaymentDate() != null;
-        startDatePicker.setDisable(isDeposited || isPaid);
-        endDatePicker.setDisable(isDeposited || isPaid);
-        campComboBox.setDisable(isDeposited || isPaid);
-        serviceComboBox.setDisable(isDeposited || isPaid);
-        personCountComboBox.setDisable(isDeposited || isPaid);
-        equipmentsComboBox.setDisable(isDeposited || isPaid);
-        cashBackComboBox.setDisable(isPaid);
-        depositComboBox.setDisable(isPaid);
-        paymentComboBox.setDisable(!isDeposited);
-        sendBillBtn.setDisable(!isPaid);
-        cancelBtn.setDisable(isPaid);
+        boolean canceled = reservation.getCanceled();
+        startDatePicker.setDisable(isDeposited || isPaid || canceled);
+        endDatePicker.setDisable(isDeposited || isPaid || canceled);
+        campComboBox.setDisable(isDeposited || isPaid || canceled);
+        serviceComboBox.setDisable(isDeposited || isPaid || canceled);
+        personCountComboBox.setDisable(isDeposited || isPaid || canceled);
+        equipmentsComboBox.setDisable(isDeposited || isPaid || canceled);
+        cashBackComboBox.setDisable(isPaid || canceled);
+        depositComboBox.setDisable(isPaid || canceled);
+        paymentComboBox.setDisable(!isDeposited || canceled);
+        sendBillBtn.setDisable(!isPaid || canceled);
+        cancelBtn.setDisable(isPaid || canceled);
     }
 
     private void refreshDatabase() {
         try {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
-        } catch (SQLException e) { // TODO gérer erreurs de conn en +
+        } catch (SQLRecoverableException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de connexion");
+            Router.goToScreen(Routes.CONN_FALLBACK);
+        } catch (SQLException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
         }
@@ -124,14 +141,16 @@ public class ReservationsScene extends ItemScene<Reservation> {
         this.reservation = reservation;
 
         VBox container = new VBox();
-
         container.setPadding(new Insets(50));
+
+        topSlot = createTopSlot();
+        bottomSlot = createBottomSlot();
 
         container.getChildren().add(createHeader());
         container.getChildren().add(new VBoxSpacer());
-        container.getChildren().add(createTopSlot());
+        container.getChildren().add(topSlot);
         container.getChildren().add(new VBoxSpacer());
-        container.getChildren().add(createBottomSlot());
+        container.getChildren().add(bottomSlot);
         container.getChildren().add(new VBoxSpacer());
         container.getChildren().add(createActionsButtonsSlot());
 
@@ -144,16 +163,18 @@ public class ReservationsScene extends ItemScene<Reservation> {
      */
     private HBox createTopSlot() {
         HBox container = new HBox(10);
-        // TODO Responsive padding
-        // container.setPadding(new Insets(50));
         container.setPadding(new Insets(INNER_PADDING));
 
-        var cards = cardsContainer();
+        cardsContainer = cardsContainer();
         var gear = selectedEquipmentAndServicesContainer();
         var dates = datesContainer();
 
-        container.getChildren().add(cards);
-        container.getChildren().add(new HBoxSpacer());
+        topSlotFirstSpacer = new HBoxSpacer();
+
+        if (!isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint())) {
+            container.getChildren().add(cardsContainer);
+            container.getChildren().add(topSlotFirstSpacer);
+        }
         container.getChildren().add(gear);
         container.getChildren().add(new HBoxSpacer());
         container.getChildren().add(dates);
@@ -166,31 +187,20 @@ public class ReservationsScene extends ItemScene<Reservation> {
      */
     private HBox createBottomSlot() {
         HBox container = new HBox(10);
-        // TODO Responsive padding
-        // container.setPadding(new Insets(50));
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.BOTTOM_CENTER);
 
-        var problemsList = new MFXListView<Problem>();
-        problemsList.setDepthLevel(DepthLevel.LEVEL0);
-        
-        problemsList.getItems().addAll(reservation.getProblems());
-        
-        // TODO responsive
-        problemsList.setMaxWidth(300);
-        
-        problemsList.setMaxHeight(140);
+        problemsContainer = new ProblemsListCard(reservation.getProblems());
 
         container.getChildren().add(createPaymentContainer());
         container.getChildren().add(new HBoxSpacer());
-        container.getChildren().add(problemsList);
+        if (!isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint()))
+            container.getChildren().add(problemsContainer);
         return container;
     }
 
     private HBox createPaymentContainer() {
         HBox container = new HBox(CONTENT_SPACING);
-
-
 
         VBox btnContainer = new VBox(CONTENT_SPACING);
         depositComboBox = createPriceComboBox("Acompte");
@@ -202,12 +212,20 @@ public class ReservationsScene extends ItemScene<Reservation> {
         createPayementListener(paymentComboBox);
 
         cashBackComboBox = createCashbackComboBox();
-        // TODO Listener
+        createCashbackListener(cashBackComboBox);
+
         btnContainer.getChildren().addAll(depositComboBox, paymentComboBox, cashBackComboBox);
 
         VBox labelsContainer = new VBox(CONTENT_SPACING);
         depositPrice = new Label();
+        depositPrice.setMinWidth(110);
+        depositPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
+
         totalPrice = new Label();
+        totalPrice.setMinWidth(110);
+        totalPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
+
+
         labelsContainer.getChildren().addAll(depositPrice, totalPrice);
 
         container.getChildren().addAll(btnContainer, labelsContainer);
@@ -243,6 +261,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.getChildren().addAll(startDatePicker, endDatePicker);
 
         try {
+            // TODO ne pas fetch les emplacements à chaque fois
             campComboBox = new CampGroundComboBox(reservation);
             campComboBox.addListener(changeListener);
             container.getChildren().add(campComboBox);
@@ -280,7 +299,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private BorderPane createHeader() {
         BorderPane container = new BorderPane();
 
-        Label title = new Label("Réservation  #" + reservation.getId());
+        title = new Label();
         title.setFont(new Font(24));
         title.setTextFill(Color.rgb(51, 59, 97));
 
@@ -307,7 +326,16 @@ public class ReservationsScene extends ItemScene<Reservation> {
         var container = new HBox(10);
 
         sendBillBtn = new MFXButton("Envoyer facture");
-        cancelBtn = new MFXButton("Annuler la réservation");
+        cancelBtn = new ConfirmButton("Annuler la réservation");
+        FontIcon icon = new FontIcon("fas-exclamation-triangle:10");
+        icon.setIconColor(Color.WHITE);
+        cancelBtn.setGraphic(icon);
+        cancelBtn.setOnConfirmedAction(e -> {
+            reservation.setCanceled(true);
+            refreshPage();
+            refreshDatabase();
+        });
+
         sendBillBtn.getStyleClass().add("action-button");
         cancelBtn.getStyleClass().add("action-button");
 
@@ -334,11 +362,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
      * @param typeName
      * @return ComboBox pour choisir une remise
      */
-    private MFXComboBox<String> createCashbackComboBox() {
-        var combo = new MFXComboBox<String>();
+    private MFXComboBox<CashBack> createCashbackComboBox() {
+        var combo = new MFXComboBox<CashBack>();
         combo.setFloatingText("Remise");
         combo.setFloatMode(FloatMode.INLINE);
-        combo.getItems().addAll("Aucune", "10%", "20%", "50%");
+        combo.getItems().addAll(CashBack.values());
         combo.selectIndex(0);
         combo.setMinWidth(180);
         combo.setAnimated(false);
@@ -385,8 +413,50 @@ public class ReservationsScene extends ItemScene<Reservation> {
         });
     }
 
+    /**
+     * Listener de la ComboBox de paiement
+     * 
+     * Lance la mise à jour de l'interface et de la BD si la valeur change
+     * 
+     * @param comboBox
+     */
+    private void createCashbackListener(MFXComboBox<CashBack> comboBox) {
+        comboBox.valueProperty().addListener((obs, oldPrice, newPrice) -> {
+            if (oldPrice == null)
+                return;
+            reservation.setCashBack(newPrice);
+            refreshPage();
+            refreshDatabase();
+        });
+    }
+
     @Override
     protected List<Reservation> queryAll() throws SQLException {
         return Database.getInstance().getReservationDao().queryForAll();
+    }
+
+    private boolean isReducedSize(HBreakPoint currentBp) {
+        return currentBp.getWidth() <= HBreakPoint.LARGE.getWidth();
+    }
+
+    @Override
+    public void onHorizontalBreak(HBreakPoint oldBp, HBreakPoint newBp) {
+        super.onHorizontalBreak(oldBp, newBp); // Implémentation de ItemScene
+
+        if (cardsContainer == null || topSlot == null || problemsContainer == null)
+            return;
+
+        if (isReducedSize(newBp)) {
+            topSlot.getChildren().remove(cardsContainer);
+            topSlot.getChildren().remove(topSlotFirstSpacer);
+            bottomSlot.getChildren().remove(problemsContainer);
+        } else {
+            if (!topSlot.getChildren().contains(cardsContainer))
+                topSlot.getChildren().add(0, cardsContainer);
+            if (!topSlot.getChildren().contains(topSlotFirstSpacer))
+                topSlot.getChildren().add(1, topSlotFirstSpacer);
+            if (!bottomSlot.getChildren().contains(problemsContainer))
+                bottomSlot.getChildren().add(problemsContainer);
+        }
     }
 }

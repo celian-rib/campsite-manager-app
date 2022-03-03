@@ -5,14 +5,28 @@ import java.util.HashMap;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import pt4.flotsblancs.scenes.*;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
 
+    @AllArgsConstructor
     public enum Routes {
-        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, ADMIN
+        CONN_FALLBACK("Erreur de connexion"), 
+        CLIENTS("Clients"), 
+        RESERVATIONS("Réservations"), 
+        LOGIN("Connexion"), 
+        HOME("Accueil"), 
+        STOCKS("Stocks"), 
+        CAMPGROUNDS("Emplacements"), 
+        ADMIN("Administration"); // TODO remove méthode getName de IScene et utiliser valeur de l'enum
+
+        @Getter
+        private String routeName;
+
+        //TODO ajouter showNavBar en attribut de l'enum et l'enlever de IScene
     }
 
     /**
@@ -41,6 +55,7 @@ public class Router {
      * Scene contenant la barre de navigation et l'écran a afficher Cette scène ne change jamais et
      * est le réel conteneur de toute l'application (La racine de l'arbre JFX)
      */
+    @Getter
     private static RootScene rootScene;
 
     /**

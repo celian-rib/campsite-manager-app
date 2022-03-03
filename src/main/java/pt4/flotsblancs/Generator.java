@@ -17,6 +17,7 @@ import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.database.model.Problem.ProblemStatus;
+import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.database.model.types.Service;
 
@@ -29,13 +30,13 @@ public class Generator {
 
         // generateAdmin();
         
-        generateStocks(f, 10);
-        generateClients(f, 50);
-        generateCampGrounds(f, 100);
-        generateReservations(f, 20);
-        generateProblemsResa(f, 5);
-        generateProblemsCg(f, 3);
-        generateProblemsClient(f, 3);
+        // generateStocks(f, 10);
+        // generateClients(f, 50);
+        // generateCampGrounds(f, 100);
+        // generateReservations(f, 20);
+        // generateProblemsResa(f, 5);
+        // generateProblemsCg(f, 3);
+        // generateProblemsClient(f, 3);
     }
     
     private static int rdmNbrBtwn(int min, int max){
@@ -50,7 +51,10 @@ public class Generator {
         u.setName("ogba");
         u.setPassword(User.sha256("test"));
         u.setLogin("test");
-        Database.getInstance().getUsersDao().create(u);
+        var existing = Database.getInstance().getUsersDao().queryForMatching(u);
+        if (existing.size() == 0){
+            Database.getInstance().getUsersDao().create(u);
+        }
     }
 
     private static void generateReservations(Faker f, int nbr) throws SQLException{
@@ -58,15 +62,21 @@ public class Generator {
         List<Client> ClientsList = Database.getInstance().getClientsDao().queryForAll();
         for(int i = 0; i < nbr; i++) {
             var resa = new Reservation();
+            
             resa.setCampground(CGlist.get(rdmNbrBtwn(0,CGlist.size())));
             resa.setClient(ClientsList.get(rdmNbrBtwn(0,ClientsList.size())));
             resa.setNbPersons(rdmNbrBtwn(1, 5));
-            resa.setCashBackPercent(rdmNbrBtwn(0, 10) > 8 ? 20 : 0);
+            
+            var cashbacks = CashBack.values();
+            resa.setCashBack(cashbacks[rdmNbrBtwn(0, cashbacks.length)]);
+
             resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
             resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+            
             var equipments = resa.getCampground().getAllowedEquipments().getCompatibles();
             resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
+            
             Database.getInstance().getReservationDao().create(resa);
             System.out.println(resa);
         }
@@ -80,7 +90,11 @@ public class Generator {
             cg.setSurface(f.number().randomDigitNotZero());
             cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);
             cg.setProvidedServices(Service.values()[rdmNbrBtwn(0, Service.values().length)]);
-            Database.getInstance().getCampgroundDao().create(cg);
+            try {
+                Database.getInstance().getCampgroundDao().create(cg);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
             System.out.println(cg);
         }
     }
@@ -90,11 +104,14 @@ public class Generator {
             var c = new Client();
             c.setAddresse(f.address().fullAddress());
             c.setPhone(f.phoneNumber().cellPhone().toString());
-            String hp = f.harryPotter().character();
+            String hp = f.harryPotter().spell();
             c.setName((hp.split(" ").length>1)?hp.split(" ")[1]:hp.split(" ")[0]);
             c.setFirstName(f.dragonBall().character().split(" ")[0]);
-            Database.getInstance().getClientsDao().create(c);
-            System.out.println(c);
+            try {
+                Database.getInstance().getClientsDao().create(c);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
         }        
     }
 
