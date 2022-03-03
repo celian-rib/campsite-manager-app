@@ -28,7 +28,7 @@ public class Generator {
 
         var f = new Faker();
 
-        // generateAdmin();
+        generateAdmin();
         
         // generateStocks(f, 10);
         // generateClients(f, 50);

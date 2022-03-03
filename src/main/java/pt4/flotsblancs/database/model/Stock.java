@@ -25,6 +25,7 @@ public class Stock implements Item{
 
     @Setter
     @Getter
+    @ToString.Include
     @DatabaseField(canBeNull = false)
     private int quantity;
 
