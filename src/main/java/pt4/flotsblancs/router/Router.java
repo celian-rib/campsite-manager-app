@@ -166,7 +166,7 @@ public class Router {
         if (parameterizedRoutes.contains(newRoute)) {
             ItemScene nextScene = (ItemScene)routes.get(newRoute);
             nextScene.selectItem(item);
-            log("[Router] Selecting " + item.getDisplayName() + " on " + newRoute.name());
+            log("Selecting " + item.getDisplayName() + " on " + newRoute.name());
         }
         goToScreen(newRoute);
     }
