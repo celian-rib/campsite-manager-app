@@ -162,9 +162,9 @@ public class Router {
      * 
      * @param newRoute
      */
-    public static void goToScreen(Routes newRoute, Item item) {
+    public static <I extends Item> void goToScreen(Routes newRoute,I item) {
         if (parameterizedRoutes.contains(newRoute)) {
-            ItemScene nextScene = (ItemScene)routes.get(newRoute);
+            ItemScene<I> nextScene = (ItemScene<I>)routes.get(newRoute);
             nextScene.selectItem(item);
             log("[Router] Selecting " + item.getDisplayName() + " on " + newRoute.name());
         }
