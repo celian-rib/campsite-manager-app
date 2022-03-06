@@ -9,8 +9,6 @@ import java.util.Locale;
 import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXListView;
-import io.github.palexdev.materialfx.effects.DepthLevel;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
@@ -22,7 +20,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.components.*;
 import pt4.flotsblancs.database.Database;
-import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.router.Router;
@@ -77,10 +74,14 @@ public class ReservationsScene extends ItemScene<Reservation> {
         if (oldValue == newValue || oldValue == null)
             return;
         refreshPage();
-        refreshDatabase();
+        updateDatabase();
     };
 
     private void refreshPage() {
+        equipmentsComboBox.refresh();
+        campComboBox.refresh();
+        serviceComboBox.refresh();
+
         // Rafraichit tous les labels de la page ayant une valeur calculé
         String cancelStr = reservation.getCanceled() ? " (Annulée)" : "";
         title.setText("Réservation  #" + reservation.getId() + cancelStr);
@@ -94,9 +95,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
         String startStr = simpleDateFormat.format(reservation.getStartDate());
         String endStr = simpleDateFormat.format(reservation.getEndDate());
         datesLabel.setText(startStr + " - " + endStr);
-
-        equipmentsComboBox.refresh();
-        campComboBox.refresh();
 
         // Active / Desactive les contrôle en fonction de l'état de la réservation
         boolean isDeposited = reservation.getDepositDate() != null;
@@ -115,7 +113,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         cancelBtn.setDisable(isPaid || canceled);
     }
 
-    private void refreshDatabase() {
+    private void updateDatabase() {
         try {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
@@ -333,7 +331,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         cancelBtn.setOnConfirmedAction(e -> {
             reservation.setCanceled(true);
             refreshPage();
-            refreshDatabase();
+            updateDatabase();
         });
 
         sendBillBtn.getStyleClass().add("action-button");
@@ -389,7 +387,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
             else
                 reservation.setDepositDate(null);
             refreshPage();
-            refreshDatabase();
+            updateDatabase();
         });
     }
 
@@ -409,7 +407,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
             else
                 reservation.setPaymentDate(null);
             refreshPage();
-            refreshDatabase();
+            updateDatabase();
         });
     }
 
@@ -426,7 +424,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
                 return;
             reservation.setCashBack(newPrice);
             refreshPage();
-            refreshDatabase();
+            updateDatabase();
         });
     }
 
