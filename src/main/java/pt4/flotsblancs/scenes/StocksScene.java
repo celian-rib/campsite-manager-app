@@ -1,42 +1,29 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.time.Month;
+import java.sql.SQLRecoverableException;
 import java.util.List;
-
-import org.kordamp.ikonli.javafx.FontIcon;
-
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXSlider;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.util.converter.IntegerStringConverter;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.router.IScene;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class StocksScene extends VBox implements IScene {
 
-    TableView<Stock> table = new TableView<Stock>();
-    private MFXButton modify;
+    private TableView<Stock> table;
 
     public String getName() {
         return "Stocks";
@@ -47,41 +34,37 @@ public class StocksScene extends VBox implements IScene {
     }
 
     public void onFocus() {
-
+        updateTable();
     }
 
     protected List<Stock> queryAll() throws SQLException {
         return Database.getInstance().getStockDao().queryForAll();
     }
 
-    public void onUnfocus() {
-
-    }
-
     public void start() {
         setAlignment(Pos.CENTER);
         displayTableView();
-        this.getChildren().add(createActionsButtonsSlot());
     }
 
     public void displayTableView() {
-
+        table = new TableView<Stock>();
         table.setEditable(true);
 
         TableColumn<Stock, String> itemCol = new TableColumn<Stock, String>("Objet");
-
         TableColumn<Stock, Integer> quantityCol = new TableColumn<Stock, Integer>("Quantité");
-
         TableColumn<Stock, String> storageLocCol = new TableColumn<Stock, String>("Emplacement");
+        TableColumn<Stock, Integer> alertCol = new TableColumn<Stock, Integer>("Seuil d'alerte");
 
-        table.getColumns().addAll(itemCol, quantityCol, storageLocCol);
+        table.getColumns().add(itemCol);
+        table.getColumns().add(quantityCol);
+        table.getColumns().add(storageLocCol);
+        table.getColumns().add(alertCol);
+        
 
         itemCol.setCellValueFactory(new PropertyValueFactory<>("item"));
         itemCol.setCellFactory(TextFieldTableCell.<Stock>forTableColumn());
 
         quantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        // quantityCol.setCellFactory(TextFieldTableCell.forTableColumn(new
-        // IntegerStringConverter()));
 
         quantityCol.setCellFactory(col -> {
             TableCell<Stock, Integer> cell = new TableCell<Stock, Integer>();
@@ -92,6 +75,14 @@ public class StocksScene extends VBox implements IScene {
                     SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,
                             100000000);
                     valueFactory.setValue(cell.getItem());
+                    valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
+                        if(oldVal == null)
+                            return;
+                        var stock = cell.getTableRow().getItem();
+                        stock.setQuantity(newVal);
+                        // TODO debounce l'update pour ne pas spam la BD
+                        updateDatabase(stock);
+                    });
                     graphic.setValueFactory(valueFactory);
 
                     cell.graphicProperty()
@@ -102,43 +93,82 @@ public class StocksScene extends VBox implements IScene {
             return cell;
         });
 
-        quantityCol.setOnEditCommit((CellEditEvent<Stock, Integer> event) -> {
-            TablePosition<Stock, Integer> pos = event.getTablePosition();
+        alertCol.setCellValueFactory(new PropertyValueFactory<>("quantityAlertThreshold"));
 
-            Integer newGender = event.getNewValue();
+        alertCol.setCellFactory(col -> {
+            TableCell<Stock, Integer> cell = new TableCell<Stock, Integer>();
 
-            int row = pos.getRow();
-            Stock stock = event.getTableView().getItems().get(row);
-            System.out.println(stock);            
+            cell.itemProperty().addListener((observableValue, o, newValue) -> {
+                if (newValue != null) {
+                    var graphic = new Spinner<Integer>();
+                    SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,
+                            100000000);
+                    valueFactory.setValue(cell.getItem());
+                    valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
+                        if(oldVal == null)
+                            return;
+                        var stock = cell.getTableRow().getItem();
+                        stock.setQuantityAlertThreshold(newVal);
+                        // TODO debounce l'update pour ne pas spam la BD
+                        updateDatabase(stock);
+                    });
+                    graphic.setValueFactory(valueFactory);
+
+                    cell.graphicProperty()
+                            .bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(graphic));
+                }
+            });
+
+            return cell;
         });
 
         storageLocCol.setCellValueFactory(new PropertyValueFactory<>("storageLocation"));
         storageLocCol.setCellFactory(TextFieldTableCell.<Stock>forTableColumn());
 
-        try {
-            table.getItems().addAll(queryAll());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        itemCol.setOnEditCommit(event -> {
+            event.getRowValue().setItem(event.getNewValue());
+            updateDatabase(event.getRowValue());
+        });
+
+        storageLocCol.setOnEditCommit(event -> {
+            event.getRowValue().setStorageLocation(event.getNewValue());
+            updateDatabase(event.getRowValue());
+        });
+        storageLocCol.setOnEditCommit(event -> {
+            event.getRowValue().setStorageLocation(event.getNewValue());
+            updateDatabase(event.getRowValue());
+        });
 
         this.getChildren().add(table);
     }
 
-    private HBox createActionsButtonsSlot() {
-        var container = new HBox(10);
+    private void updateTable() {
+        try {
+            table.getItems().clear();
+            table.getItems().addAll(queryAll());
+        } catch (SQLRecoverableException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de connexion");
+            Router.goToScreen(Routes.CONN_FALLBACK);
+        } catch (SQLException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
+            Router.goToScreen(Routes.HOME);
+        }
+    }
 
-        modify = new MFXButton("Valider les modifications");
-        FontIcon icon = new FontIcon("fas-exclamation-triangle:10");
-        icon.setIconColor(Color.WHITE);
-
-        modify.getStyleClass().add("action-button");
-
-        modify.setOnAction(e -> {
-            System.out.println(table.getSelectionModel().getSelectedItem());
-        });
-
-        container.setAlignment(Pos.CENTER_RIGHT);
-        container.getChildren().addAll(modify);
-        return container;
+    private void updateDatabase(Stock stock) {
+        try {
+            Database.getInstance().getStockDao().update(stock);
+            Router.showToast(ToastType.SUCCESS, "Stock mis à jour");
+        } catch (SQLRecoverableException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de connexion");
+            Router.goToScreen(Routes.CONN_FALLBACK);
+        } catch (SQLException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
+            Router.goToScreen(Routes.HOME);
+        }
     }
 }
