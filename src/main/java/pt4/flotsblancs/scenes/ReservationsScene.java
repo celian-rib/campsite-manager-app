@@ -99,13 +99,15 @@ public class ReservationsScene extends ItemScene<Reservation> {
         boolean isDeposited = reservation.getDepositDate() != null;
         boolean isPaid = reservation.getPaymentDate() != null;
         boolean isCanceled = reservation.getCanceled();
-        boolean isMobilhome = reservation.getCampground().getAllowedEquipments() == Equipment.MOBILHOME;
-        startDatePicker.setDisable(isDeposited || isPaid || isCanceled);
+        Equipment campEquipments = reservation.getCampground().getAllowedEquipments();
+        boolean isMobilhome = campEquipments == Equipment.MOBILHOME;
+        boolean isSingleEquipment = campEquipments.getCompatibles().size() == 1;
         endDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         campComboBox.setDisable(isDeposited || isPaid || isCanceled);
         serviceComboBox.setDisable(isDeposited || isPaid || isCanceled || isMobilhome);
         personCountComboBox.setDisable(isDeposited || isPaid || isCanceled);
-        equipmentsComboBox.setDisable(isDeposited || isPaid || isCanceled);
+        equipmentsComboBox.setDisable(
+                isDeposited || isPaid || isCanceled || isMobilhome || isSingleEquipment);
         cashBackComboBox.setDisable(isPaid || isCanceled);
         depositComboBox.setDisable(isPaid || isCanceled);
         paymentComboBox.setDisable(!isDeposited || isCanceled);
@@ -157,8 +159,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return Conteneur avec les cartes, les equipements et services, les
-     *         sélections de dates
+     * @return Conteneur avec les cartes, les equipements et services, les sélections de dates
      */
     private HBox createTopSlot() {
         HBox container = new HBox(10);
@@ -231,8 +232,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return VBox contenant la carte du client et la carte de l'emplacement
-     *         associés à cette
+     * @return VBox contenant la carte du client et la carte de l'emplacement associés à cette
      *         réservation
      */
     private VBox cardsContainer() {
@@ -246,8 +246,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return Conteneur contenant les ComboBox des dates de début de fin de la
-     *         réservation
+     * @return Conteneur contenant les ComboBox des dates de début de fin de la réservation
      */
     private VBox datesContainer() {
         VBox container = new VBox(CONTENT_SPACING);
@@ -273,8 +272,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return conteneur contenant les ComboBox de sélection de l'equipement /
-     *         services / nb
+     * @return conteneur contenant les ComboBox de sélection de l'equipement / services / nb
      *         personnes
      */
     private VBox selectedEquipmentAndServicesContainer() {
@@ -284,10 +282,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
         personCountComboBox.addListener(changeListener);
 
         serviceComboBox = new ServiceComboBox(reservation);
-        serviceComboBox.addListener(changeListener);
+        serviceComboBox.addUserChangedValueListener(changeListener);
 
         equipmentsComboBox = new EquipmentComboBox(reservation);
-        equipmentsComboBox.addListener(changeListener);
+        equipmentsComboBox.addUserChangedValueListener(changeListener);
 
         container.getChildren().addAll(personCountComboBox, serviceComboBox, equipmentsComboBox);
         return container;

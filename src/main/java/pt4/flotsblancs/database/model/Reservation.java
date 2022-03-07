@@ -113,7 +113,7 @@ public class Reservation implements Item {
      */
     public void setCampground(CampGround camp) {
         this.campground = camp;
-        // checkEquipmentsConstraints();
+        checkEquipmentsConstraints();
         checkServicesConstraint();
     }
 
