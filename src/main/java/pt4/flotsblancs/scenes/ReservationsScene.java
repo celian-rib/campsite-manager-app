@@ -22,6 +22,7 @@ import pt4.flotsblancs.components.*;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
+import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.breakpoints.*;
@@ -67,8 +68,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     ProblemsListCard problemsContainer;
 
-
-
     ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         // Check if we need to refresh the page and the database
         if (oldValue == newValue || oldValue == null)
@@ -99,18 +98,19 @@ public class ReservationsScene extends ItemScene<Reservation> {
         // Active / Desactive les contrôle en fonction de l'état de la réservation
         boolean isDeposited = reservation.getDepositDate() != null;
         boolean isPaid = reservation.getPaymentDate() != null;
-        boolean canceled = reservation.getCanceled();
-        startDatePicker.setDisable(isDeposited || isPaid || canceled);
-        endDatePicker.setDisable(isDeposited || isPaid || canceled);
-        campComboBox.setDisable(isDeposited || isPaid || canceled);
-        serviceComboBox.setDisable(isDeposited || isPaid || canceled);
-        personCountComboBox.setDisable(isDeposited || isPaid || canceled);
-        equipmentsComboBox.setDisable(isDeposited || isPaid || canceled);
-        cashBackComboBox.setDisable(isPaid || canceled);
-        depositComboBox.setDisable(isPaid || canceled);
-        paymentComboBox.setDisable(!isDeposited || canceled);
-        sendBillBtn.setDisable(!isPaid || canceled);
-        cancelBtn.setDisable(isPaid || canceled);
+        boolean isCanceled = reservation.getCanceled();
+        boolean isMobilhome = reservation.getCampground().getAllowedEquipments() == Equipment.MOBILHOME;
+        startDatePicker.setDisable(isDeposited || isPaid || isCanceled);
+        endDatePicker.setDisable(isDeposited || isPaid || isCanceled);
+        campComboBox.setDisable(isDeposited || isPaid || isCanceled);
+        serviceComboBox.setDisable(isDeposited || isPaid || isCanceled || isMobilhome);
+        personCountComboBox.setDisable(isDeposited || isPaid || isCanceled);
+        equipmentsComboBox.setDisable(isDeposited || isPaid || isCanceled);
+        cashBackComboBox.setDisable(isPaid || isCanceled);
+        depositComboBox.setDisable(isPaid || isCanceled);
+        paymentComboBox.setDisable(!isDeposited || isCanceled);
+        sendBillBtn.setDisable(!isPaid || isCanceled);
+        cancelBtn.setDisable(isPaid || isCanceled);
     }
 
     private void updateDatabase() {
@@ -157,7 +157,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return Conteneur avec les cartes, les equipements et services, les sélections de dates
+     * @return Conteneur avec les cartes, les equipements et services, les
+     *         sélections de dates
      */
     private HBox createTopSlot() {
         HBox container = new HBox(10);
@@ -223,7 +224,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
         totalPrice.setMinWidth(110);
         totalPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
 
-
         labelsContainer.getChildren().addAll(depositPrice, totalPrice);
 
         container.getChildren().addAll(btnContainer, labelsContainer);
@@ -231,7 +231,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return VBox contenant la carte du client et la carte de l'emplacement associés à cette
+     * @return VBox contenant la carte du client et la carte de l'emplacement
+     *         associés à cette
      *         réservation
      */
     private VBox cardsContainer() {
@@ -245,7 +246,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return Conteneur contenant les ComboBox des dates de début de fin de la réservation
+     * @return Conteneur contenant les ComboBox des dates de début de fin de la
+     *         réservation
      */
     private VBox datesContainer() {
         VBox container = new VBox(CONTENT_SPACING);
@@ -270,9 +272,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
         return container;
     }
 
-
     /**
-     * @return conteneur contenant les ComboBox de sélection de l'equipement / services / nb
+     * @return conteneur contenant les ComboBox de sélection de l'equipement /
+     *         services / nb
      *         personnes
      */
     private VBox selectedEquipmentAndServicesContainer() {

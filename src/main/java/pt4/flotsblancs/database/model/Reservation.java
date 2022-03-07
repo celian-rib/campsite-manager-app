@@ -87,7 +87,6 @@ public class Reservation implements Item {
     private Client client;
 
     @Getter
-    @Setter
     @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private CampGround campground;
 
@@ -101,6 +100,11 @@ public class Reservation implements Item {
         if (canceled)
             return "[Annulée] " + client.getName();
         return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
+    }
+
+    public void setCampground(CampGround camp) {
+        // Contraintes ici
+        this.campground = camp;
     }
 
     public int getDayCount() {

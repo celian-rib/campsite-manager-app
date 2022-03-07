@@ -5,6 +5,7 @@ import io.github.palexdev.materialfx.controls.MFXComboBox;
 import javafx.beans.value.ChangeListener;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.database.model.types.Service;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.utils.ToastType;
@@ -60,12 +61,17 @@ public class ServiceComboBox extends MFXComboBox<Service> {
             try {
                 selectItem(reservation.getSelectedServices());
             } catch (Exception e) {
-                System.out.println(
-                        "Reservation service set to None -> camground not allowing this service");
-                Router.showToast(ToastType.ERROR,
-                        "Les services demandés par la réservation ne sont pas ou plus disponibles pour l'emplacement");
-                reservation.setSelectedServices(Service.NONE);
-                selectItem(Service.NONE);
+                if(reservation.getCampground().getAllowedEquipments() == Equipment.MOBILHOME) {
+                    reservation.setSelectedServices(Service.WATER_AND_ELECTRICITY);
+                    selectItem(Service.WATER_AND_ELECTRICITY);
+                } else {
+                    System.out.println(
+                            "Reservation service set to None -> camground not allowing this service");
+                    Router.showToast(ToastType.ERROR,
+                            "Les services demandés par la réservation ne sont pas ou plus disponibles pour l'emplacement");
+                    reservation.setSelectedServices(Service.NONE);
+                    selectItem(Service.NONE);
+                }
             }
         }
     }
