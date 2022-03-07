@@ -3,9 +3,14 @@ package pt4.flotsblancs.scenes;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.List;
+
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
@@ -13,7 +18,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.router.IScene;
@@ -24,6 +31,8 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 public class StocksScene extends VBox implements IScene {
 
     private TableView<Stock> table;
+    private MFXButton addItemBtn;
+    private MFXButton deleteItemBtn;
 
     public String getName() {
         return "Stocks";
@@ -44,13 +53,16 @@ public class StocksScene extends VBox implements IScene {
     public void start() {
         setAlignment(Pos.CENTER);
         displayTableView();
+        this.getChildren().add(createActionsButtonsSlot());
+
     }
 
     public void displayTableView() {
         table = new TableView<Stock>();
         table.setEditable(true);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Stock, String> itemCol = new TableColumn<Stock, String>("Objet");
+        TableColumn<Stock, String> itemCol = new TableColumn<Stock, String>("Produit");
         TableColumn<Stock, Integer> quantityCol = new TableColumn<Stock, Integer>("Quantité");
         TableColumn<Stock, String> storageLocCol = new TableColumn<Stock, String>("Emplacement");
         TableColumn<Stock, Integer> alertCol = new TableColumn<Stock, Integer>("Seuil d'alerte");
@@ -171,4 +183,47 @@ public class StocksScene extends VBox implements IScene {
             Router.goToScreen(Routes.HOME);
         }
     }
+
+    private HBox createActionsButtonsSlot() {
+        var container = new HBox(10);
+
+        deleteItemBtn = new MFXButton("Supprimer un produit");
+        addItemBtn = new MFXButton("Ajouter un produit");
+        FontIcon icon = new FontIcon("fas-exclamation-triangle:10");
+        icon.setIconColor(Color.WHITE);
+
+        addItemBtn.getStyleClass().add("action-button");
+        deleteItemBtn.getStyleClass().add("action-button");
+        
+        container.setAlignment(Pos.CENTER_RIGHT);
+        container.getChildren().addAll(deleteItemBtn, addItemBtn);
+
+        deleteItemBtn.setOnAction(e -> {
+            try {
+                Database.getInstance().getStockDao().delete(table.getSelectionModel().getSelectedItem());
+            } catch (SQLException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            updateTable();
+        });
+
+        addItemBtn.setOnAction(e -> {
+            var s = new Stock();
+            s.setItem("Nouveau produit");
+            s.setQuantity(0);
+            s.setQuantityAlertThreshold(5);
+            s.setStorageLocation("Pas d'emplacement");
+            try {
+                Database.getInstance().getStockDao().create(s);
+            } catch (SQLException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            updateTable();
+        });
+        
+        return container;
+    }
+
 }
