@@ -14,6 +14,7 @@ public enum Equipment {
     private String name;
 
     public boolean isCompatible(Equipment other) {
+        // Rework complet vis à vis de tests
         if (this == other)
             return true;
         if (this == Equipment.TENT_AND_CAMPINGCAR || this == TENT || this == CAMPINGCAR)
@@ -21,6 +22,7 @@ public enum Equipment {
         return false;
     }
 
+    // TODO bouger ça dans campground comme service
     public List<Equipment> getCompatibles() {
         var list = new ArrayList<Equipment>();
         if (this == Equipment.TENT_AND_CAMPINGCAR) {

@@ -16,7 +16,13 @@ public enum Service {
     @Getter
     private int pricePerDay;
 
-    public boolean isCompatible(Service other) {
+    /**
+     * Permet de savoir si ce service est compatible avec un service 
+     * 
+     * @param other service avec lequel se comparer
+     * @return
+     */
+    public boolean isCompatibleWithCampService(Service other) {
         if (this == NONE)
             return true;
         if (this == WATER_AND_ELECTRICITY)

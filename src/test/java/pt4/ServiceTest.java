@@ -11,53 +11,36 @@ import pt4.flotsblancs.database.model.types.Service;
 
 public class ServiceTest {
     @Test
-    public void testIsCompatibles() {
+    public void testIsCompatibleWithCampService() {
         // Demander rien est compatible avec un emplacement qui na rien
-        assertTrue(Service.NONE.isCompatible(Service.NONE));
+        assertTrue(Service.NONE.isCompatibleWithCampService(Service.NONE));
         // Demander rien est compatible avec un emplacement qui a eau et elec
-        assertTrue(Service.NONE.isCompatible(Service.WATER_AND_ELECTRICITY));
-        assertTrue(Service.NONE.isCompatible(Service.WATER_ONLY));
-        assertTrue(Service.NONE.isCompatible(Service.ELECTRICITY_ONLY));
+        assertTrue(Service.NONE.isCompatibleWithCampService(Service.WATER_AND_ELECTRICITY));
+        assertTrue(Service.NONE.isCompatibleWithCampService(Service.WATER_ONLY));
+        assertTrue(Service.NONE.isCompatibleWithCampService(Service.ELECTRICITY_ONLY));
 
         // Demander l'eau électricité compatible avec un emplacement qui na rien ?
-        assertFalse(Service.WATER_AND_ELECTRICITY.isCompatible(Service.NONE));
-        assertTrue(Service.WATER_AND_ELECTRICITY.isCompatible(Service.WATER_AND_ELECTRICITY));
+        assertFalse(Service.WATER_AND_ELECTRICITY.isCompatibleWithCampService(Service.NONE));
+        assertTrue(Service.WATER_AND_ELECTRICITY
+                .isCompatibleWithCampService(Service.WATER_AND_ELECTRICITY));
         // Demander l'eau électricité compatible avec un emplacement qui a que l'eau ?
-        assertFalse(Service.WATER_AND_ELECTRICITY.isCompatible(Service.WATER_ONLY));
+        assertFalse(Service.WATER_AND_ELECTRICITY.isCompatibleWithCampService(Service.WATER_ONLY));
         // Demander l'eau électricité compatible avec un emplacement qui a que
         // l'electricité ?
-        assertFalse(Service.WATER_AND_ELECTRICITY.isCompatible(Service.ELECTRICITY_ONLY));
+        assertFalse(Service.WATER_AND_ELECTRICITY
+                .isCompatibleWithCampService(Service.ELECTRICITY_ONLY));
 
-        assertFalse(Service.WATER_ONLY.isCompatible(Service.NONE));
+        assertFalse(Service.WATER_ONLY.isCompatibleWithCampService(Service.NONE));
         // Demander l'eau compatible avec un emplacement qui a eau et electricité ?
-        assertTrue(Service.WATER_ONLY.isCompatible(Service.WATER_AND_ELECTRICITY));
-        assertTrue(Service.WATER_ONLY.isCompatible(Service.WATER_ONLY));
-        assertFalse(Service.WATER_ONLY.isCompatible(Service.ELECTRICITY_ONLY));
+        assertTrue(Service.WATER_ONLY.isCompatibleWithCampService(Service.WATER_AND_ELECTRICITY));
+        assertTrue(Service.WATER_ONLY.isCompatibleWithCampService(Service.WATER_ONLY));
+        assertFalse(Service.WATER_ONLY.isCompatibleWithCampService(Service.ELECTRICITY_ONLY));
 
-        assertFalse(Service.ELECTRICITY_ONLY.isCompatible(Service.NONE));
+        assertFalse(Service.ELECTRICITY_ONLY.isCompatibleWithCampService(Service.NONE));
         // Demander l'eau compatible avec un emplacement qui a eau et électricité ?
-        assertTrue(Service.ELECTRICITY_ONLY.isCompatible(Service.WATER_AND_ELECTRICITY));
-        assertFalse(Service.ELECTRICITY_ONLY.isCompatible(Service.WATER_ONLY));
-        assertTrue(Service.ELECTRICITY_ONLY.isCompatible(Service.ELECTRICITY_ONLY));
-    }
-
-    @Test
-    public void testGetCompatibles() {
-        // var list = Service.NONE.getCompatiblesForCampgrounds();
-        // assertArrayEquals(Service.values(), list.toArray());
-
-        // list = Service.WATER_AND_ELECTRICITY.getCompatiblesForCampgrounds();
-        // assertEquals(list.size(), 1);
-        // assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
-        
-        // list = Service.ELECTRICITY_ONLY.getCompatiblesForCampgrounds();
-        // assertEquals(list.size(), 2);
-        // assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
-        // assertTrue(list.contains(Service.ELECTRICITY_ONLY));
-        
-        // list = Service.WATER_ONLY.getCompatiblesForCampgrounds();
-        // assertEquals(list.size(), 2);
-        // assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
-        // assertTrue(list.contains(Service.WATER_ONLY));
+        assertTrue(Service.ELECTRICITY_ONLY
+                .isCompatibleWithCampService(Service.WATER_AND_ELECTRICITY));
+        assertFalse(Service.ELECTRICITY_ONLY.isCompatibleWithCampService(Service.WATER_ONLY));
+        assertTrue(Service.ELECTRICITY_ONLY.isCompatibleWithCampService(Service.ELECTRICITY_ONLY));
     }
 }

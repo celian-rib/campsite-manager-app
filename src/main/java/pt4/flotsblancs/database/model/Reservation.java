@@ -157,7 +157,7 @@ public class Reservation implements Item {
             Router.showToast(ToastType.WARNING,
                     "Services de la réservation modifiés pour correspondre à aux services proposés par l'emplacement selectionné");
         }
-        if (!selectedServices.isCompatible(campground.getProvidedServices())) {
+        if (!selectedServices.isCompatibleWithCampService(campground.getProvidedServices())) {
             selectedServices = campground.getProvidedServices();
             Router.showToast(ToastType.WARNING,
                     "Services de la réservation modifiés pour correspondre à aux services proposés par l'emplacement selectionné");

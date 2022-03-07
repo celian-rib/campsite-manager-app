@@ -54,10 +54,13 @@ public class CampGround {
         return "#" + id + "   " + pricePerDays + "€/j  " + allowedEquipments.getChar();
     }
 
+    /**
+     * @return Tous les services possibles pour cet emplacement
+     */
     public List<Service> getCompatiblesServices() {
         var list = new ArrayList<Service>();
         for (var v : Service.values())
-            if (v.isCompatible(providedServices))
+            if (v.isCompatibleWithCampService(providedServices))
                 list.add(v);
         return list;
     }
