@@ -52,9 +52,13 @@ public class StocksScene extends VBox implements IScene {
 
     public void start() {
         setAlignment(Pos.CENTER);
+        setSpacing(10);
         displayTableView();
         this.getChildren().add(createActionsButtonsSlot());
-
+        deleteItemBtn.setDisable(true);
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            deleteItemBtn.setDisable(table.getSelectionModel().getSelectedItem() == null);
+        });
     }
 
     public void displayTableView() {
@@ -71,7 +75,6 @@ public class StocksScene extends VBox implements IScene {
         table.getColumns().add(quantityCol);
         table.getColumns().add(storageLocCol);
         table.getColumns().add(alertCol);
-        
 
         itemCol.setCellValueFactory(new PropertyValueFactory<>("item"));
         itemCol.setCellFactory(TextFieldTableCell.<Stock>forTableColumn());
@@ -88,7 +91,7 @@ public class StocksScene extends VBox implements IScene {
                             100000000);
                     valueFactory.setValue(cell.getItem());
                     valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
-                        if(oldVal == null)
+                        if (oldVal == null)
                             return;
                         var stock = cell.getTableRow().getItem();
                         stock.setQuantity(newVal);
@@ -117,7 +120,7 @@ public class StocksScene extends VBox implements IScene {
                             100000000);
                     valueFactory.setValue(cell.getItem());
                     valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
-                        if(oldVal == null)
+                        if (oldVal == null)
                             return;
                         var stock = cell.getTableRow().getItem();
                         stock.setQuantityAlertThreshold(newVal);
@@ -194,7 +197,7 @@ public class StocksScene extends VBox implements IScene {
 
         addItemBtn.getStyleClass().add("action-button");
         deleteItemBtn.getStyleClass().add("action-button");
-        
+
         container.setAlignment(Pos.CENTER_RIGHT);
         container.getChildren().addAll(deleteItemBtn, addItemBtn);
 
@@ -202,8 +205,9 @@ public class StocksScene extends VBox implements IScene {
             try {
                 Database.getInstance().getStockDao().delete(table.getSelectionModel().getSelectedItem());
             } catch (SQLException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+                System.err.println(e);
+                Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
+                Router.goToScreen(Routes.HOME);
             }
             updateTable();
         });
@@ -217,12 +221,13 @@ public class StocksScene extends VBox implements IScene {
             try {
                 Database.getInstance().getStockDao().create(s);
             } catch (SQLException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+                System.err.println(e);
+                Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
+                Router.goToScreen(Routes.HOME);
             }
             updateTable();
         });
-        
+
         return container;
     }
 
