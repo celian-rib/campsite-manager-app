@@ -28,15 +28,15 @@ public class Generator {
 
         var f = new Faker();
 
-        // generateAdmin();
+        generateAdmin();
         
-        // generateStocks(f, 10);
-        // generateClients(f, 50);
-        // generateCampGrounds(f, 100);
-        // generateReservations(f, 20);
-        // generateProblemsResa(f, 5);
-        // generateProblemsCg(f, 3);
-        // generateProblemsClient(f, 3);
+        generateStocks(f, 10);
+        generateClients(f, 50);
+        generateCampGrounds(f, 100);
+        generateReservations(f, 20);
+        generateProblemsResa(f, 5);
+        generateProblemsCg(f, 3);
+        generateProblemsClient(f, 3);
     }
     
     private static int rdmNbrBtwn(int min, int max){
@@ -104,7 +104,7 @@ public class Generator {
             var c = new Client();
             c.setAddresse(f.address().fullAddress());
             c.setPhone(f.phoneNumber().cellPhone().toString());
-            String hp = f.harryPotter().spell();
+            String hp = f.harryPotter().character();
             c.setName((hp.split(" ").length>1)?hp.split(" ")[1]:hp.split(" ")[0]);
             c.setFirstName(f.dragonBall().character().split(" ")[0]);
             try {
