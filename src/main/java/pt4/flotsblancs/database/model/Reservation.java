@@ -95,19 +95,9 @@ public class Reservation implements Item {
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Problem> problems;
 
-    @Override
-    public String getDisplayName() {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM");
-        if (canceled)
-            return "[Annulée] " + client.getName();
-        return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
-    }
-
     /**
-     * Change l'emplacement actuel de la réservation tout en respectant les
-     * contraintes sur les
-     * équipements et les services demandés (Ces derniers peuvent changer par effet
-     * de bord)
+     * Change l'emplacement actuel de la réservation tout en respectant les contraintes sur les
+     * équipements et les services demandés (Ces derniers peuvent changer par effet de bord)
      * 
      * @param camp nouvel emplacement de la réservation
      */
@@ -117,11 +107,34 @@ public class Reservation implements Item {
         checkServicesConstraint();
     }
 
+    /**
+     * Permet de changer les équipements demandés par la réservation en conservant les contraintes
+     * imposées par l'emplacement
+     * 
+     * @param equipment
+     */
     public void setEquipments(Equipment equipment) {
         this.equipments = equipment;
         checkEquipmentsConstraints();
     }
 
+    /**
+     * Permet de changer les services demandés par la réservation en conservant les contraintes
+     * imposées par l'emplacement
+     * 
+     * @param service
+     */
+    public void setSelectedServices(Service service) {
+        this.selectedServices = service;
+        checkServicesConstraint();
+    }
+
+    /**
+     * Vérifie l'intégrité des contrainte entre les equipement demandés par la réservation et son
+     * emplacement
+     * 
+     * En cas de non compatibilité l'équipement sera modifié pour répondre à la contrainte
+     */
     private void checkEquipmentsConstraints() {
         if (!equipments.isCompatible(campground.getAllowedEquipments())) {
             equipments = campground.getAllowedEquipments();
@@ -130,15 +143,16 @@ public class Reservation implements Item {
         }
     }
 
-    public void setSelectedServices(Service service) {
-        this.selectedServices = service;
-        checkServicesConstraint();
-    }
-
+    /**
+     * Vérifie l'intégrité des contrainte entre les services demandés par la réservation et son
+     * emplacement
+     * 
+     * En cas de non compatibilité le service sera modifié pour répondre à la contrainte
+     */
     private void checkServicesConstraint() {
-        if(this.selectedServices == null)
+        if (this.selectedServices == null)
             return;
-        if(campground.getAllowedEquipments() == Equipment.MOBILHOME) {
+        if (campground.getAllowedEquipments() == Equipment.MOBILHOME) {
             selectedServices = Service.WATER_AND_ELECTRICITY;
             Router.showToast(ToastType.WARNING,
                     "Services de la réservation modifiés pour correspondre à aux services proposés par l'emplacement selectionné");
@@ -150,11 +164,17 @@ public class Reservation implements Item {
         }
     }
 
+    /**
+     * @return Nombres de jours de la réservation
+     */
     public int getDayCount() {
         long diff = endDate.getTime() - startDate.getTime();
         return (int) Math.ceil(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)) + 1;
     }
 
+    /**
+     * @return Prix total de la réservation
+     */
     public float getTotalPrice() {
         var dayCount = getDayCount();
         var rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
@@ -162,7 +182,18 @@ public class Reservation implements Item {
         return withService * cashBack.getReduction();
     }
 
+    /**
+     * @return Prix d'acompte de la réservation
+     */
     public float getDepositPrice() {
         return getTotalPrice() * 0.3f; // Acompte de 30%
+    }
+
+    @Override
+    public String getDisplayName() {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM");
+        if (canceled)
+            return "[Annulée] " + client.getName();
+        return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
     }
 }
