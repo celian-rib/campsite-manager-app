@@ -1,13 +1,18 @@
 package pt4.flotsblancs.router;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.scenes.*;
+import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
@@ -42,6 +47,13 @@ public class Router {
             put(Routes.STOCKS, (IScene) new StocksScene());
             put(Routes.CAMPGROUNDS, new CampgroundsScene());
             put(Routes.ADMIN, new AdminScene());
+        }
+    };
+
+    public static final HashSet<Routes> parameterizedRoutes = new HashSet<>() {
+        {
+            add(Routes.RESERVATIONS);
+            add(Routes.CLIENTS);
         }
     };
 
@@ -143,6 +155,20 @@ public class Router {
         routes.get(currentRoute).onFocus();
 
         log("Switch scene -> " + newRoute);
+    }
+
+    /**
+     * Permet de change la scène actuelle (La page courante)
+     * 
+     * @param newRoute
+     */
+    public static <I extends Item> void goToScreen(Routes newRoute,I item) {
+        if (parameterizedRoutes.contains(newRoute)) {
+            ItemScene<I> nextScene = (ItemScene<I>)routes.get(newRoute);
+            nextScene.selectItem(item);
+            log("[Router] Selecting " + item.getDisplayName() + " on " + newRoute.name());
+        }
+        goToScreen(newRoute);
     }
 
     /**

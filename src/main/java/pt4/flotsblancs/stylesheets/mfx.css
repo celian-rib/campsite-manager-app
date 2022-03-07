@@ -72,3 +72,7 @@
     -fx-padding: 5px 15px;
     -mfx-button-type: flat;
 }
+
+.mfx-scroll-pane .scroll-bar:vertical {
+	-fx-pref-width: 8;
+}
