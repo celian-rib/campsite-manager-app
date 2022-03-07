@@ -27,14 +27,6 @@
     -mfx-selected: -mfx-main-color-pressed;
 }
 
-.action-button {
-    -fx-background-color: #5965a0;
-    -fx-background-radius: 5px;
-    -fx-text-fill: white;
-    -fx-padding: 5px 15px;
-    -mfx-button-type: raised;
-}
-
 .mfx-date-picker .date-picker-popup .left-arrow:disabled,
 .mfx-date-picker .date-picker-popup .right-arrow:disabled {
 	-fx-opacity: 0.8;
@@ -61,4 +53,26 @@
 	-fx-border-color: #ebebeb;
 	-fx-border-radius: 10;
     -fx-padding: 10px;
+}
+
+/* ----------------- CUSTOMS ----------------- */
+
+.action-button {
+    -fx-background-color: #5965a0;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+    -fx-padding: 5px 15px;
+    -mfx-button-type: raised;
+}
+
+.action-button-outlined {
+    -fx-border-color: #5965a0;
+    -fx-border-radius: 5px;
+    -fx-text-fill: #5965a0;
+    -fx-padding: 5px 15px;
+    -mfx-button-type: flat;
+}
+
+.mfx-scroll-pane .scroll-bar:vertical {
+	-fx-pref-width: 8;
 }

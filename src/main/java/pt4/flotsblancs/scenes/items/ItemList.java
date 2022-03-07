@@ -1,0 +1,215 @@
+package pt4.flotsblancs.scenes.items;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.enums.FloatMode;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.Shadow;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.scenes.utils.ToastType;
+
+public class ItemList<I extends Item> extends StackPane {
+
+    private final static int CONTENT_WIDTH = 250;
+
+    private ItemScene<I> itemScene;
+
+    private BorderPane borderPane;
+    private MFXScrollPane scrollPane;
+
+    private MFXTextField searchBar;
+
+    private ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
+    private ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
+
+    private HBox addButton;
+
+    /**
+     * Permet de créer l'item list associée à l'item scene donnée
+     * 
+     * @param itemScene
+     */
+    public ItemList(ItemScene<I> itemScene) {
+        this.itemScene = itemScene;
+
+        BackgroundFill fill = new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY);
+        Background background = new Background(fill);
+
+        Shadow shadow = new Shadow();
+        shadow.setBlurType(BlurType.GAUSSIAN);
+        shadow.setColor(Color.LIGHTGRAY);
+        shadow.setRadius(15);
+
+        Pane shadowPane = new Pane();
+        shadowPane.setBackground(background);
+        shadowPane.setEffect(shadow);
+
+        scrollPane = createScrollPane();
+        searchBar = createSearchBar();
+        addButton = createAddButton();
+
+        // Border pane qui contient l'ensemble des élèments
+        // ItemList en ellse même est une StackPane pour superposer l'ombre avec cette borderpane
+        borderPane = new BorderPane();
+        borderPane.setTop(searchBar);
+        borderPane.setCenter(scrollPane);
+        borderPane.setBottom(addButton);
+        borderPane.setPadding(new Insets(10));
+        borderPane.setBackground(background);
+        borderPane.setCenter(scrollPane);
+
+        
+
+        BorderPane.setMargin(scrollPane, new Insets(10, 0, 10, 0));
+
+        setBackground(background);
+        setMargin(searchBar, new Insets(0, 0, 10, 0));
+        setIsLoading(true);
+
+        getChildren().addAll(shadowPane, borderPane);
+    }
+
+    /**
+     * Permet de mettre à jour la liste d'Item affichés par cette ItemList
+     * 
+     * @param items
+     */
+    public void updateItems(List<I> items) {
+        listButtons = new ArrayList<ItemPane<I>>();
+
+        for (I i : items)
+            listButtons.add(createListButton(i));
+
+        ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
+        ObservableList<ItemPane<I>> itemsListContainer =
+                FXCollections.observableArrayList(listButtons);
+
+        listView.setFocusTraversable(false);
+        listView.setStyle("-fx-background-insets: 0; -fx-background-insets: 0; -fx-padding: 0;");
+
+        listView.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                ItemPane<I> selected = listView.getSelectionModel().getSelectedItem();
+                if (selected != null)
+                    itemScene.updateContainer(selected.getItem());
+            }
+        });
+
+        listView.setItems(itemsListContainer);
+        scrollPane.setContent(listView);
+    }
+
+    /**
+     * Active ou désactive l'animation de chargement de cette itemList
+     * 
+     * @param isLoading
+     */
+    public void setIsLoading(boolean isLoading) {
+        if (isLoading) {
+            borderPane.setCenter(new MFXProgressSpinner());
+        } else {
+            borderPane.setCenter(scrollPane);
+        }
+        System.out.println("loading : " + isLoading);
+    }
+
+    /**
+     * Permet de sélectionner un item en particulier
+     * 
+     * @param item
+     */
+    public void selectItem(I item) {
+        listView.getSelectionModel().select(new ItemPane<I>(item));
+        itemScene.updateContainer(item);
+    }
+
+    private MFXScrollPane createScrollPane() {
+        MFXScrollPane scrollPane = new MFXScrollPane();
+        scrollPane.setFitToHeight(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setPrefWidth(CONTENT_WIDTH);
+        return scrollPane;
+    }
+
+    private MFXTextField createSearchBar() {
+        MFXTextField searchBar = new MFXTextField();
+        searchBar.setFloatingText("Rechercher");
+        searchBar.setFloatMode(FloatMode.BORDER);
+        searchBar.setMinWidth(CONTENT_WIDTH);
+        var icon = new FontIcon("fas-search:15");
+        icon.setIconColor(Color.GREY);
+        searchBar.setPadding(new Insets(5, 10, 5, 5));
+        searchBar.setTrailingIcon(icon);
+        return searchBar;
+    }
+
+    private HBox createAddButton() {
+        var container = new HBox();
+        var btn = new MFXButton("Ajouter");
+        btn.getStyleClass().add("action-button");
+        btn.setOnAction(e -> {
+            Router.showToast(ToastType.WARNING, "ADD ITEM TODO");
+        });
+        container.getChildren().add(btn);
+        btn.setMinWidth(CONTENT_WIDTH);
+        return container;
+    }
+
+    private ItemPane<I> createListButton(I item) {
+        ItemPane<I> button = new ItemPane<I>(item);
+        // On aligne verticalement car c'est moche sinon
+        button.setPadding(new Insets(6, 0, 0, 0));
+        button.setPrefHeight(30);
+
+        Text display = new Text(item.getDisplayName());
+        display.setFill(Color.rgb(50, 60, 100));
+        display.setStyle("-fx-font-weight: bold");
+
+        Text id = new Text("#" + item.getId());
+        id.setFill(Color.rgb(50, 50, 80));
+        id.setStyle("-fx-font-weight: bold");
+
+        button.setLeft(display);
+        button.setRight(id);
+        button.setMaxWidth(CONTENT_WIDTH - 15);
+        return button;
+    }
+
+    private class ItemPane<T extends Item> extends BorderPane {
+        private T item;
+
+        public ItemPane(T item) {
+            super();
+            this.item = item;
+        }
+
+        public T getItem() {
+            return this.item;
+        }
+
+        @Override
+        public boolean equals(Object anObject) {
+            if (this == anObject) {
+                return true;
+            }
+            return anObject instanceof Item && this.getItem().equals(anObject);
+        }
+    }
+}

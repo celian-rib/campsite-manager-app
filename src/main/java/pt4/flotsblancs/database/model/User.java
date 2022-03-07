@@ -12,7 +12,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @DatabaseTable(tableName = "users")
 public class User {
@@ -23,26 +23,31 @@ public class User {
 
     @Getter
     @Setter
+    @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = false)
     private String login;
 
     @Getter
     @Setter
+    @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = false)
     private String password;
 
     @Getter
     @Setter
+    @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = false, columnName = "is_admin")
     private boolean isAdmin;
 
     @Getter
     @Setter
+    @EqualsAndHashCode.Include
     @DatabaseField(uniqueCombo = true, canBeNull = false)
     private String name;
 
     @Getter
     @Setter
+    @EqualsAndHashCode.Include
     @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "first_name")
     private String firstName;
 

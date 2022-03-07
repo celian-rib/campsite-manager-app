@@ -1,8 +1,10 @@
 package pt4.flotsblancs.scenes.items;
 
 import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
 import java.util.List;
+
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.effect.BlurType;
@@ -15,13 +17,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import pt4.flotsblancs.components.ItemList;
+import pt4.flotsblancs.components.EmptyItemContainer;
 import pt4.flotsblancs.router.IScene;
-import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.router.Router.Routes;
-import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
+import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
 
-public abstract class ItemScene<I extends Item> extends BorderPane implements IScene {
+public abstract class ItemScene<I extends Item> extends BorderPane
+        implements IScene, BreakPointListener {
 
     private ItemList<I> itemList;
 
@@ -47,30 +50,37 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
     public void start() {
         itemList = new ItemList<I>(this);
 
+        BreakPointManager.addListener(this);
         setLeft(itemList);
-        setCenter(null);
-
-        // TODO Responsive padding
-        // setPadding(new Insets(70));
-        setPadding(new Insets(40));
-        // TODO Responsive margin
-        // BorderPane.setMargin(itemList, new Insets(0, 50, 0, 0));
-        BorderPane.setMargin(itemList, new Insets(0, 40, 0, 0));
+        updateContainer(null);
     }
 
     @Override
     public void onFocus() {
-        try {
-            // Mise à jour de la liste
-            itemList.updateItems(queryAll());
-        } catch (SQLRecoverableException e) {
-            System.err.println(e);
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
-        } catch (SQLException e) {
-            System.err.println(e);
-            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
-        }
+        itemList.setIsLoading(true);
+        final Task<List<I>> updateListTask = new Task<List<I>>() {
+            protected java.util.List<I> call() throws Exception {
+                var allItems = queryAll();
+                Platform.runLater(() -> {
+                    try {
+                        // Mise à jour de la liste
+                        itemList.updateItems(allItems);
+
+                    } catch (Exception e) {
+                        System.err.println(e);
+                    }
+                });
+                return allItems;
+            };
+
+            protected void succeeded() {
+                itemList.setIsLoading(false);
+            };
+
+            protected void failed() {};
+        };
+
+        new Thread(updateListTask).start();
     }
 
     /**
@@ -94,11 +104,26 @@ public abstract class ItemScene<I extends Item> extends BorderPane implements IS
         shadowPane.setBackground(background);
         shadowPane.setEffect(shadow);
 
-        Region container = createContainer(item);
+        Region container = item == null ? new EmptyItemContainer() : createContainer(item);
         container.setBackground(background);
 
         stack.getChildren().addAll(shadowPane, container);
 
         setCenter((Parent) stack);
+    }
+
+    @Override
+    public void onHorizontalBreak(HBreakPoint oldBp, HBreakPoint newBp) {
+        if (newBp.getWidth() <= HBreakPoint.LARGE.getWidth()) {
+            setPadding(new Insets(5));
+            BorderPane.setMargin(itemList, new Insets(0, 20, 0, 0));
+        } else {
+            setPadding(new Insets(50));
+            BorderPane.setMargin(itemList, new Insets(0, 40, 0, 0));
+        }
+    }
+
+    public void selectItem(Item item) {
+        itemList.selectItem((I) item);
     }
 }

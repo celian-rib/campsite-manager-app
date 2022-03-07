@@ -1,10 +1,12 @@
 package pt4.flotsblancs.router;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import pt4.flotsblancs.scenes.AdminScene;
 import pt4.flotsblancs.scenes.CampgroundsScene;
@@ -15,12 +17,30 @@ import pt4.flotsblancs.scenes.LoginScene;
 import pt4.flotsblancs.scenes.ProblemesScene;
 import pt4.flotsblancs.scenes.ReservationsScene;
 import pt4.flotsblancs.scenes.StocksScene;
+import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
 
+    @AllArgsConstructor
     public enum Routes {
-        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, ADMIN, PROBLEMES
+
+        CONN_FALLBACK("Erreur de connexion"), 
+        CLIENTS("Clients"), 
+        RESERVATIONS("Réservations"), 
+        LOGIN("Connexion"), 
+        HOME("Accueil"), 
+        STOCKS("Stocks"), 
+        CAMPGROUNDS("Emplacements"), 
+        ADMIN("Administration"), // TODO remove méthode getName de IScene et utiliser valeur de l'enum
+    	PROBLEMES("Problèmes");
+
+        @Getter
+        private String routeName;
+
+        //TODO ajouter showNavBar en attribut de l'enum et l'enlever de IScene
+
     }
 
     /**
@@ -40,6 +60,13 @@ public class Router {
         }
     };
 
+    public static final HashSet<Routes> parameterizedRoutes = new HashSet<>() {
+        {
+            add(Routes.RESERVATIONS);
+            add(Routes.CLIENTS);
+        }
+    };
+
     /**
      * Route actuelle affichée sur le "Stage" de l'application
      */
@@ -50,6 +77,7 @@ public class Router {
      * Scene contenant la barre de navigation et l'écran a afficher Cette scène ne change jamais et
      * est le réel conteneur de toute l'application (La racine de l'arbre JFX)
      */
+    @Getter
     private static RootScene rootScene;
 
     /**
@@ -124,6 +152,14 @@ public class Router {
         // On prévient l'ancienne page qu'elle ne va plus être affiché
         if (currentRoute != null)
             routes.get(currentRoute).onUnfocus();
+        
+        //On vérifie si c'est la scène probleme depuis laquelle on part pour la mettre à jour (la description pour éviter 
+        //A chaque fois de reload la bd quand on change la description ce qui peut ralentir le logiciel et la connexion
+        if(currentRoute == Routes.PROBLEMES)
+        {
+        	ProblemesScene pbs = (ProblemesScene) routes.get(currentRoute);
+        	pbs.refreshDatabase(false);
+        }
 
         currentRoute = newRoute;
 
@@ -137,6 +173,20 @@ public class Router {
         routes.get(currentRoute).onFocus();
 
         log("Switch scene -> " + newRoute);
+    }
+
+    /**
+     * Permet de change la scène actuelle (La page courante)
+     * 
+     * @param newRoute
+     */
+    public static <I extends Item> void goToScreen(Routes newRoute,I item) {
+        if (parameterizedRoutes.contains(newRoute)) {
+            ItemScene<I> nextScene = (ItemScene<I>)routes.get(newRoute);
+            nextScene.selectItem(item);
+            log("[Router] Selecting " + item.getDisplayName() + " on " + newRoute.name());
+        }
+        goToScreen(newRoute);
     }
 
     /**

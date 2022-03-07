@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pt4.flotsblancs.database.model.types.Problems;
 import pt4.flotsblancs.scenes.items.Item;
 
 @EqualsAndHashCode
@@ -16,9 +17,6 @@ import pt4.flotsblancs.scenes.items.Item;
 @DatabaseTable(tableName = "problems")
 public class Problem implements Item
 {
-    public enum ProblemStatus {
-        OPEN, OPEN_URGENT, SOLVED
-    }
 
     @Getter
     @DatabaseField(generatedId = true)
@@ -31,7 +29,7 @@ public class Problem implements Item
 
     @Getter
     @DatabaseField(canBeNull = false)
-    private ProblemStatus status = ProblemStatus.OPEN;
+    private Problems status = Problems.OPEN;
 
     @Getter
     @DatabaseField(canBeNull = false, columnName = "start_date")
@@ -61,9 +59,9 @@ public class Problem implements Item
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Reservation reservation;
 
-    public void setStatus(ProblemStatus newStatus) {
+    public void setStatus(Problems newStatus) {
         this.status = newStatus;
-        if (newStatus == ProblemStatus.SOLVED) {
+        if (newStatus == Problems.SOLVED) {
             this.endDate = new Date();
             this.lastUpdateDate = this.endDate;
         } else {

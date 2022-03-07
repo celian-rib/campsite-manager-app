@@ -1,27 +1,32 @@
 package pt4.flotsblancs.components;
 
 import java.util.LinkedHashMap;
+
 import org.kordamp.ikonli.javafx.FontIcon;
+
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
+import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
-public class NavBar extends BorderPane {
+public class NavBar extends BorderPane implements BreakPointListener {
 
-    /**
-     * Label affichant l'utilisateur actuellement connecté
-     */
     private Label userLabel;
+    private FlotsBlancsLogo largeLogo;
+    private FlotsBlancsLogo smallLogo;
+    private MFXButton logoutBtn;
 
     /**
      * Map avec les boutons de navigation associées à leur route
@@ -32,13 +37,17 @@ public class NavBar extends BorderPane {
         // link au css de la navbar
         setId("nav-bar");
 
-        setTop(new FlotsBlancsLogo(false, true, 50));
+        largeLogo = new FlotsBlancsLogo(false, true, 50);
+        smallLogo = new FlotsBlancsLogo(false, false, 30);
+
         setCenter(navigationButtons());
         setBottom(logOutButton());
+        BreakPointManager.addListener(this);
     }
 
-    private void addNavButton(String content, Routes route, String icon, int gap) {
-        MFXButton btn = new MFXButton(content, 200, 40);
+    private void addNavButton(Routes route, String icon, int gap) {
+        // TODO hardcode width des boutons
+        MFXButton btn = new MFXButton(route.getRouteName(), 200, 40);
         btn.setButtonType(ButtonType.FLAT);
         btn.setAlignment(Pos.CENTER_LEFT);
         btn.setPadding(new Insets(20, 10, 20, 30));
@@ -55,14 +64,14 @@ public class NavBar extends BorderPane {
         centerButtons.setAlignment(Pos.CENTER);
 
         navButtons = new LinkedHashMap<Routes, MFXButton>();
-        addNavButton("Accueil", Routes.HOME, "fas-home:18", 15);
-        addNavButton("Clients", Routes.CLIENTS, "far-user:19", 15);
-        addNavButton("Réservations", Routes.RESERVATIONS, "far-calendar-alt:19", 15);
-        addNavButton("Stocks", Routes.STOCKS, "fas-box:16", 15);
-        addNavButton("Emplacements", Routes.CAMPGROUNDS, "fas-caravan:16", 11);
-        addNavButton("Problèmes", Routes.PROBLEMES, "fas-exclamation-triangle:16", 11);
-        addNavButton("Administration", Routes.ADMIN, "fas-user-cog:16", 11);
-        
+
+        addNavButton(Routes.HOME, "fas-home:18", 15);
+        addNavButton(Routes.CLIENTS, "far-user:19", 15);
+        addNavButton(Routes.RESERVATIONS, "far-calendar-alt:19", 15);
+        addNavButton(Routes.STOCKS, "fas-box:16", 15);
+        addNavButton(Routes.CAMPGROUNDS, "fas-caravan:16", 11);
+        addNavButton(Routes.PROBLEMES, "fas-exclamation-triangle:16", 11);
+        addNavButton(Routes.ADMIN, "fas-user-cog:16", 11);
 
         centerButtons.getChildren().addAll(navButtons.values());
 
@@ -76,15 +85,15 @@ public class NavBar extends BorderPane {
         userLabel = new Label();
         userLabel.setTextFill(Color.WHITE);
 
-        MFXButton btn5 = new MFXButton("Déconnexion", 200, 60);
-        btn5.setOnAction(event -> {
+        logoutBtn = new MFXButton("Déconnexion", 200, 60);
+        logoutBtn.setOnAction(event -> {
             User.logOut();
             Router.showToast(ToastType.INFO, "Deconnecté.e");
             Router.goToScreen(Routes.LOGIN);
         });
-        btn5.setId("btn-logout");
+        logoutBtn.setId("btn-logout");
 
-        bottomButtons.getChildren().addAll(userLabel, btn5);
+        bottomButtons.getChildren().addAll(userLabel, logoutBtn);
         return bottomButtons;
     }
 
@@ -105,5 +114,25 @@ public class NavBar extends BorderPane {
             else
                 button.setStyle("-fx-background-color: transparent;");
         });
+    }
+
+    @Override
+    public void onHorizontalBreak(HBreakPoint oldBp, HBreakPoint newBp) {
+        if (newBp.getWidth() <= HBreakPoint.LARGE.getWidth()) {
+            navButtons.forEach((r, btn) -> {
+                setTop(smallLogo);
+                btn.setText("         ");
+                btn.setTextOverrun(OverrunStyle.CLIP);
+                btn.setMaxWidth(50);
+                logoutBtn.setMaxWidth(50);
+            });
+        } else {
+            navButtons.forEach((r, btn) -> {
+                setTop(largeLogo);
+                btn.setText(r.getRouteName());
+                btn.setMaxWidth(200);
+                logoutBtn.setMaxWidth(200);
+            });
+        }
     }
 }

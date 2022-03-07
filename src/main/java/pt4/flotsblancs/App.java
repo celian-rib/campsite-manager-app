@@ -3,6 +3,7 @@ package pt4.flotsblancs;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.router.*;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.utils.WindowManager;
 import java.sql.SQLException;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -34,15 +35,20 @@ public class App extends Application {
 			defaultRoute = Routes.CONN_FALLBACK;
 		}
 
-		Router.initialize(defaultRoute, primaryStage, 1400, 850);
+		Router.initialize(defaultRoute, primaryStage, 1200, 700);
 
+        BreakPointManager.init(primaryStage);
 		new WindowManager(primaryStage, 20);
-		primaryStage.setMinWidth(1400);
-		primaryStage.setMinHeight(850);
+
+		primaryStage.setMinWidth(950);
+		primaryStage.setMinHeight(650);
+
 
 		// Affichage de la fenêtre
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 		primaryStage.setResizable(true);
 		primaryStage.show();
+
+		
 	}
 }

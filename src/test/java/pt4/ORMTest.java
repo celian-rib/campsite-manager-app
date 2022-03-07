@@ -1,20 +1,24 @@
 package pt4;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.sql.SQLException;
 import java.util.Date;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
-import pt4.flotsblancs.database.model.Problem.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Equipment;
+import pt4.flotsblancs.database.model.types.Problems;
+import pt4.flotsblancs.database.model.types.Service;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class ORMTest {
@@ -32,6 +36,7 @@ public class ORMTest {
         testReservationCampground.setPricePerDays(28);
         testReservationCampground.setSurface(34.5f);
         testReservationCampground.setAllowedEquipments(Equipment.MOBILHOME);
+        testReservationCampground.setProvidedServices(Service.WATER_AND_ELECTRICITY);
         Database.getInstance().getCampgroundDao().create(testReservationCampground);
 
         System.out.println("Création réservation de test");
@@ -40,6 +45,8 @@ public class ORMTest {
         testReservation.setStartDate(new Date());
         testReservation.setEndDate(new Date());
         testReservation.setDepositDate(new Date());
+        testReservation.setEquipments(Equipment.CAMPINGCAR);
+        testReservation.setSelectedServices(Service.WATER_ONLY);
         Database.getInstance().getReservationDao().refresh(testReservation);
         testReservation.setCampground(testReservationCampground);
 
@@ -59,7 +66,7 @@ public class ORMTest {
         testProblem = new Problem();
         testProblem.setDescription("Brindille en feu");
         testProblem.setStartDate(new Date());
-        testProblem.setStatus(ProblemStatus.OPEN_URGENT);
+        testProblem.setStatus(Problems.OPEN_URGENT);
         testProblem.setCampground(testReservationCampground);
         Database.getInstance().getProblemDao().create(testProblem);
         Database.getInstance().getProblemDao().refresh(testProblem);

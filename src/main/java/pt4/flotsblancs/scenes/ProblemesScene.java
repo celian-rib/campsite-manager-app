@@ -1,52 +1,50 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.SQLRecoverableException;
 import java.util.List;
-import java.util.Locale;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXListView;
-import io.github.palexdev.materialfx.effects.DepthLevel;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import pt4.flotsblancs.components.CampGroundComboBox;
 import pt4.flotsblancs.components.CampgroundCard;
 import pt4.flotsblancs.components.ClientCard;
-import pt4.flotsblancs.components.EquipmentComboBox;
 import pt4.flotsblancs.components.HBoxSpacer;
-import pt4.flotsblancs.components.PersonCountComboBox;
 import pt4.flotsblancs.components.ProblemDatePicker;
-import pt4.flotsblancs.components.ServiceComboBox;
 import pt4.flotsblancs.components.VBoxSpacer;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Problem;
-import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.types.Problems;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
+
+
+/*
+ * 
+ * Ajouter les listener -> maj labels
+ * Ajouter les card campground 
+ * Pas oublier de modifier refreshpage
+ * Save description sur le quit de page
+ * 
+ */
 
 public class ProblemesScene extends ItemScene<Problem>
 {
 	
     private final int INNER_PADDING = 10;
     private final int CONTENT_SPACING = 20;
-
-    private Label dayCount;
-
-    private Label datesLabel;
 
     private Problem item;
 
@@ -55,14 +53,11 @@ public class ProblemesScene extends ItemScene<Problem>
     private ProblemDatePicker startDatePicker;
 
     private ProblemDatePicker endDatePicker;
+    
+    private TextArea description;
+    
+    private Problems status;
 
-    private CampGroundComboBox campComboBox;
-
-    private ServiceComboBox serviceComboBox;
-
-    private PersonCountComboBox personCountComboBox;
-
-    private EquipmentComboBox equipmentsComboBox;
 
     @Override
     public String getName() {
@@ -78,12 +73,79 @@ public class ProblemesScene extends ItemScene<Problem>
         container.setPadding(new Insets(50));
 
         container.getChildren().add(createHeader());
-        container.getChildren().add(new VBoxSpacer());
+
         container.getChildren().add(createTopSlot());
         container.getChildren().add(new VBoxSpacer());
+        
+        container.getChildren().add(createBottomSlot());
 
         return container;
 	}
+	
+	private BorderPane createBottomSlot()
+	{
+		BorderPane pane = new BorderPane();
+		pane.setPadding(new Insets(25));
+		
+		description = new TextArea(item.getDescription());
+		description.textProperty().addListener(new ChangeListener<String>() {
+	        @Override
+	        public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+	            item.setDescription(newValue);
+	        }
+	    });
+		
+		BorderPane spacing = new BorderPane();
+		spacing.setPadding(new Insets(10));
+		
+		BorderPane comboPane  = new BorderPane();
+		MFXComboBox<String> combo = createProblemsTypeCombo();
+		createStatusListener(combo);
+		comboPane.setCenter(combo);
+		
+		
+		
+		pane.setTop(description);
+		pane.setCenter(spacing);
+		pane.setBottom(comboPane);
+
+		return pane;
+	}
+	
+    /**
+     * Listener de la ComboBox de l'acompu status
+     * 
+     * Lance la mise à jour de l'interface et de la BD si la valeur change
+     * 
+     * @param comboBox
+     */
+    private void createStatusListener(MFXComboBox<String> comboBox) {
+        comboBox.valueProperty().addListener((obs, oldStatus, newStatus) -> {
+            if(newStatus.equals(Problems.OPEN_URGENT.displayName))
+            {
+            	item.setStatus(Problems.OPEN_URGENT);
+            } else if(newStatus.equals(Problems.OPEN.displayName)) {
+            	item.setStatus(Problems.OPEN);
+            } else {
+            	item.setStatus(Problems.SOLVED);
+            }
+            	
+            refreshPage();
+            refreshDatabase(true);
+        });
+    }
+	
+    private MFXComboBox<String> createProblemsTypeCombo() {
+        var combo = new MFXComboBox<String>();
+        combo.setFloatingText("Status");
+        combo.setFloatMode(FloatMode.INLINE);
+        combo.getItems().addAll(Problems.OPEN_URGENT.displayName,Problems.OPEN.displayName,Problems.SOLVED.displayName);
+        if(item.getStatus() != null)
+        	combo.selectItem(item.getStatus().displayName);
+        combo.setMinWidth(180);
+        combo.setAnimated(false);
+        return combo;
+    }
 
 
     /**
@@ -94,14 +156,11 @@ public class ProblemesScene extends ItemScene<Problem>
         // TODO Responsive padding
         // container.setPadding(new Insets(50));
         container.setPadding(new Insets(INNER_PADDING));
-
+  
         var cards = cardsContainer();
-        var gear = selectedEquipmentAndServicesContainer();
         var dates = datesContainer();
 
         container.getChildren().add(cards);
-        container.getChildren().add(new HBoxSpacer());
-        container.getChildren().add(gear);
         container.getChildren().add(new HBoxSpacer());
         container.getChildren().add(dates);
 
@@ -116,9 +175,16 @@ public class ProblemesScene extends ItemScene<Problem>
         VBox container = new VBox(CONTENT_SPACING);
         container.setPadding(new Insets(10, 0, 0, 0));
         container.setMinWidth(220);
-        var clientCard = new ClientCard(item.getClient(), 220);
-        campCard = new CampgroundCard(item.getCampground(), 220);
-        container.getChildren().addAll(clientCard, campCard);
+        
+        if(item.getClient() != null) {
+	        var clientCard = new ClientCard(item.getClient(), 220);
+	        container.getChildren().addAll(clientCard);
+        }
+        if(item.getCampground() != null) {
+	        campCard = new CampgroundCard(item.getCampground(), 220);
+	        container.getChildren().addAll(campCard);
+        }
+
         return container;
     }
 
@@ -131,6 +197,19 @@ public class ProblemesScene extends ItemScene<Problem>
         startDatePicker = new ProblemDatePicker(item, true);
 
         endDatePicker = new ProblemDatePicker(item, false);
+        
+        startDatePicker.addListener(changeListener);
+        endDatePicker.addListener(changeListener);
+        
+        
+        if(item.getStatus() != Problems.SOLVED) {
+        	endDatePicker.setEditable(false);
+        	endDatePicker.setDisable(true);
+        	endDatePicker.updateCurrentDate();
+        } else {
+        	endDatePicker.setEditable(true);
+        	endDatePicker.setDisable(false);
+        }
 
         container.getChildren().addAll(startDatePicker, endDatePicker);
 
@@ -140,33 +219,11 @@ public class ProblemesScene extends ItemScene<Problem>
          * 
          * 
          */
-        try {
-            campComboBox = new CampGroundComboBox(item.getReservation());
-            container.getChildren().add(campComboBox);
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        
+           
         return container;
     }
 
-
-    /**
-     * @return conteneur contenant les ComboBox de sélection de l'equipement / services / nb
-     *         personnes
-     */
-    private VBox selectedEquipmentAndServicesContainer() {
-        VBox container = new VBox(CONTENT_SPACING);
-
-        personCountComboBox = new PersonCountComboBox(item.getReservation());
-
-        serviceComboBox = new ServiceComboBox(item.getReservation());
-
-        equipmentsComboBox = new EquipmentComboBox(item.getReservation());
-
-        container.getChildren().addAll(personCountComboBox, serviceComboBox, equipmentsComboBox);
-        return container;
-    }
 
     /**
      * @return Header de la page (Numéro de réservations + Label avec dates)
@@ -178,20 +235,45 @@ public class ProblemesScene extends ItemScene<Problem>
         title.setFont(new Font(24));
         title.setTextFill(Color.rgb(51, 59, 97));
 
-        VBox datesInfosContainer = new VBox(5);
-        datesLabel = new Label();
-        datesLabel.setFont(new Font(17));
-        datesLabel.setTextFill(Color.GREY);
-
-        dayCount = new Label();
-        dayCount.setFont(new Font(13));
-        dayCount.setTextFill(Color.DARKGREY);
-
-        datesInfosContainer.getChildren().addAll(datesLabel, dayCount);
-
         container.setLeft(title);
-        container.setRight(datesInfosContainer);
+
         return container;
+    }
+    
+    ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
+        // Check if we need to refresh the page and the database
+        if (oldValue == newValue || oldValue == null)
+            return;
+        refreshPage();
+        refreshDatabase(true);
+    };
+
+    
+    private void refreshPage() {
+    	if(item.getCampground() != null & campCard != null)
+    		campCard.refresh(item.getCampground());
+
+        // Active / Desactive les contrôle en fonction de l'état du probleme
+        boolean isSolved = item.getStatus() == Problems.SOLVED;
+        
+        endDatePicker.setDisable(!isSolved);
+    }
+
+    public void refreshDatabase(boolean showToast) {
+        try {
+            Database.getInstance().getProblemDao().update(item);
+            if(showToast)
+            	Router.showToast(ToastType.SUCCESS, "Problème mis à jour");
+        } catch (SQLRecoverableException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de connexion");
+            Router.goToScreen(Routes.CONN_FALLBACK);
+        } catch (SQLException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
+            Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
+            Router.goToScreen(Routes.HOME);
+        }
     }
 
 	@Override

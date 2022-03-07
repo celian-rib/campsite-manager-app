@@ -12,30 +12,36 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.components.DateHourHeader;
+import pt4.flotsblancs.components.HBoxSpacer;
 import pt4.flotsblancs.components.NavBar;
 import pt4.flotsblancs.components.ToastBasket;
 import pt4.flotsblancs.components.WindowBar;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
+import pt4.flotsblancs.scenes.breakpoints.VBreakPoint;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.scenes.utils.Toaster;
 import pt4.flotsblancs.scenes.utils.TransitionBuilder;
 
-public class RootScene extends StackPane {
+public class RootScene extends StackPane implements BreakPointListener {
 
     private IScene currentScene;
 
     private boolean navBarIsActive;
 
-    private ToastBasket toastBasket;
+    private final ToastBasket toastBasket;
 
-    private BorderPane rootPane;
-    private BorderPane toastPane;
+    private final BorderPane rootPane;
+    private final BorderPane toastPane;
 
-    private BorderPane sceneContainer;
-    private NavBar navBar;
-    private WindowBar windowBar;
-    private DateHourHeader header;
+    private final BorderPane sceneContainer;
+    private final NavBar navBar;
+    private final WindowBar windowBar;
+    private final DateHourHeader header;
+    private final BorderPane contentContainer;
 
     public RootScene() {
+
         initBackground();
         loadStyleSheets();
 
@@ -51,10 +57,12 @@ public class RootScene extends StackPane {
         // Initialisation de la liste des toasts
         toastBasket = new ToastBasket(toastPane);
 
+        header = new DateHourHeader();
+
         toastPane.mouseTransparentProperty().set(true);
         this.getChildren().add(toastPane);
 
-        var contentContainer = createContentContainer();
+        contentContainer = createContentContainer();
         sceneContainer = createSceneContainer();
 
         windowBar = new WindowBar();
@@ -66,6 +74,7 @@ public class RootScene extends StackPane {
         rootPane.setCenter(contentContainer);
 
         this.navBarIsActive = true;
+        BreakPointManager.addListener(this);
     }
 
     /**
@@ -108,8 +117,8 @@ public class RootScene extends StackPane {
      */
     private BorderPane createSceneContainer() {
         var container = new BorderPane();
-        header = new DateHourHeader();
         container.setTop(header);
+        container.setCenter(new HBoxSpacer());
         container.setPadding(new Insets(20));
         return container;
     }
@@ -233,4 +242,12 @@ public class RootScene extends StackPane {
         Toaster.playTransition(toast, toastBasket, durationMillis, fadeinoutMillis);
     }
 
+    @Override
+    public void onVerticalBreak(VBreakPoint oldBp, VBreakPoint newBp) {
+        if (newBp.getHeight() <= VBreakPoint.MEDIUM.getHeight()) {
+            sceneContainer.setTop(null);
+        } else {
+            sceneContainer.setTop(header);
+        }
+    }
 }
