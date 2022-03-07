@@ -43,21 +43,21 @@ public class ServiceTest {
 
     @Test
     public void testGetCompatibles() {
-        var list = Service.NONE.getCompatibles();
-        assertArrayEquals(Service.values(), list.toArray());
+        // var list = Service.NONE.getCompatiblesForCampgrounds();
+        // assertArrayEquals(Service.values(), list.toArray());
 
-        list = Service.WATER_AND_ELECTRICITY.getCompatibles();
-        assertEquals(list.size(), 1);
-        assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
+        // list = Service.WATER_AND_ELECTRICITY.getCompatiblesForCampgrounds();
+        // assertEquals(list.size(), 1);
+        // assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
         
-        list = Service.ELECTRICITY_ONLY.getCompatibles();
-        assertEquals(list.size(), 2);
-        assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
-        assertTrue(list.contains(Service.ELECTRICITY_ONLY));
+        // list = Service.ELECTRICITY_ONLY.getCompatiblesForCampgrounds();
+        // assertEquals(list.size(), 2);
+        // assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
+        // assertTrue(list.contains(Service.ELECTRICITY_ONLY));
         
-        list = Service.WATER_ONLY.getCompatibles();
-        assertEquals(list.size(), 2);
-        assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
-        assertTrue(list.contains(Service.WATER_ONLY));
+        // list = Service.WATER_ONLY.getCompatiblesForCampgrounds();
+        // assertEquals(list.size(), 2);
+        // assertTrue(list.contains(Service.WATER_AND_ELECTRICITY));
+        // assertTrue(list.contains(Service.WATER_ONLY));
     }
 }

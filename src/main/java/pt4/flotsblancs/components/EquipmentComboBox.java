@@ -28,6 +28,8 @@ public class EquipmentComboBox extends MFXComboBox<Equipment> {
 
         getItems().addAll(Equipment.values());
         refresh();
+        selectItem(reservation.getEquipments());
+
 
         valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue == null)
@@ -63,23 +65,25 @@ public class EquipmentComboBox extends MFXComboBox<Equipment> {
     }
 
     public void refresh() {
-        getItems().clear();
-        if (this.campground != null) {
-            getItems().addAll(Equipment.values());
-            selectItem(campground.getAllowedEquipments());
-        } else if (this.reservation != null) {
-            getItems().addAll(reservation.getCampground().getAllowedEquipments().getCompatibles());
-            try {
-                selectItem(reservation.getEquipments());
-            } catch (Exception e) {
-                System.out.println(
-                        "Reservation equipement set to default -> camground not allowing this equipement");
-                Router.showToast(ToastType.ERROR,
-                        "Les équipement demandés par la réservation ne correspondent pas ou plus à l'emplacement, ils ont donc été changés");
-                reservation.setEquipments(reservation.getCampground().getAllowedEquipments());
-                selectItem(reservation.getCampground().getAllowedEquipments());
-            }
-        }
+        // getItems().clear();
+        // if (this.campground != null) {
+        //     getItems().addAll(Equipment.values());
+        //     selectItem(campground.getAllowedEquipments());
+        // } else if (this.reservation != null) {
+        //     getItems().addAll(reservation.getCampground().getAllowedEquipments().getCompatibles());
+        //     // TODO AAAAAAAAAAA
+
+        //     // try {
+        //     //     selectItem(reservation.getEquipments());
+        //     // } catch (Exception e) {
+        //     //     System.out.println(
+        //     //             "Reservation equipement set to default -> camground not allowing this equipement");
+        //     //     Router.showToast(ToastType.ERROR,
+        //     //             "Les équipement demandés par la réservation ne correspondent pas ou plus à l'emplacement, ils ont donc été changés");
+        //     //     reservation.setEquipments(reservation.getCampground().getAllowedEquipments());
+        //     //     selectItem(reservation.getCampground().getAllowedEquipments());
+        //     // }
+        // }
     }
 
     public void addListener(ChangeListener<? super Equipment> listener) {

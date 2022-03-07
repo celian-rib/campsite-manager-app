@@ -27,7 +27,7 @@ public class ServiceComboBox extends MFXComboBox<Service> {
         refresh();
 
         valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (oldValue == null)
+            if (oldValue == null || newValue == null)
                 return;
             reservation.setSelectedServices(newValue);
         });
@@ -45,38 +45,29 @@ public class ServiceComboBox extends MFXComboBox<Service> {
         refresh();
 
         valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (oldValue == null)
+            if (oldValue == null || newValue == null)
                 return;
             campground.setProvidedServices(newValue);
         });
     }
 
     public void refresh() {
+        // if(isFocused())
+        //     return;
         getItems().clear();
         if (this.campground != null) {
             getItems().addAll(Service.values());
             selectItem(campground.getProvidedServices());
         } else if (this.reservation != null) {
-            getItems().addAll(reservation.getCampground().getProvidedServices().getCompatibles());
-            try {
-                selectItem(reservation.getSelectedServices());
-            } catch (Exception e) {
-                if(reservation.getCampground().getAllowedEquipments() == Equipment.MOBILHOME) {
-                    reservation.setSelectedServices(Service.WATER_AND_ELECTRICITY);
-                    selectItem(Service.WATER_AND_ELECTRICITY);
-                } else {
-                    System.out.println(
-                            "Reservation service set to None -> camground not allowing this service");
-                    Router.showToast(ToastType.ERROR,
-                            "Les services demandés par la réservation ne sont pas ou plus disponibles pour l'emplacement");
-                    reservation.setSelectedServices(Service.NONE);
-                    selectItem(Service.NONE);
-                }
-            }
+            System.out.println("UPDATE");
+            // On peut choisir parmis les services donnés par l'emplacement
+            System.out.println(reservation.getCampground().getCompatiblesServices());
+            getItems().addAll(reservation.getCampground().getCompatiblesServices());
+            selectItem(reservation.getSelectedServices());
         }
     }
 
     public void addListener(ChangeListener<? super Service> listener) {
-        valueProperty().addListener(listener);
+        // valueProperty().addListener(listener);
     }
 }

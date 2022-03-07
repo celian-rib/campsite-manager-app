@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pt4.flotsblancs.database.model.types.*;
+import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.ToastType;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -71,12 +74,10 @@ public class Reservation implements Item {
     private Boolean canceled;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false, defaultValue = "NONE", columnName = "selected_services")
     private Service selectedServices;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false, columnName = "equipments")
     private Equipment equipments;
 
@@ -102,9 +103,51 @@ public class Reservation implements Item {
         return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
     }
 
+    /**
+     * Change l'emplacement actuel de la réservation tout en respectant les
+     * contraintes sur les
+     * équipements et les services demandés (Ces derniers peuvent changer par effet
+     * de bord)
+     * 
+     * @param camp nouvel emplacement de la réservation
+     */
     public void setCampground(CampGround camp) {
-        // Contraintes ici
         this.campground = camp;
+        // checkEquipmentsConstraints();
+        checkServicesConstraint();
+    }
+
+    public void setEquipments(Equipment equipment) {
+        this.equipments = equipment;
+        checkEquipmentsConstraints();
+    }
+
+    private void checkEquipmentsConstraints() {
+        if (!equipments.isCompatible(campground.getAllowedEquipments())) {
+            equipments = campground.getAllowedEquipments();
+            Router.showToast(ToastType.WARNING,
+                    "Equipement de la réservation modifiés pour correspondre à l'emplacement selectionné");
+        }
+    }
+
+    public void setSelectedServices(Service service) {
+        this.selectedServices = service;
+        checkServicesConstraint();
+    }
+
+    private void checkServicesConstraint() {
+        if(this.selectedServices == null)
+            return;
+        if(campground.getAllowedEquipments() == Equipment.MOBILHOME) {
+            selectedServices = Service.WATER_AND_ELECTRICITY;
+            Router.showToast(ToastType.WARNING,
+                    "Services de la réservation modifiés pour correspondre à aux services proposés par l'emplacement selectionné");
+        }
+        if (!selectedServices.isCompatible(campground.getProvidedServices())) {
+            selectedServices = campground.getProvidedServices();
+            Router.showToast(ToastType.WARNING,
+                    "Services de la réservation modifiés pour correspondre à aux services proposés par l'emplacement selectionné");
+        }
     }
 
     public int getDayCount() {

@@ -1,15 +1,13 @@
 package pt4.flotsblancs.database.model.types;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 public enum Service {
     NONE("Aucun", 0),
-    WATER_ONLY("Eau seulement", 2),
-    ELECTRICITY_ONLY("Electricité seulement", 2),
+    WATER_ONLY("Eau", 2),
+    ELECTRICITY_ONLY("Electricité", 2),
     WATER_AND_ELECTRICITY("Eau et électricité", 4);
 
     @Getter
@@ -30,16 +28,8 @@ public enum Service {
         return false;
     }
 
-    public List<Service> getCompatibles() {
-        var list = new ArrayList<Service>();
-        for (var v : Service.values())
-            if (this.isCompatible(v))
-                list.add(v);
-        return list;
-    }
-
     @Override
     public String toString() {
-        return name;
+        return name + " " + pricePerDay + "€/j";
     }
 }
