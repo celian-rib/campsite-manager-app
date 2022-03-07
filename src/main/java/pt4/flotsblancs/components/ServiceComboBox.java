@@ -1,8 +1,12 @@
 package pt4.flotsblancs.components;
 
 import io.github.palexdev.materialfx.enums.FloatMode;
+
+import java.util.function.Consumer;
+
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.Equipment;
@@ -31,6 +35,13 @@ public class ServiceComboBox extends MFXComboBox<Service> {
                 return;
             reservation.setSelectedServices(newValue);
         });
+
+        // setOnCommit(new Consumer<String>() {
+        //     @Override
+        //     public void accept(String t) {
+        //         System.out.println("COMMITED TO " + t);                
+        //     };
+        // });
     }
 
     public ServiceComboBox(CampGround campground) {
@@ -52,8 +63,6 @@ public class ServiceComboBox extends MFXComboBox<Service> {
     }
 
     public void refresh() {
-        // if(isFocused())
-        //     return;
         getItems().clear();
         if (this.campground != null) {
             getItems().addAll(Service.values());
@@ -68,6 +77,17 @@ public class ServiceComboBox extends MFXComboBox<Service> {
     }
 
     public void addListener(ChangeListener<? super Service> listener) {
-        // valueProperty().addListener(listener);
+        // TODO Call ce listener que si l'update vient de l'utilisateur et non d'un
+        // effet de bord
+        var wrapper = new ChangeListener<>() {
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                System.out.println(isHover());
+                if (isPressed()) {
+                    listener.changed(observable, (Service) oldValue, (Service) newValue);
+                }
+            };
+        };
+
+        valueProperty().addListener(wrapper);
     }
 }
