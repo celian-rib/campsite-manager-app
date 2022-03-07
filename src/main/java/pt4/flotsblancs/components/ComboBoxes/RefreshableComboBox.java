@@ -1,4 +1,4 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.components.ComboBoxes;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import javafx.beans.value.ChangeListener;

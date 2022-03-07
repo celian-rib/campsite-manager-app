@@ -1,7 +1,6 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.components.ComboBoxes;
 
 import io.github.palexdev.materialfx.enums.FloatMode;
-
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.Equipment;

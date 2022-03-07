@@ -19,6 +19,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.components.*;
+import pt4.flotsblancs.components.ComboBoxes.CampGroundComboBox;
+import pt4.flotsblancs.components.ComboBoxes.EquipmentComboBox;
+import pt4.flotsblancs.components.ComboBoxes.PersonCountComboBox;
+import pt4.flotsblancs.components.ComboBoxes.ServiceComboBox;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
@@ -102,12 +106,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
         Equipment campEquipments = reservation.getCampground().getAllowedEquipments();
         boolean isMobilhome = campEquipments == Equipment.MOBILHOME;
         boolean isSingleEquipment = campEquipments.getCompatibles().size() == 1;
+        startDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         endDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         campComboBox.setDisable(isDeposited || isPaid || isCanceled);
-        serviceComboBox.setDisable(isDeposited || isPaid || isCanceled || isMobilhome);
+        serviceComboBox.setDisable(isDeposited || isPaid || isMobilhome || isCanceled);
         personCountComboBox.setDisable(isDeposited || isPaid || isCanceled);
-        equipmentsComboBox.setDisable(
-                isDeposited || isPaid || isCanceled || isMobilhome || isSingleEquipment);
+        equipmentsComboBox.setDisable(isDeposited || isPaid || isMobilhome || isSingleEquipment || isCanceled);
         cashBackComboBox.setDisable(isPaid || isCanceled);
         depositComboBox.setDisable(isPaid || isCanceled);
         paymentComboBox.setDisable(!isDeposited || isCanceled);
