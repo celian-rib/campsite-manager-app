@@ -52,7 +52,7 @@ public class EquipmentComboBox extends RefreshableComboBox<Equipment> {
             getItems().addAll(Equipment.values());
             selectItem(campground.getAllowedEquipments());
         } else if (this.reservation != null) {
-            getItems().addAll(reservation.getCampground().getAllowedEquipments().getCompatibles());
+            getItems().addAll(reservation.getCampground().getCompatiblesEquipments());
             selectItem(reservation.getEquipments());
         }
     }

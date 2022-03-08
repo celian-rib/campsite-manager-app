@@ -105,7 +105,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         boolean isCanceled = reservation.getCanceled();
         Equipment campEquipments = reservation.getCampground().getAllowedEquipments();
         boolean isMobilhome = campEquipments == Equipment.MOBILHOME;
-        boolean isSingleEquipment = campEquipments.getCompatibles().size() == 1;
+        boolean isSingleEquipment = reservation.getCampground().getCompatiblesEquipments().size() == 1;
         startDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         endDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         campComboBox.setDisable(isDeposited || isPaid || isCanceled);
@@ -163,7 +163,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return Conteneur avec les cartes, les equipements et services, les sélections de dates
+     * @return Conteneur avec les cartes, les equipements et services, les
+     *         sélections de dates
      */
     private HBox createTopSlot() {
         HBox container = new HBox(10);
@@ -236,7 +237,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return VBox contenant la carte du client et la carte de l'emplacement associés à cette
+     * @return VBox contenant la carte du client et la carte de l'emplacement
+     *         associés à cette
      *         réservation
      */
     private VBox cardsContainer() {
@@ -250,7 +252,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return Conteneur contenant les ComboBox des dates de début de fin de la réservation
+     * @return Conteneur contenant les ComboBox des dates de début de fin de la
+     *         réservation
      */
     private VBox datesContainer() {
         VBox container = new VBox(CONTENT_SPACING);
@@ -276,7 +279,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return conteneur contenant les ComboBox de sélection de l'equipement / services / nb
+     * @return conteneur contenant les ComboBox de sélection de l'equipement /
+     *         services / nb
      *         personnes
      */
     private VBox selectedEquipmentAndServicesContainer() {

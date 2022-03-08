@@ -96,8 +96,10 @@ public class Reservation implements Item {
     private ForeignCollection<Problem> problems;
 
     /**
-     * Change l'emplacement actuel de la réservation tout en respectant les contraintes sur les
-     * équipements et les services demandés (Ces derniers peuvent changer par effet de bord)
+     * Change l'emplacement actuel de la réservation tout en respectant les
+     * contraintes sur les
+     * équipements et les services demandés (Ces derniers peuvent changer par effet
+     * de bord)
      * 
      * @param camp nouvel emplacement de la réservation
      */
@@ -108,7 +110,8 @@ public class Reservation implements Item {
     }
 
     /**
-     * Permet de changer les équipements demandés par la réservation en conservant les contraintes
+     * Permet de changer les équipements demandés par la réservation en conservant
+     * les contraintes
      * imposées par l'emplacement
      * 
      * @param equipment
@@ -119,7 +122,8 @@ public class Reservation implements Item {
     }
 
     /**
-     * Permet de changer les services demandés par la réservation en conservant les contraintes
+     * Permet de changer les services demandés par la réservation en conservant les
+     * contraintes
      * imposées par l'emplacement
      * 
      * @param service
@@ -130,13 +134,17 @@ public class Reservation implements Item {
     }
 
     /**
-     * Vérifie l'intégrité des contrainte entre les equipement demandés par la réservation et son
+     * Vérifie l'intégrité des contrainte entre les equipement demandés par la
+     * réservation et son
      * emplacement
      * 
-     * En cas de non compatibilité l'équipement sera modifié pour répondre à la contrainte
+     * En cas de non compatibilité l'équipement sera modifié pour répondre à la
+     * contrainte
      */
     private void checkEquipmentsConstraints() {
-        if (!equipments.isCompatible(campground.getAllowedEquipments())) {
+        if (this.equipments == null || campground == null) // Gére le cas ou la réservation n'est pas encore bien construite
+            return;
+        if (!equipments.isCompatibleWithCampEquipment(campground.getAllowedEquipments())) {
             equipments = campground.getAllowedEquipments();
             Router.showToast(ToastType.WARNING,
                     "Equipement de la réservation modifiés pour correspondre à l'emplacement selectionné");
@@ -144,13 +152,15 @@ public class Reservation implements Item {
     }
 
     /**
-     * Vérifie l'intégrité des contrainte entre les services demandés par la réservation et son
+     * Vérifie l'intégrité des contrainte entre les services demandés par la
+     * réservation et son
      * emplacement
      * 
-     * En cas de non compatibilité le service sera modifié pour répondre à la contrainte
+     * En cas de non compatibilité le service sera modifié pour répondre à la
+     * contrainte
      */
     private void checkServicesConstraint() {
-        if (this.selectedServices == null)
+        if (this.selectedServices == null || campground == null) // Gére le cas ou la réservation n'est pas encore bien construite
             return;
         if (campground.getAllowedEquipments() == Equipment.MOBILHOME) {
             selectedServices = Service.WATER_AND_ELECTRICITY;

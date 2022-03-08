@@ -73,7 +73,7 @@ public class Generator {
             resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
 
-            var equipments = resa.getCampground().getAllowedEquipments().getCompatibles();
+            var equipments = resa.getCampground().getCompatiblesEquipments();
             resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
 
             Database.getInstance().getReservationDao().create(resa);

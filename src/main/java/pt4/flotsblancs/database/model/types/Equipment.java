@@ -1,7 +1,5 @@
 package pt4.flotsblancs.database.model.types;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,26 +11,17 @@ public enum Equipment {
     @Getter
     private String name;
 
-    public boolean isCompatible(Equipment other) {
+    public boolean isCompatibleWithCampEquipment(Equipment other) {
         // Rework complet vis à vis de tests
-        if (this == other)
-            return true;
-        if (this == Equipment.TENT_AND_CAMPINGCAR || this == TENT || this == CAMPINGCAR)
-            return other == TENT_AND_CAMPINGCAR || other == TENT || other == CAMPINGCAR;
+        if (this == CAMPINGCAR)
+            return other == CAMPINGCAR || other == TENT_AND_CAMPINGCAR;
+        if (this == MOBILHOME)
+            return other == MOBILHOME;
+        if (this == TENT)
+            return other == TENT || other == TENT_AND_CAMPINGCAR;
+        if (this == TENT_AND_CAMPINGCAR)
+            return other == TENT_AND_CAMPINGCAR;
         return false;
-    }
-
-    // TODO bouger ça dans campground comme service
-    public List<Equipment> getCompatibles() {
-        var list = new ArrayList<Equipment>();
-        if (this == Equipment.TENT_AND_CAMPINGCAR) {
-            list.add(Equipment.TENT_AND_CAMPINGCAR);
-            list.add(Equipment.TENT);
-            list.add(Equipment.CAMPINGCAR);
-        } else {
-            list.add(this);
-        }
-        return list;
     }
 
     public String getChar() {

@@ -64,4 +64,15 @@ public class CampGround {
                 list.add(v);
         return list;
     }
+    
+    /**
+     * @return Tous les services possibles pour cet emplacement
+     */
+    public List<Equipment> getCompatiblesEquipments() {
+        var list = new ArrayList<Equipment>();
+        for (var v : Equipment.values())
+            if (v.isCompatibleWithCampEquipment(allowedEquipments))
+                list.add(v);
+        return list;
+    }
 }
