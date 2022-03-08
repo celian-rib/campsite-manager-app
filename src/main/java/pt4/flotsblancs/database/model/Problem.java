@@ -15,8 +15,7 @@ import pt4.flotsblancs.scenes.items.Item;
 @EqualsAndHashCode
 @NoArgsConstructor
 @DatabaseTable(tableName = "problems")
-public class Problem implements Item
-{
+public class Problem implements Item {
 
     @Getter
     @DatabaseField(generatedId = true)
@@ -69,8 +68,8 @@ public class Problem implements Item
         }
     }
 
-    public void setStartDate(Date date){
-        this.startDate =  date;
+    public void setStartDate(Date date) {
+        this.startDate = date;
         this.lastUpdateDate = date;
     }
 
@@ -79,20 +78,20 @@ public class Problem implements Item
         return "Problème #" + id + "  " + description;
     }
 
-	@Override
-	public String getDisplayName() {
-		if(client!=null) {
-			String returnMsg = "Problème concernant "+client;
-			if(returnMsg.length() > 30 )
-				return returnMsg.substring(0, 30)+" [...]";
-			return returnMsg;
-		} else {
-			return "Problème sans client";
-		}
-	}
+    @Override
+    public String getDisplayName() {
+        if (client != null) {
+            String returnMsg = "Problème concernant " + client;
+            if (returnMsg.length() > 30)
+                return returnMsg.substring(0, 30) + " [...]";
+            return returnMsg;
+        } else {
+            return "Problème sans client";
+        }
+    }
 
-	public void setEndDate(Date fromLocale) {
-        this.endDate =  fromLocale;
+    public void setEndDate(Date fromLocale) {
+        this.endDate = fromLocale;
         this.lastUpdateDate = fromLocale;
-	}
+    }
 }
