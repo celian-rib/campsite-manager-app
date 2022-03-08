@@ -32,11 +32,7 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 
 
 /*
- * 
- * Ajouter les listener -> maj labels
- * Ajouter les card campground 
- * Pas oublier de modifier refreshpage
- * Save description sur le quit de page
+ * Resa card
  * 
  */
 
@@ -229,6 +225,7 @@ public class ProblemesScene extends ItemScene<Problem>
      * @return Header de la page (Numéro de réservations + Label avec dates)
      */
     private BorderPane createHeader() {
+
         BorderPane container = new BorderPane();
 
         Label title = new Label("Problème  #" + item.getId());

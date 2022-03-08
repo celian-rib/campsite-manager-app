@@ -22,7 +22,7 @@ import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
-
+	
     @AllArgsConstructor
     public enum Routes {
 

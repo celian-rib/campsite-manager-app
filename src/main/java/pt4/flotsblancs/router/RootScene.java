@@ -1,6 +1,7 @@
 package pt4.flotsblancs.router;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -11,6 +12,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import pt4.flotsblancs.components.DateHourHeader;
 import pt4.flotsblancs.components.HBoxSpacer;
 import pt4.flotsblancs.components.NavBar;
@@ -39,7 +41,7 @@ public class RootScene extends StackPane implements BreakPointListener {
     private final WindowBar windowBar;
     private final DateHourHeader header;
     private final BorderPane contentContainer;
-
+    
     public RootScene() {
 
         initBackground();
@@ -236,11 +238,11 @@ public class RootScene extends StackPane implements BreakPointListener {
      * @param fadeinoutMillis : Durée de la transition d'apparition / disparaition
      */
     public void showToast(ToastType type, String message, int durationMillis, int fadeinoutMillis) {
-        // Deux borderpane pour placer en bas à droite sinon impossible
         BorderPane toast = Toaster.createToast(type, message);
         toastBasket.display(toast);
         Toaster.playTransition(toast, toastBasket, durationMillis, fadeinoutMillis);
     }
+
 
     @Override
     public void onVerticalBreak(VBreakPoint oldBp, VBreakPoint newBp) {
