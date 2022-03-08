@@ -6,7 +6,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -14,13 +13,12 @@ import javafx.scene.control.OverrunStyle;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
 import pt4.flotsblancs.database.model.User;
-
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
-
-import pt4.flotsblancs.scenes.breakpoints.*;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
+import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class NavBar extends BorderPane implements BreakPointListener {
@@ -66,11 +64,13 @@ public class NavBar extends BorderPane implements BreakPointListener {
         centerButtons.setAlignment(Pos.CENTER);
 
         navButtons = new LinkedHashMap<Routes, MFXButton>();
+
         addNavButton(Routes.HOME, "fas-home:18", 15);
         addNavButton(Routes.CLIENTS, "far-user:19", 15);
         addNavButton(Routes.RESERVATIONS, "far-calendar-alt:19", 15);
         addNavButton(Routes.STOCKS, "fas-box:16", 15);
         addNavButton(Routes.CAMPGROUNDS, "fas-caravan:16", 11);
+        addNavButton(Routes.PROBLEMES, "fas-exclamation-triangle:16", 11);
         addNavButton(Routes.ADMIN, "fas-user-cog:16", 11);
 
         centerButtons.getChildren().addAll(navButtons.values());

@@ -8,15 +8,21 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pt4.flotsblancs.database.Database;
-import pt4.flotsblancs.database.model.Client;
-import pt4.flotsblancs.scenes.*;
+import pt4.flotsblancs.scenes.AdminScene;
+import pt4.flotsblancs.scenes.CampgroundsScene;
+import pt4.flotsblancs.scenes.ClientsScene;
+import pt4.flotsblancs.scenes.ConnectionFallbackScene;
+import pt4.flotsblancs.scenes.DashboardScene;
+import pt4.flotsblancs.scenes.LoginScene;
+import pt4.flotsblancs.scenes.ProblemesScene;
+import pt4.flotsblancs.scenes.ReservationsScene;
+import pt4.flotsblancs.scenes.StocksScene;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
-
+	
     @AllArgsConstructor
     public enum Routes {
         CONN_FALLBACK("Erreur de connexion"), 
@@ -26,12 +32,11 @@ public class Router {
         HOME("Accueil"), 
         STOCKS("Stocks"), 
         CAMPGROUNDS("Emplacements"), 
-        ADMIN("Administration"); // TODO remove méthode getName de IScene et utiliser valeur de l'enum
+        ADMIN("Administration"), // TODO remove méthode getName de IScene et utiliser valeur de l'enum
+    	PROBLEMES("Problèmes"); // TODO renommer en PROBLEMS
 
         @Getter
-        private String routeName;
-
-        //TODO ajouter showNavBar en attribut de l'enum et l'enlever de IScene
+        private String routeName; // TODO remove ça
     }
 
     /**
@@ -47,6 +52,7 @@ public class Router {
             put(Routes.STOCKS, new StocksScene());
             put(Routes.CAMPGROUNDS, new CampgroundsScene());
             put(Routes.ADMIN, new AdminScene());
+            put(Routes.PROBLEMES, new ProblemesScene());
         }
     };
 

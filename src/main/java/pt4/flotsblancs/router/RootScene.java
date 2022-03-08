@@ -39,7 +39,7 @@ public class RootScene extends StackPane implements BreakPointListener {
     private final WindowBar windowBar;
     private final DateHourHeader header;
     private final BorderPane contentContainer;
-
+    
     public RootScene() {
 
         initBackground();
@@ -236,7 +236,6 @@ public class RootScene extends StackPane implements BreakPointListener {
      * @param fadeinoutMillis : Durée de la transition d'apparition / disparaition
      */
     public void showToast(ToastType type, String message, int durationMillis, int fadeinoutMillis) {
-        // Deux borderpane pour placer en bas à droite sinon impossible
         BorderPane toast = Toaster.createToast(type, message);
         toastBasket.display(toast);
         Toaster.playTransition(toast, toastBasket, durationMillis, fadeinoutMillis);
