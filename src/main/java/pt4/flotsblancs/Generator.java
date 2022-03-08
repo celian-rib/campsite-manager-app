@@ -27,7 +27,7 @@ public class Generator {
         var f = new Faker();
 
         generateAdmin();
-    
+        
         generateStocks(f, 10);
         generateClients(f, 50);
         generateCampGrounds(f, 100);
