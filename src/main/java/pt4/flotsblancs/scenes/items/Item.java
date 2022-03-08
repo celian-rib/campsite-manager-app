@@ -13,4 +13,11 @@ public interface Item {
 	 * @return identifiant de l'item
 	 */
 	public int getId();
+
+	/**
+	 * 
+	 * @return Une chaîne de caractère permettant de rechercher
+	 * parmis les données de l'item
+	 */
+	public String getSearchString();
 }

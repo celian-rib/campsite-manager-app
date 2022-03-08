@@ -43,4 +43,13 @@ public class Stock implements Item{
     public String getDisplayName() {
         return item;
     }
+
+    @Override
+    public String getSearchString() {
+        return new StringBuilder()
+            .append(this.id).append(';')
+            .append(this.item).append(';')
+            .append(this.storageLocation).append(';')
+            .toString().trim().toLowerCase();
+    }
 }
