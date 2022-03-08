@@ -125,6 +125,8 @@ public class Router {
      */
     public static void showToast(ToastType type, String message, int durationMillis,
             int fadeinoutMillis) {
+        if(rootScene == null)
+            return;
         rootScene.showToast(type, message, durationMillis, fadeinoutMillis);
     }
 
@@ -135,6 +137,8 @@ public class Router {
      * @param message
      */
     public static void showToast(ToastType type, String message) {
+        if(rootScene == null)
+            return;
         rootScene.showToast(type, message);
     }
 
@@ -144,6 +148,8 @@ public class Router {
      * @param newRoute
      */
     public static void goToScreen(Routes newRoute) {
+        if(rootScene == null)
+            return;
         if (!routes.containsKey(newRoute)) {
             log("Route not implemented");
             return;
@@ -181,6 +187,8 @@ public class Router {
      * @param newRoute
      */
     public static <I extends Item> void goToScreen(Routes newRoute,I item) {
+        if(rootScene == null)
+            return;
         if (parameterizedRoutes.contains(newRoute)) {
             ItemScene<I> nextScene = (ItemScene<I>)routes.get(newRoute);
             nextScene.selectItem(item);

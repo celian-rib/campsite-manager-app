@@ -13,7 +13,7 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.router.Router.Routes;
 
 public class ClientCard extends BorderPane {
 
@@ -30,10 +30,7 @@ public class ClientCard extends BorderPane {
         openBtn.setGraphic(openIcon);
         openBtn.setGraphicTextGap(10);
 
-        openBtn.setOnAction(e -> {
-            // TODO linking
-            Router.showToast(ToastType.WARNING, "LINKING TODO");
-        });
+        openBtn.setOnAction(e -> Router.goToScreen(Routes.CLIENTS, client));
         return openBtn;
     }
 
