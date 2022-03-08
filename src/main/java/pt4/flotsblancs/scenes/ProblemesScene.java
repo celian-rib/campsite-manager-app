@@ -244,12 +244,9 @@ public class ProblemesScene extends ItemScene<Problem>
     	
     	if(item.getCampground() != null & campCard != null)
     		campCard.refresh(item.getCampground());
-
-        // Active / Desactive les contrôle en fonction de l'état du probleme
-        
     }
 
-    public void refreshDatabase(boolean showToast) {
+    private void refreshDatabase(boolean showToast) {
         try {
             Database.getInstance().getProblemDao().update(item);
             if(showToast)
@@ -271,4 +268,10 @@ public class ProblemesScene extends ItemScene<Problem>
 	protected List<Problem> queryAll() throws SQLException {
         return Database.getInstance().getProblemDao().queryForAll();
 	}
+
+    @Override
+    public void onUnfocus() {
+        // TODO remplacer par onContainerUnFocus        
+        refreshDatabase(true);
+    }
 }

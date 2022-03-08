@@ -158,14 +158,6 @@ public class Router {
         // On prévient l'ancienne page qu'elle ne va plus être affiché
         if (currentRoute != null)
             routes.get(currentRoute).onUnfocus();
-        
-        //On vérifie si c'est la scène probleme depuis laquelle on part pour la mettre à jour (la description pour éviter 
-        //A chaque fois de reload la bd quand on change la description ce qui peut ralentir le logiciel et la connexion
-        if(currentRoute == Routes.PROBLEMES)
-        {
-        	ProblemesScene pbs = (ProblemesScene) routes.get(currentRoute);
-        	pbs.refreshDatabase(false);
-        }
 
         currentRoute = newRoute;
 
