@@ -122,7 +122,23 @@ public class User {
         System.out.println("[UserStore] " + message);
     }
 
-    private void logs(){
-        
+    private static void addlog(User user,String message){
+        QueryBuilder<User, String> queryBuilder;
+        try {
+            queryBuilder = Database.getInstance().getUsersDao().queryBuilder();
+            queryBuilder.where().eq("login", user);
+            PreparedQuery<User> preparedQuery = queryBuilder.prepare();
+            List<User> accountList = Database.getInstance().getUsersDao().query(preparedQuery);//
+
+            for (User u : accountList) {
+                String s = sha256(message);
+
+                if (u.getPassword().equals(s)) {
+                    connected = u;
+                }
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
     }
 }
