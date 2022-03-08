@@ -24,6 +24,7 @@ import pt4.flotsblancs.components.HBoxSpacer;
 import pt4.flotsblancs.components.ProblemDatePicker;
 import pt4.flotsblancs.components.ReservationCard;
 import pt4.flotsblancs.components.VBoxSpacer;
+import pt4.flotsblancs.components.ComboBoxes.ProblemStatusComboBox;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.types.Problems;
@@ -108,8 +109,13 @@ public class ProblemesScene extends ItemScene<Problem>
 		spacing.setPadding(new Insets(10));
 		
 		BorderPane comboPane  = new BorderPane();
-		MFXComboBox<String> combo = createProblemsTypeCombo();
-		createStatusListener(combo);
+		ProblemStatusComboBox combo = new ProblemStatusComboBox(item);
+        combo.addUserChangedValueListener((obs, newVal, oldVal) -> {
+            if (oldVal == newVal || oldVal == null)
+            return;
+            refreshPage();
+            refreshDatabase(true);
+        });
 		comboPane.setCenter(combo);
 
 		
@@ -119,42 +125,6 @@ public class ProblemesScene extends ItemScene<Problem>
 
 		return pane;
 	}
-	
-    /**
-     * Listener de la ComboBox de l'acompu status
-     * 
-     * Lance la mise à jour de l'interface et de la BD si la valeur change
-     * 
-     * @param comboBox
-     */
-    private void createStatusListener(MFXComboBox<String> comboBox) {
-        comboBox.valueProperty().addListener((obs, oldStatus, newStatus) -> {
-            if(newStatus.equals(Problems.OPEN_URGENT.displayName))
-            {
-            	item.setStatus(Problems.OPEN_URGENT);
-            } else if(newStatus.equals(Problems.OPEN.displayName)) {
-            	item.setStatus(Problems.OPEN);
-            } else {
-            	item.setStatus(Problems.SOLVED);
-            }
-            	
-            refreshPage();
-            refreshDatabase(true);
-        });
-    }
-	
-    private MFXComboBox<String> createProblemsTypeCombo() {
-        var combo = new MFXComboBox<String>();
-        combo.setFloatingText("Status");
-        combo.setFloatMode(FloatMode.INLINE);
-        combo.getItems().addAll(Problems.OPEN_URGENT.displayName,Problems.OPEN.displayName,Problems.SOLVED.displayName);
-        if(item.getStatus() != null)
-        	combo.selectItem(item.getStatus().displayName);
-        combo.setMinWidth(180);
-        combo.setAnimated(false);
-        return combo;
-    }
-   
 
     /**
      * @return Conteneur avec les cartes, les equipements et services, les sélections de dates
