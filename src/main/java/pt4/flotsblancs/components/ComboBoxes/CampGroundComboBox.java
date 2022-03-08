@@ -1,4 +1,4 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.components.ComboBoxes;
 
 import java.sql.SQLException;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
@@ -7,8 +7,6 @@ import javafx.beans.value.ChangeListener;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Reservation;
-import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class CampGroundComboBox extends MFXComboBox<CampGround> {
 
@@ -28,11 +26,6 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
             if (oldValue == null)
                 return;
             // TODO Check si l'emplacmeent est disponibles sur les dates de la résa
-            if (!newValue.getAllowedEquipments().isCompatible(reservation.getEquipments())) {
-                Router.showToast(ToastType.WARNING,
-                        "L'equipement client a été changé pour correspondre à l'emplacement");
-                reservation.setEquipments(newValue.getAllowedEquipments());
-            }
             reservation.setCampground(newValue);
         });
     }

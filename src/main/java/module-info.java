@@ -24,4 +24,5 @@ module pt4.flotsblancs {
 	exports pt4.flotsblancs;
 	exports pt4.flotsblancs.database;
 	exports pt4.flotsblancs.database.model;
+	exports pt4.flotsblancs.database.model.types;
 }
