@@ -1,7 +1,6 @@
 package pt4.flotsblancs;
 
 import java.sql.SQLException;
-import java.sql.Date; //ne pas supprimer, cet import EST utilisé
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -16,9 +15,9 @@ import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.database.model.User;
-import pt4.flotsblancs.database.model.Problem.ProblemStatus;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;
+import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
 public class Generator {
@@ -28,7 +27,7 @@ public class Generator {
         var f = new Faker();
 
         generateAdmin();
-
+    
         generateStocks(f, 10);
         generateClients(f, 50);
         generateCampGrounds(f, 100);
@@ -139,17 +138,8 @@ public class Generator {
             p.setClient(p.getReservation().getClient());
             p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().between(p.getReservation().getStartDate(), p.getReservation().getEndDate()));
-            int rdm = rdmNbrBtwn(1, 4);
-            switch (rdm) {
-                case 1:
-                    p.setStatus(ProblemStatus.OPEN);
-                    break;
-                case 2:
-                    p.setStatus(ProblemStatus.OPEN_URGENT);
-                    break;
-                default:
-                    p.setStatus(ProblemStatus.SOLVED);
-            }
+            p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
+
             Database.getInstance().getProblemDao().create(p);
             System.out.println(p);
         }
@@ -162,17 +152,8 @@ public class Generator {
             p.setClient(ClientsList.get(rdmNbrBtwn(0, ClientsList.size())));
             p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().past(30, TimeUnit.DAYS));
-            int rdm = rdmNbrBtwn(1, 4);
-            switch (rdm) {
-                case 1:
-                    p.setStatus(ProblemStatus.OPEN);
-                    break;
-                case 2:
-                    p.setStatus(ProblemStatus.OPEN_URGENT);
-                    break;
-                default:
-                    p.setStatus(ProblemStatus.SOLVED);
-            }
+            p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
+
             Database.getInstance().getProblemDao().create(p);
             System.out.println(p);
         }
@@ -186,17 +167,8 @@ public class Generator {
             p.setCampground(CGlist.get(rdmNbrBtwn(0, CGlist.size())));
             p.setDescription(f.lorem().sentence().toString());
             p.setStartDate(f.date().past(30, TimeUnit.DAYS));
-            int rdm = rdmNbrBtwn(1, 4);
-            switch (rdm) {
-                case 1:
-                    p.setStatus(ProblemStatus.OPEN);
-                    break;
-                case 2:
-                    p.setStatus(ProblemStatus.OPEN_URGENT);
-                    break;
-                default:
-                    p.setStatus(ProblemStatus.SOLVED);
-            }
+            p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
+
             Database.getInstance().getProblemDao().create(p);
             System.out.println(p);
         }

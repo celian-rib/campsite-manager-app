@@ -2,6 +2,8 @@ package pt4.flotsblancs.scenes.utils;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
@@ -17,7 +19,6 @@ import pt4.flotsblancs.components.ToastBasket;
 
 public class Toaster 
 {
-	
 	/** Permet de lancer l'affichage d'un toast avec sa durée et son fadein/out time
 	 * Il faut lui passer en paramètre deux Panes. Le premier, celui sur lequel le toast sera mis, et un autre,
 	 * le container de celui-ci
@@ -29,32 +30,23 @@ public class Toaster
 	 */
 	public static void playTransition(Pane toast, ToastBasket basket,int durationMillis, int fadeinoutMillis)
 	{
-        //Fade du toast
+
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(fadeinoutMillis), toast);
         fadeTransition.setFromValue(0.0f);
         fadeTransition.setToValue(1.0f);
-
-        fadeTransition.setOnFinished((ae) -> 
-        {
-            new Thread(() -> {
-                try
-                {
-                    Thread.sleep(durationMillis);
-                } catch (InterruptedException e) { e.printStackTrace(); }
                 
-	                //Fade du toast
-	                FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(fadeinoutMillis), toast);
-	                fadeTransitionOut.setFromValue(1.0f);
-	                fadeTransitionOut.setToValue(0.0f);
-	               
-	                fadeTransitionOut.play();
-	                
-	                fadeTransitionOut.setOnFinished(aee->{ basket.remove(toast); });
-            }).start();
-        }); 
-        
+	    //Fade du toast
+	    FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(fadeinoutMillis), toast);
+	    fadeTransitionOut.setFromValue(1.0f);
+	    fadeTransitionOut.setToValue(0.0f);
+                   
+        fadeTransitionOut.setOnFinished(aee->{ 
+        	basket.remove(toast); 
+        });
         fadeTransition.setInterpolator(Interpolator.EASE_BOTH);
-        fadeTransition.play();
+        
+        SequentialTransition seqTransition = new SequentialTransition (fadeTransition,new PauseTransition(Duration.millis(durationMillis)),fadeTransitionOut);
+        seqTransition.play();  
 	}
 	
 	/** Permet de créer un toast avec le type indiqué et le contenu passé.
@@ -67,7 +59,6 @@ public class Toaster
 	 */
     public static BorderPane createToast(ToastType type, String content)
     {
-        
         Text text = new Text(content);
         text.setFont(Font.font("Verdana", 15));
         
