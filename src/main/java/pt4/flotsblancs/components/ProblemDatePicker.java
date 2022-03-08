@@ -43,35 +43,15 @@ public class ProblemDatePicker extends MFXDatePicker {
         setValue(toLocale(defaultDate));
         setText(toLocale(defaultDate).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
 
-        setDisable(toLocale(defaultDate).isBefore(LocalDate.now()));
-
-        if (isStartDate)
-            createStartDateListener();
-        else
+        if (!isStartDate)
             createEndDateListener();
-    }
-
-    private void createStartDateListener() {
-        valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (newDate.isBefore(LocalDate.now())) {
-                Router.showToast(ToastType.ERROR,
-                        "La date de début sélectionnée est antérieur à la date actuelle");
-                setValue(oldDate);
-            } else if (newDate.isAfter(toLocale(problem.getEndDate()))) {
-                Router.showToast(ToastType.ERROR,
-                        "La date de début sélectionnée est ultérieure à la date de fin");
-                setValue(oldDate);
-            } else {
-            	problem.setStartDate(fromLocale(newDate));
-            }
-        });
     }
 
     private void createEndDateListener() {
         valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (newDate.isBefore(toLocale(problem.getStartDate()))) {
+            if (newDate.isAfter(LocalDate.now())) {
                 Router.showToast(ToastType.ERROR,
-                        "La date de fin sélectionnée est antérieure à la date de début de la réservation.");
+                		"La date donnée est supérieure à la date actuelle");
                 setValue(oldDate);
             } else {
             	problem.setEndDate(fromLocale(newDate));
