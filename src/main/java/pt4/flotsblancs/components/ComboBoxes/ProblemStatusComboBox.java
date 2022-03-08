@@ -2,9 +2,9 @@ package pt4.flotsblancs.components.ComboBoxes;
 
 import io.github.palexdev.materialfx.enums.FloatMode;
 import pt4.flotsblancs.database.model.Problem;
-import pt4.flotsblancs.database.model.types.Problems;
+import pt4.flotsblancs.database.model.types.ProblemStatus;
 
-public class ProblemStatusComboBox extends RefreshableComboBox<Problems> {
+public class ProblemStatusComboBox extends RefreshableComboBox<ProblemStatus> {
 
     private Problem problem;
 
@@ -13,7 +13,7 @@ public class ProblemStatusComboBox extends RefreshableComboBox<Problems> {
 
         setFloatingText("Status");
         setFloatMode(FloatMode.INLINE);
-        getItems().addAll(Problems.values());
+        getItems().addAll(ProblemStatus.values());
         setMinWidth(180);
         setAnimated(false);
 

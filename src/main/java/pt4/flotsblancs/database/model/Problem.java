@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pt4.flotsblancs.database.model.types.Problems;
+import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.scenes.items.Item;
 
 @EqualsAndHashCode
@@ -29,7 +29,7 @@ public class Problem implements Item
 
     @Getter
     @DatabaseField(canBeNull = false)
-    private Problems status = Problems.OPEN;
+    private ProblemStatus status = ProblemStatus.OPEN;
 
     @Getter
     @DatabaseField(canBeNull = false, columnName = "start_date")
@@ -59,9 +59,9 @@ public class Problem implements Item
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Reservation reservation;
 
-    public void setStatus(Problems newStatus) {
+    public void setStatus(ProblemStatus newStatus) {
         this.status = newStatus;
-        if (newStatus == Problems.SOLVED) {
+        if (newStatus == ProblemStatus.SOLVED) {
             this.endDate = new Date();
             this.lastUpdateDate = this.endDate;
         } else {

@@ -17,7 +17,7 @@ import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.Equipment;
-import pt4.flotsblancs.database.model.types.Problems;
+import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -66,7 +66,7 @@ public class ORMTest {
         testProblem = new Problem();
         testProblem.setDescription("Brindille en feu");
         testProblem.setStartDate(new Date());
-        testProblem.setStatus(Problems.OPEN_URGENT);
+        testProblem.setStatus(ProblemStatus.OPEN_URGENT);
         testProblem.setCampground(testReservationCampground);
         Database.getInstance().getProblemDao().create(testProblem);
         Database.getInstance().getProblemDao().refresh(testProblem);

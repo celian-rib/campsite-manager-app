@@ -27,7 +27,7 @@ import pt4.flotsblancs.components.VBoxSpacer;
 import pt4.flotsblancs.components.ComboBoxes.ProblemStatusComboBox;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Problem;
-import pt4.flotsblancs.database.model.types.Problems;
+import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.items.ItemScene;
@@ -58,7 +58,7 @@ public class ProblemesScene extends ItemScene<Problem>
     
     private TextArea description;
     
-    private Problems status;
+    private ProblemStatus status;
     
     private boolean firstLaunchToast = true;
     
@@ -189,7 +189,7 @@ public class ProblemesScene extends ItemScene<Problem>
         endDatePicker.addListener(changeListener);
         
         
-        if(item.getStatus() != Problems.SOLVED) {
+        if(item.getStatus() != ProblemStatus.SOLVED) {
         	endDatePicker.setEditable(false);
         	endDatePicker.setDisable(true);
         	endDatePicker.updateCurrentDate();
@@ -239,7 +239,7 @@ public class ProblemesScene extends ItemScene<Problem>
     
     private void refreshPage() {
     	
-    	boolean isSolved = item.getStatus() == Problems.SOLVED;
+    	boolean isSolved = item.getStatus() == ProblemStatus.SOLVED;
     	endDatePicker.setDisable(!isSolved);
     	
     	if(item.getCampground() != null & campCard != null)

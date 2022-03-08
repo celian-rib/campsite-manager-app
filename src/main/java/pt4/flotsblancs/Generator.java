@@ -17,7 +17,7 @@ import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;
-import pt4.flotsblancs.database.model.types.Problems;
+import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
 public class Generator {
@@ -141,13 +141,13 @@ public class Generator {
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){
                 case 1 :
-                    p.setStatus(Problems.OPEN);
+                    p.setStatus(ProblemStatus.OPEN);
                     break;
                 case 2 : 
-                    p.setStatus(Problems.OPEN_URGENT);
+                    p.setStatus(ProblemStatus.OPEN_URGENT);
                     break;
                 default :
-                    p.setStatus(Problems.SOLVED);
+                    p.setStatus(ProblemStatus.SOLVED);
             }
             Database.getInstance().getProblemDao().create(p);
             System.out.println(p);
@@ -164,13 +164,13 @@ public class Generator {
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){
                 case 1 :
-                    p.setStatus(Problems.OPEN);
+                    p.setStatus(ProblemStatus.OPEN);
                     break;
                 case 2 : 
-                    p.setStatus(Problems.OPEN_URGENT);
+                    p.setStatus(ProblemStatus.OPEN_URGENT);
                     break;
                 default :
-                    p.setStatus(Problems.SOLVED);
+                    p.setStatus(ProblemStatus.SOLVED);
             }
             Database.getInstance().getProblemDao().create(p);
             System.out.println(p);
@@ -188,13 +188,13 @@ public class Generator {
             int rdm = rdmNbrBtwn(1,4);
             switch(rdm){
                 case 1 :
-                    p.setStatus(Problems.OPEN);
+                    p.setStatus(ProblemStatus.OPEN);
                     break;
                 case 2 : 
-                    p.setStatus(Problems.OPEN_URGENT);
+                    p.setStatus(ProblemStatus.OPEN_URGENT);
                     break;
                 default :
-                    p.setStatus(Problems.SOLVED);
+                    p.setStatus(ProblemStatus.SOLVED);
             }
             Database.getInstance().getProblemDao().create(p);
             System.out.println(p);
