@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pt4.flotsblancs.database.model.types.*;
+import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.ToastType;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -71,12 +74,10 @@ public class Reservation implements Item {
     private Boolean canceled;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false, defaultValue = "NONE", columnName = "selected_services")
     private Service selectedServices;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false, columnName = "equipments")
     private Equipment equipments;
 
@@ -87,7 +88,6 @@ public class Reservation implements Item {
     private Client client;
 
     @Getter
-    @Setter
     @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private CampGround campground;
 
@@ -95,19 +95,107 @@ public class Reservation implements Item {
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Problem> problems;
 
-    @Override
-    public String getDisplayName() {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM");
-        if (canceled)
-            return "[Annulée] " + client.getName();
-        return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
+    /**
+     * Change l'emplacement actuel de la réservation tout en respectant les
+     * contraintes sur les
+     * équipements et les services demandés (Ces derniers peuvent changer par effet
+     * de bord)
+     * 
+     * @param camp nouvel emplacement de la réservation
+     */
+    public void setCampground(CampGround camp) {
+        this.campground = camp;
+        checkEquipmentsConstraints();
+        checkServicesConstraint();
     }
 
+    /**
+     * Permet de changer les équipements demandés par la réservation en conservant
+     * les contraintes
+     * imposées par l'emplacement
+     * 
+     * @param equipment
+     */
+    public void setEquipments(Equipment equipment) {
+        this.equipments = equipment;
+        checkEquipmentsConstraints();
+    }
+
+    /**
+     * Permet de changer les services demandés par la réservation en conservant les
+     * contraintes
+     * imposées par l'emplacement
+     * 
+     * @param service
+     */
+    public void setSelectedServices(Service service) {
+        this.selectedServices = service;
+        checkServicesConstraint();
+    }
+
+    /**
+     * Vérifie l'intégrité des contrainte entre les equipement demandés par la
+     * réservation et son
+     * emplacement
+     * 
+     * En cas de non compatibilité l'équipement sera modifié pour répondre à la
+     * contrainte
+     * 
+     * @return vrai si la contrainte était bien respectée
+     */
+    public boolean checkEquipmentsConstraints() {
+        if (this.equipments == null || campground == null) // Gére le cas ou la réservation n'est pas encore bien construite
+            return true;
+        boolean isOk = true;
+        if (!equipments.isCompatibleWithCampEquipment(campground.getAllowedEquipments())) {
+            isOk = false;
+            equipments = campground.getAllowedEquipments();
+            Router.showToast(ToastType.WARNING,
+                    "Equipements de la réservation modifiés pour correspondre à l'emplacement selectionné");
+        }
+        return isOk;
+    }
+
+    /**
+     * Vérifie l'intégrité des contrainte entre les services demandés par la
+     * réservation et son
+     * emplacement
+     * 
+     * En cas de non compatibilité le service sera modifié pour répondre à la
+     * contrainte
+     * 
+     * @return vrai si la contrainte était bien respectée
+     */
+    public boolean checkServicesConstraint() {
+        if (this.selectedServices == null || campground == null) // Gére le cas ou la réservation n'est pas encore bien construite
+            return true;
+        boolean isOk = true;
+        if (campground.getAllowedEquipments() == Equipment.MOBILHOME) {
+            isOk = false;
+            selectedServices = Service.WATER_AND_ELECTRICITY;
+            Router.showToast(ToastType.WARNING,
+            "Services de la réservation modifiés pour correspondre aux services proposés par l'emplacement selectionné");
+        }
+        if (!selectedServices.isCompatibleWithCampService(campground.getProvidedServices())) {
+            isOk = false;
+            selectedServices = campground.getProvidedServices();
+            Router.showToast(ToastType.WARNING,
+                    "Services de la réservation modifiés pour correspondre aux services proposés par l'emplacement selectionné");
+        }
+        return isOk;
+    }
+
+    /**
+     * @return Nombres de jours de la réservation
+     */
     public int getDayCount() {
         long diff = endDate.getTime() - startDate.getTime();
         return (int) Math.ceil(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)) + 1;
     }
 
+    /**
+     * @return Prix total de la réservation
+     */
     public float getTotalPrice() {
         var dayCount = getDayCount();
         var rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
@@ -115,7 +203,18 @@ public class Reservation implements Item {
         return withService * cashBack.getReduction();
     }
 
+    /**
+     * @return Prix d'acompte de la réservation
+     */
     public float getDepositPrice() {
         return getTotalPrice() * 0.3f; // Acompte de 30%
+    }
+
+    @Override
+    public String getDisplayName() {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM");
+        if (canceled)
+            return "[Annulée] " + client.getName();
+        return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
     }
 }

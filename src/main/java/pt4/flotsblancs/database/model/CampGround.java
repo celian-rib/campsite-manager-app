@@ -3,6 +3,10 @@ package pt4.flotsblancs.database.model;
 import pt4.flotsblancs.database.model.types.*;
 
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.j256.ormlite.field.DatabaseField;
 
 import lombok.*;
@@ -48,5 +52,27 @@ public class CampGround {
     @Override
     public String toString() {
         return "#" + id + "   " + pricePerDays + "€/j  " + allowedEquipments.getChar();
+    }
+
+    /**
+     * @return Tous les services possibles pour cet emplacement
+     */
+    public List<Service> getCompatiblesServices() {
+        var list = new ArrayList<Service>();
+        for (var v : Service.values())
+            if (v.isCompatibleWithCampService(providedServices))
+                list.add(v);
+        return list;
+    }
+    
+    /**
+     * @return Tous les services possibles pour cet emplacement
+     */
+    public List<Equipment> getCompatiblesEquipments() {
+        var list = new ArrayList<Equipment>();
+        for (var v : Equipment.values())
+            if (v.isCompatibleWithCampEquipment(allowedEquipments))
+                list.add(v);
+        return list;
     }
 }

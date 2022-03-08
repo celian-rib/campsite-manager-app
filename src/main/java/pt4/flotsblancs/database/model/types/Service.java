@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum Service {
-    NONE("Aucun", 0), 
-    WATER_ONLY("Eau seulement", 2), 
-    ELECTRICITY_ONLY("Electricité seulement", 2), 
+    NONE("Aucun", 0),
+    WATER_ONLY("Eau", 2),
+    ELECTRICITY_ONLY("Electricité", 2),
     WATER_AND_ELECTRICITY("Eau et électricité", 4);
 
     @Getter
@@ -16,8 +16,26 @@ public enum Service {
     @Getter
     private int pricePerDay;
 
+    /**
+     * Permet de savoir si ce service est compatible avec un service 
+     * 
+     * @param other service avec lequel se comparer
+     * @return
+     */
+    public boolean isCompatibleWithCampService(Service other) {
+        if (this == NONE)
+            return true;
+        if (this == WATER_AND_ELECTRICITY)
+            return other == WATER_AND_ELECTRICITY;
+        if (this == WATER_ONLY)
+            return other == WATER_ONLY || other == WATER_AND_ELECTRICITY;
+        if (this == ELECTRICITY_ONLY)
+            return other == ELECTRICITY_ONLY || other == WATER_AND_ELECTRICITY;
+        return false;
+    }
+
     @Override
     public String toString() {
-        return name;
+        return name + " " + pricePerDay + "€/j";
     }
 }
