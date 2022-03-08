@@ -43,6 +43,13 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     protected abstract List<I> queryAll() throws SQLException;
 
     /**
+     * Appelée au moment ou le bouton ajouter
+     */
+    protected void onAddButtonClicked() {
+        System.out.println("Add button not implemented for page " + getName());
+    };
+
+    /**
      * Met en place le BorderPane contenant à gauche la liste des items et à droite l'item
      * selectionné
      */
@@ -88,7 +95,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
      * 
      * @param item item selectionné qui doit être affiché
      */
-    public void updateContainer(I item) {
+    void updateContainer(I item) {
         // Stack pane pour pouvoir créer une ombre derrière le conteneur
         StackPane stack = new StackPane();
 

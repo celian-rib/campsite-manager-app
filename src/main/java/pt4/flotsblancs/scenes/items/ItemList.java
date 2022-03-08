@@ -94,7 +94,6 @@ public class ItemList<I extends Item> extends StackPane {
             return;
         searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
             filterList(newValue);
-
         });
     }
 
@@ -178,7 +177,7 @@ public class ItemList<I extends Item> extends StackPane {
      * 
      * @param items
      */
-    public void updateItems(List<I> items) {
+    void updateItems(List<I> items) {
         updateItems(items, false);
     }
 
@@ -187,7 +186,7 @@ public class ItemList<I extends Item> extends StackPane {
      * 
      * @param isLoading
      */
-    public void setIsLoading(boolean isLoading) {
+    void setIsLoading(boolean isLoading) {
         if (isLoading)
             borderPane.setCenter(new MFXProgressSpinner());
         else
@@ -229,7 +228,7 @@ public class ItemList<I extends Item> extends StackPane {
         var btn = new MFXButton("Ajouter");
         btn.getStyleClass().add("action-button");
         btn.setOnAction(e -> {
-            Router.showToast(ToastType.WARNING, "ADD ITEM TODO");
+            itemScene.onAddButtonClicked();
         });
         container.getChildren().add(btn);
         btn.setMinWidth(CONTENT_WIDTH);

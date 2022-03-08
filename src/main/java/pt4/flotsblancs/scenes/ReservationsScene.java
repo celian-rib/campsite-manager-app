@@ -148,6 +148,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     @Override
+    protected void onAddButtonClicked() {
+        Router.showToast(ToastType.INFO, "Selectionner un client");
+        Router.goToScreen(Routes.CLIENTS);
+    }
+
+    @Override
     protected Region createContainer(Reservation reservation) {
         this.reservation = reservation;
 
