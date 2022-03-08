@@ -1,6 +1,7 @@
 package pt4.flotsblancs;
 
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.*;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
@@ -25,6 +26,7 @@ public class App extends Application {
 		Dotenv dotenv = Dotenv.load();
 		if (dotenv.get("DEFAULT_ROUTE") != null) {
 			System.out.println("DEFAULT ROUTE OVERRIDE");
+			User.logIn("test", "test");
 			defaultRoute = Routes.valueOf(dotenv.get("DEFAULT_ROUTE"));
 		}
 
