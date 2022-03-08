@@ -1,7 +1,10 @@
 package pt4.flotsblancs.scenes.items;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -20,13 +23,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-
+import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ItemList<I extends Item> extends StackPane {
 
     private final static int CONTENT_WIDTH = 250;
+    private String query = "";
+    private List<I> initialList;
 
     private ItemScene<I> itemScene;
 
@@ -62,6 +67,7 @@ public class ItemList<I extends Item> extends StackPane {
 
         scrollPane = createScrollPane();
         searchBar = createSearchBar();
+        addSearchListener();
         addButton = createAddButton();
 
         // Border pane qui contient l'ensemble des élèments
@@ -74,8 +80,6 @@ public class ItemList<I extends Item> extends StackPane {
         borderPane.setBackground(background);
         borderPane.setCenter(scrollPane);
 
-        
-
         BorderPane.setMargin(scrollPane, new Insets(10, 0, 10, 0));
 
         setBackground(background);
@@ -85,16 +89,69 @@ public class ItemList<I extends Item> extends StackPane {
         getChildren().addAll(shadowPane, borderPane);
     }
 
-    /**
-     * Permet de mettre à jour la liste d'Item affichés par cette ItemList
-     * 
-     * @param items
-     */
-    public void updateItems(List<I> items) {
-        listButtons = new ArrayList<ItemPane<I>>();
+    private void addSearchListener() {
+        if (searchBar == null)
+            return;
+        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterList(newValue);
+
+        });
+    }
+
+    private void filterList(String filter) {
+        query = filter.trim().toLowerCase();
+        if (query.isEmpty()) {
+            updateItems(initialList);
+            return;
+        }
+
+        List<I> filteredList = initialList.stream().filter((I item) -> {
+            var words = query.split(" ");
+            return Arrays.stream(words).allMatch(item.getSearchString()::contains);
+        }).collect(Collectors.toList());
+        updateItems(filteredList, true);
+    }
+
+    private ArrayList<ItemPane<I>> createListButtons(List<I> items) {
+        ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
 
         for (I i : items)
             listButtons.add(createListButton(i));
+        return listButtons;
+    }
+
+    private void updateItems(List<I> items, boolean filtered) {
+        if (!filtered) {
+            boolean isReservation = items.get(0) instanceof Reservation;
+            items.sort((i1, i2) -> {
+                if (isReservation) {
+                    var r1 = (Reservation) i1;
+                    var r2 = (Reservation) i2;
+
+                    return r1.getStartDate().compareTo(r2.getStartDate());
+                }
+                return i1.getId() - i2.getId();
+            });
+            if (isReservation) {
+                ArrayList<I> canceledAndPast = new ArrayList<I>();
+                int i = 0;
+                while (i < items.size()) {
+                    I it = items.get(i);
+                    Reservation r = (Reservation) it;
+                    if (r.getCanceled() || r.isInPast()) {
+                        canceledAndPast.add(it);
+                        items.remove(it);
+                        continue;
+                    }
+                    i++;
+                }
+                items.addAll(canceledAndPast);
+            }
+
+
+            initialList = items;
+        }
+        listButtons = createListButtons(items);
 
         ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
         ObservableList<ItemPane<I>> itemsListContainer =
@@ -117,17 +174,24 @@ public class ItemList<I extends Item> extends StackPane {
     }
 
     /**
+     * Permet de mettre à jour la liste d'Item affichés par cette ItemList
+     * 
+     * @param items
+     */
+    public void updateItems(List<I> items) {
+        updateItems(items, false);
+    }
+
+    /**
      * Active ou désactive l'animation de chargement de cette itemList
      * 
      * @param isLoading
      */
     public void setIsLoading(boolean isLoading) {
-        if (isLoading) {
+        if (isLoading)
             borderPane.setCenter(new MFXProgressSpinner());
-        } else {
+        else
             borderPane.setCenter(scrollPane);
-        }
-        System.out.println("loading : " + isLoading);
     }
 
     /**

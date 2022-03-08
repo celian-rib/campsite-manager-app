@@ -65,8 +65,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane
                     try {
                         // Mise à jour de la liste
                         itemList.updateItems(allItems);
-
                     } catch (Exception e) {
+                        // TODO gestion erreur
                         System.err.println(e);
                     }
                 });

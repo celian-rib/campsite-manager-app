@@ -1,5 +1,6 @@
 package pt4.flotsblancs.database.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -98,5 +99,23 @@ public class Problem implements Item {
         } else {
             return "Problème sans client";
         }
+    }
+
+    @Override
+    public String getSearchString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        var b = new StringBuilder()
+            .append(this.id).append(';')
+            .append(formatter.format(this.startDate)).append(';');
+        if(this.endDate != null)
+            b.append(formatter.format(this.endDate)).append(';');
+        if(this.client != null)
+            b.append(this.client.getFirstName()).append(';')
+            .append(this.client.getName()).append(';');
+        if(this.campground != null)
+            b.append(this.campground.getId()).append(';');
+        if(this.reservation != null)
+            b.append(this.reservation.getId()).append(';');
+        return b.toString().trim().toLowerCase();
     }
 }
