@@ -118,4 +118,18 @@ public class Reservation implements Item {
     public float getDepositPrice() {
         return getTotalPrice() * 0.3f; // Acompte de 30%
     }
+
+    public String getSearchString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return
+        (this.id
+        + ";"
+        + formatter.format(this.startDate)
+        + ";"
+        + this.client.getFirstName()
+        + ";"
+        + this.client.getName()
+        + ";"
+        + this.client.getPhone()).trim().toLowerCase();
+    }
 }

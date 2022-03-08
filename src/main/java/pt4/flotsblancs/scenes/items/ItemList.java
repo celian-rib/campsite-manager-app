@@ -2,6 +2,7 @@ package pt4.flotsblancs.scenes.items;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -27,6 +28,8 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 public class ItemList<I extends Item> extends StackPane {
 
     private final static int CONTENT_WIDTH = 250;
+    private String query = "";
+    private List<I> initialList;
 
     private ItemScene<I> itemScene;
 
@@ -62,6 +65,7 @@ public class ItemList<I extends Item> extends StackPane {
 
         scrollPane = createScrollPane();
         searchBar = createSearchBar();
+        addSearchListener();
         addButton = createAddButton();
 
         // Border pane qui contient l'ensemble des élèments
@@ -85,16 +89,41 @@ public class ItemList<I extends Item> extends StackPane {
         getChildren().addAll(shadowPane, borderPane);
     }
 
-    /**
-     * Permet de mettre à jour la liste d'Item affichés par cette ItemList
-     * 
-     * @param items
-     */
-    public void updateItems(List<I> items) {
-        listButtons = new ArrayList<ItemPane<I>>();
+    private void addSearchListener() {
+        if (searchBar == null) return;
+        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterList(newValue);
+            
+        });
+    }
+
+    private void filterList(String filter) {
+        query = filter.trim().toLowerCase();
+            System.out.println(query);
+            if (query.isEmpty()) {
+                updateItems(initialList);
+                return;
+            }
+
+
+            List<I> filteredList = initialList.stream().filter((I item ) -> item.getSearchString().contains(query)).collect(Collectors.toList());
+            updateItems(filteredList, true);
+
+    }
+    
+    private ArrayList<ItemPane<I>> createListButtons(List<I> items) {
+        ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
 
         for (I i : items)
             listButtons.add(createListButton(i));
+        return listButtons;
+    }
+
+    private void updateItems(List<I> items, boolean filtered) {
+        if (!filtered) {
+            initialList = items;
+        }
+        listButtons = createListButtons(items);
 
         ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
         ObservableList<ItemPane<I>> itemsListContainer =
@@ -114,6 +143,15 @@ public class ItemList<I extends Item> extends StackPane {
 
         listView.setItems(itemsListContainer);
         scrollPane.setContent(listView);
+    }
+
+    /**
+     * Permet de mettre à jour la liste d'Item affichés par cette ItemList
+     * 
+     * @param items
+     */
+    public void updateItems(List<I> items) {
+        updateItems(items, false);
     }
 
     /**
