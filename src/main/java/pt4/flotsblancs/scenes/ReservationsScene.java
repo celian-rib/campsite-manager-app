@@ -81,9 +81,14 @@ public class ReservationsScene extends ItemScene<Reservation> {
     };
 
     private void refreshPage() {
+        if(!reservation.checkEquipmentsConstraints() || !reservation.checkServicesConstraint()) {
+            updateDatabase();
+        };
+        
         equipmentsComboBox.refresh();
         campComboBox.refresh();
         serviceComboBox.refresh();
+
 
         // Rafraichit tous les labels de la page ayant une valeur calculé
         String cancelStr = reservation.getCanceled() ? " (Annulée)" : "";
@@ -106,10 +111,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
         Equipment campEquipments = reservation.getCampground().getAllowedEquipments();
         boolean isMobilhome = campEquipments == Equipment.MOBILHOME;
         boolean isSingleEquipment = reservation.getCampground().getCompatiblesEquipments().size() == 1;
+        boolean isSingleService = reservation.getCampground().getCompatiblesServices().size() == 1;
         startDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         endDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         campComboBox.setDisable(isDeposited || isPaid || isCanceled);
-        serviceComboBox.setDisable(isDeposited || isPaid || isMobilhome || isCanceled);
+        serviceComboBox.setDisable(isDeposited || isPaid || isMobilhome || isSingleService || isCanceled);
         personCountComboBox.setDisable(isDeposited || isPaid || isCanceled);
         equipmentsComboBox.setDisable(isDeposited || isPaid || isMobilhome || isSingleEquipment || isCanceled);
         cashBackComboBox.setDisable(isPaid || isCanceled);

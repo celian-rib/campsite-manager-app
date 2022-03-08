@@ -140,15 +140,20 @@ public class Reservation implements Item {
      * 
      * En cas de non compatibilité l'équipement sera modifié pour répondre à la
      * contrainte
+     * 
+     * @return vrai si la contrainte était bien respectée
      */
-    private void checkEquipmentsConstraints() {
+    public boolean checkEquipmentsConstraints() {
         if (this.equipments == null || campground == null) // Gére le cas ou la réservation n'est pas encore bien construite
-            return;
+            return true;
+        boolean isOk = true;
         if (!equipments.isCompatibleWithCampEquipment(campground.getAllowedEquipments())) {
+            isOk = false;
             equipments = campground.getAllowedEquipments();
             Router.showToast(ToastType.WARNING,
-                    "Equipement de la réservation modifiés pour correspondre à l'emplacement selectionné");
+                    "Equipements de la réservation modifiés pour correspondre à l'emplacement selectionné");
         }
+        return isOk;
     }
 
     /**
@@ -158,20 +163,26 @@ public class Reservation implements Item {
      * 
      * En cas de non compatibilité le service sera modifié pour répondre à la
      * contrainte
+     * 
+     * @return vrai si la contrainte était bien respectée
      */
-    private void checkServicesConstraint() {
+    public boolean checkServicesConstraint() {
         if (this.selectedServices == null || campground == null) // Gére le cas ou la réservation n'est pas encore bien construite
-            return;
+            return true;
+        boolean isOk = true;
         if (campground.getAllowedEquipments() == Equipment.MOBILHOME) {
+            isOk = false;
             selectedServices = Service.WATER_AND_ELECTRICITY;
             Router.showToast(ToastType.WARNING,
-                    "Services de la réservation modifiés pour correspondre à aux services proposés par l'emplacement selectionné");
+            "Services de la réservation modifiés pour correspondre aux services proposés par l'emplacement selectionné");
         }
         if (!selectedServices.isCompatibleWithCampService(campground.getProvidedServices())) {
+            isOk = false;
             selectedServices = campground.getProvidedServices();
             Router.showToast(ToastType.WARNING,
-                    "Services de la réservation modifiés pour correspondre à aux services proposés par l'emplacement selectionné");
+                    "Services de la réservation modifiés pour correspondre aux services proposés par l'emplacement selectionné");
         }
+        return isOk;
     }
 
     /**
