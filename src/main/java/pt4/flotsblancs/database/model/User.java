@@ -60,7 +60,7 @@ public class User {
 
     public static void logOut() {
         if (!isConnected())
-            log("/!\\ Impossible de deconnecter si il ny a pas d'utilisateur déjà connecté");
+            log("/!\\ Impossible de deconnecter si il n\'y a pas d'utilisateur déjà connecté");
         connected = null;
     }
 
@@ -120,5 +120,9 @@ public class User {
      */
     private static void log(String message) {
         System.out.println("[UserStore] " + message);
+    }
+
+    private void logs(){
+        
     }
 }
