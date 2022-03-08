@@ -81,9 +81,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
     };
 
     private void refreshPage() {
-        if(!reservation.checkEquipmentsConstraints() || !reservation.checkServicesConstraint()) {
-            updateDatabase();
-        };
+        // TODO check constraintes à l'ouverture (@celian-rib)
+        // if(!reservation.checkEquipmentsConstraints() || !reservation.checkServicesConstraint()) {
+        //     updateDatabase();
+        // };
         
         equipmentsComboBox.refresh();
         campComboBox.refresh();
