@@ -58,6 +58,14 @@ public class ProblemesScene extends ItemScene<Problem>
     private TextArea description;
     
     private Problems status;
+    
+    private boolean firstLaunchToast = true;
+    
+    public void initLaunch()
+    {
+    	this.firstLaunchToast = true;
+    }
+
 
 
     @Override
@@ -103,8 +111,7 @@ public class ProblemesScene extends ItemScene<Problem>
 		MFXComboBox<String> combo = createProblemsTypeCombo();
 		createStatusListener(combo);
 		comboPane.setCenter(combo);
-		
-		
+
 		
 		pane.setTop(description);
 		pane.setCenter(spacing);
@@ -147,7 +154,7 @@ public class ProblemesScene extends ItemScene<Problem>
         combo.setAnimated(false);
         return combo;
     }
-
+   
 
     /**
      * @return Conteneur avec les cartes, les equipements et services, les sélections de dates
@@ -276,6 +283,7 @@ public class ProblemesScene extends ItemScene<Problem>
         try {
             Database.getInstance().getProblemDao().update(item);
             if(showToast)
+            	
             	Router.showToast(ToastType.SUCCESS, "Problème mis à jour");
         } catch (SQLRecoverableException e) {
             System.err.println(e);
