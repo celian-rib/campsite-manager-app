@@ -37,6 +37,7 @@ public class ClientsScene extends ItemScene<Client> {
     private MFXTextField textFieldPhone;
     private MFXTextField textPreference;
     private MFXButton updateButton;
+    private MFXButton addReservationButton;
 
     @Override
     public String getName() {
@@ -158,16 +159,21 @@ public class ClientsScene extends ItemScene<Client> {
         var container = new HBox(10);
 
         updateButton = new MFXButton("Mettre à jour");
-        FontIcon icon = new FontIcon("fas-exclamation-triangle:10");
-        icon.setIconColor(Color.WHITE);
-
         updateButton.getStyleClass().add("action-button");
+        
+        // TODO afficher que si le client n'a pas de réservation en cours
+        addReservationButton = new MFXButton("Créer une réservation");
+        addReservationButton.getStyleClass().add("action-button");
 
         container.setAlignment(Pos.CENTER_RIGHT);
-        container.getChildren().addAll(updateButton);
+        container.getChildren().addAll(updateButton, addReservationButton);
 
         updateButton.setOnAction(e -> {
             updateDatabase(client);
+        });
+
+        addReservationButton.setOnAction(e -> {
+           Router.goToScreen(Routes.RESERVATIONS, new Reservation(client));
         });
 
         return container;

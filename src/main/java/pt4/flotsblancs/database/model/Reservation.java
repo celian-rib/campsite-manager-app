@@ -6,11 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ToastType;
-
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -94,6 +95,32 @@ public class Reservation implements Item {
     @Getter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Problem> problems;
+
+    /**
+     * Permet de créer une réservation dite "vide" à partir d'un client
+     * 
+     * @param client
+     */
+    public Reservation(Client client) {
+        try {
+            setClient(client);
+            // TODO chopper un emplacement disponible (Attention si il y en a plus de dispo décaler date résa)
+            setCampground(Database.getInstance().getCampgroundDao().queryForFirst());
+            setEquipments(campground.getAllowedEquipments());
+            setSelectedServices(campground.getProvidedServices());
+            setStartDate(new Date());
+            setEndDate(new Date());
+            setNbPersons(1);
+            setCashBack(CashBack.NONE);
+            Database.getInstance().getReservationDao().create(this);
+            // Refresh pour setup les relations
+            Database.getInstance().getReservationDao().refresh(this);
+        } catch (SQLException e) {
+            System.err.println("Erreur création résa");
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Change l'emplacement actuel de la réservation tout en respectant les contraintes sur les
@@ -214,13 +241,11 @@ public class Reservation implements Item {
     @Override
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return new StringBuilder()
-            .append(this.id).append(';')
-            .append(formatter.format(this.startDate)).append(';')
-            .append(this.client.getFirstName()).append(';')
-            .append(this.client.getName()).append(';')
-            .append(this.client.getPhone()).append(';')
-            .toString().trim().toLowerCase();
+        return new StringBuilder().append(this.id).append(';')
+                .append(formatter.format(this.startDate)).append(';')
+                .append(this.client.getFirstName()).append(';').append(this.client.getName())
+                .append(';').append(this.client.getPhone()).append(';').toString().trim()
+                .toLowerCase();
     }
 
     @Override
