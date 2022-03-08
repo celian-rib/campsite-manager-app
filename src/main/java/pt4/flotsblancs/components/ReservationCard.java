@@ -11,12 +11,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import lombok.Getter;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ReservationCard extends BorderPane {
 
+    @Getter
     private Reservation reservation;
 
     private MFXButton createOpenButton() {
@@ -52,7 +54,7 @@ public class ReservationCard extends BorderPane {
         clientInfos.getChildren().addAll(name, id);
 
         container.getChildren().addAll(icon, clientInfos);
-        container.setAlignment(Pos.CENTER);
+        container.setAlignment(Pos.BASELINE_CENTER);
         return container;
     }
 
