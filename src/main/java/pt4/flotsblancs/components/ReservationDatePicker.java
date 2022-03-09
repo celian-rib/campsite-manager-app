@@ -1,8 +1,6 @@
 package pt4.flotsblancs.components;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.enums.FloatMode;
@@ -32,7 +30,7 @@ public class ReservationDatePicker extends MFXDatePicker {
 
         Date defaultDate = isStartDate ? reservation.getStartDate() : reservation.getEndDate();
         setValue(DateUtils.toLocale(defaultDate));
-        setText(DateUtils.toLocale(defaultDate).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
+        setText(DateUtils.toFormattedString(defaultDate));
 
         setDisable(DateUtils.toLocale(defaultDate).isBefore(LocalDate.now()));
 

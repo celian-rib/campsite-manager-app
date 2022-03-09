@@ -1,6 +1,5 @@
 package pt4.flotsblancs.database.model;
 
-
 import java.util.Collection;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -58,6 +57,11 @@ public class Client implements Item {
         this.firstName = firstName;
     }
 
+    public Reservation getOpenReservation() {
+        return reservations.stream().filter(r -> r.getPaymentDate() == null).findFirst()
+                .orElse(null);
+    }
+
     @Override
     public String getDisplayName() {
         return toString();
@@ -71,12 +75,12 @@ public class Client implements Item {
     @Override
     public String getSearchString() {
         return new StringBuilder()
-            .append(this.id).append(';')
-            .append(this.firstName).append(';')
-            .append(this.name).append(';')
-            .append(this.addresse).append(';')
-            .append(this.phone).append(';')
-            .toString().trim().toLowerCase();
+                .append(this.id).append(';')
+                .append(this.firstName).append(';')
+                .append(this.name).append(';')
+                .append(this.addresse).append(';')
+                .append(this.phone).append(';')
+                .toString().trim().toLowerCase();
     }
-    
+
 }
