@@ -50,6 +50,15 @@ public class ClientsScene extends ItemScene<Client> {
     }
 
     @Override
+    protected void onAddButtonClicked() {
+        client.setFirstName("Jean");
+        client.setName("Dupond");
+        client.setAddresse("Adresse");
+        client.setPhone("00 00 00 00 00");
+        Router.goToScreen(Routes.CLIENTS, new Client());
+    }
+
+    @Override
     protected Region createContainer(Client client) {
         this.client = client;
         var container = new VBox(10);
@@ -157,7 +166,6 @@ public class ClientsScene extends ItemScene<Client> {
     @Override
     public void onUnfocus() {
         // TODO remplacer par onContainerUnfocus
-        updateDatabase(client);
     }
 
     private HBox createActionsButtonsSlot() {
