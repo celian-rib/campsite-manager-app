@@ -1,30 +1,44 @@
 package pt4.flotsblancs.database.model;
 
+import java.util.Date;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.*;
+import pt4.flotsblancs.database.model.types.LogType;
 
 @NoArgsConstructor
 @EqualsAndHashCode
-@ToString(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "logs")
 public class Log {
 
     @Getter
-    @ToString.Include
     @DatabaseField(generatedId = true)
     private int id;
 
     @Getter
     @Setter
-    @ToString.Include
     @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private User user;
 
     @Getter
     @Setter
-    @ToString.Include
     @DatabaseField(canBeNull = false)
-    private String action;
+    private String message;
+
+    @Getter
+    @Setter
+    @DatabaseField(canBeNull = false)
+    private Date time;
+
+    @Getter
+    @Setter
+    @DatabaseField(canBeNull = false)
+    private LogType type;
+
+    @Override
+    public String toString() {
+        return "PB #" + id;
+    }
 }

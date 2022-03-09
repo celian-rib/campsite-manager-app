@@ -10,20 +10,13 @@ import javafx.beans.value.ChangeListener;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.utils.DateUtils;
 
 public class ReservationDatePicker extends MFXDatePicker {
 
     private Reservation reservation;
 
     private LocalDate skipNotif;
-
-    private static LocalDate toLocale(Date dateToConvert) {
-        return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    }
-
-    private static Date fromLocale(LocalDate dateToConvert) {
-        return Date.from(dateToConvert.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-    }
 
     public ReservationDatePicker(Reservation reservation, boolean isStartDate) {
         this.reservation = reservation;
@@ -38,10 +31,10 @@ public class ReservationDatePicker extends MFXDatePicker {
         setAnimated(false);
 
         Date defaultDate = isStartDate ? reservation.getStartDate() : reservation.getEndDate();
-        setValue(toLocale(defaultDate));
-        setText(toLocale(defaultDate).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
+        setValue(DateUtils.toLocale(defaultDate));
+        setText(DateUtils.toLocale(defaultDate).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
 
-        setDisable(toLocale(defaultDate).isBefore(LocalDate.now()));
+        setDisable(DateUtils.toLocale(defaultDate).isBefore(LocalDate.now()));
 
         if (isStartDate)
             createStartDateListener();
@@ -56,26 +49,26 @@ public class ReservationDatePicker extends MFXDatePicker {
                 Router.showToast(ToastType.ERROR,
                 "La date de début sélectionnée est antérieur à la date actuelle");
                 setValue(oldDate);
-            } else if (newDate.isAfter(toLocale(reservation.getEndDate()))) {
+            } else if (newDate.isAfter(DateUtils.toLocale(reservation.getEndDate()))) {
                 this.skipNotif = oldDate;
                 Router.showToast(ToastType.ERROR,
                         "La date de début sélectionnée est ultérieure à la date de fin");
                 setValue(oldDate);
             } else {
-                reservation.setStartDate(fromLocale(newDate));
+                reservation.setStartDate(DateUtils.fromLocale(newDate));
             }
         });
     }
 
     private void createEndDateListener() {
         valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (newDate.isBefore(toLocale(reservation.getStartDate()))) {
+            if (newDate.isBefore(DateUtils.toLocale(reservation.getStartDate()))) {
                 this.skipNotif = oldDate;
                 Router.showToast(ToastType.ERROR,
                         "La date de fin sélectionnée est antérieure à la date de début de la réservation.");
                 setValue(oldDate);
             } else {
-                reservation.setEndDate(fromLocale(newDate));
+                reservation.setEndDate(DateUtils.fromLocale(newDate));
             }
         });
     }
