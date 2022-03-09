@@ -6,11 +6,13 @@ import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.beans.value.ChangeListener;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 
 public class CampGroundComboBox extends MFXComboBox<CampGround> {
 
-    private final Reservation reservation;
+    private Reservation reservation;
+    private Problem problem;
 
     public CampGroundComboBox(Reservation reservation) throws SQLException {
         this.reservation = reservation;
@@ -29,8 +31,26 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
             reservation.setCampground(newValue);
         });
     }
+    
+    public CampGroundComboBox(Problem problem) throws SQLException {
+    	this.problem = problem;
+        setFloatingText("Emplacement");
+        setFloatMode(FloatMode.INLINE);
+        // TODO afficher que les emplacements dispos sur les dates de la résa
+        getItems().addAll(Database.getInstance().getCampgroundDao().queryForAll());
+        setMinWidth(180);
+        setAnimated(false);
+        refresh();
+        valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (oldValue == null)
+                return;
+            // TODO Check si l'emplacmeent est disponibles sur les dates de la résa
+            problem.setCampground(newValue);
+        });
+    }
 
     public void refresh() {
+    	
         selectItem(reservation.getCampground());
     }
 

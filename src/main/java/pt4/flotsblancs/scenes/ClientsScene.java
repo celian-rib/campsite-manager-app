@@ -245,7 +245,7 @@ public class ClientsScene extends ItemScene<Client> {
 
     @Override
     public void onUnfocus() {
-        if (!saveButton.isDisabled())
+        if (saveButton!=null && !saveButton.isDisabled())
             updateDatabase(client);
     }
 

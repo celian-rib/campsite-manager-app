@@ -1,11 +1,7 @@
 package pt4.flotsblancs.scenes;
 
-import java.util.Date;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -19,25 +15,19 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-
-import pt4.flotsblancs.components.*;
+import pt4.flotsblancs.components.CampgroundCard;
+import pt4.flotsblancs.components.ClientCard;
+import pt4.flotsblancs.components.HBoxSpacer;
+import pt4.flotsblancs.components.ReservationCard;
+import pt4.flotsblancs.components.VBoxSpacer;
 import pt4.flotsblancs.components.ComboBoxes.ProblemStatusComboBox;
-
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Problem;
-
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
-
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
-
-/*
- * 
- * Resa card
- * 
- */
 
 public class ProblemesScene extends ItemScene<Problem> {
 
@@ -62,6 +52,22 @@ public class ProblemesScene extends ItemScene<Problem> {
         refreshPage();
         refreshDatabase();
     };
+    
+    @Override
+    public void onAddButtonClicked()
+    {
+        try {
+        	
+        	//Crée le problème
+        	
+        	Problem p = new Problem();
+        	Router.goToScreen(Routes.PROBLEMS_ADD, p);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            Router.showToast(ToastType.ERROR, "Erreur durant l'ajout du problème");
+            Router.goToScreen(Routes.CONN_FALLBACK);
+        }
+    }
 
     @Override
     public String getName() {
