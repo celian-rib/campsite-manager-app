@@ -23,44 +23,7 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
         setFloatMode(FloatMode.INLINE);
         // TODO afficher que les emplacements dispos sur les dates de la résa
         
-        Long startDate = reservation.getStartDate().toInstant().toEpochMilli()/1000;
-        Long endDate   = reservation.getEndDate  ().toInstant().toEpochMilli()/1000;
-        
-        var dbr = Database.getInstance().getReservationDao();
-        var dbc = Database.getInstance().getCampgroundDao();
-        
-        List<Reservation> emplacementIncompatible = dbr.query(
-        		(dbr.queryBuilder()
-        		.where()
-        		.raw("("+startDate+" <= UNIX_TIMESTAMP(start_date) AND "+endDate+" >= UNIX_TIMESTAMP(start_date)) OR ("
-        				+startDate+" <= UNIX_TIMESTAMP(end_date) AND "+endDate+" >= UNIX_TIMESTAMP(start_date))"
-        				)
-				.prepare()));
-       
-        
-        /*
-         * SELECT * FROM reservations WHERE start <= UNIX_TIMESTAMP(start_date) AND end >= UNIX_TIMESTAMP(start_date)
-							OR   start <= UNIX_TIMESTAMP(end_date) AND end >= UNIX_TIMESTAMP(end_date)
-         * 
-         */
-        
-        List<Integer> ids = new ArrayList<>();
-        
-        //On récupère les ids des réservations incompatibles
-        for(Reservation r : emplacementIncompatible)
-        {
-        	if(r.getId()!=this.reservation.getId()) {
-        		ids.add(r.getCampground().getId());
-        	}
-        }
-
-        //On check dans la table des campground qu'il n'y a pas un id incompatible et on l'ajoute
-        
-        List<CampGround> campgrounds = dbc.query(
-        		(dbc.queryBuilder().where().raw("id NOT IN "+getIds(ids)).prepare()
-        	));
-        
-        getItems().addAll(campgrounds);
+        getItems().addAll(Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(reservation.getStartDate(),reservation.getEndDate(),reservation.getId()));
 
         
         //db.executeRaw("SELECT * FROM reservations WHERE start_date >= "+endDate+" OR end_date <= "+startDate);
@@ -78,19 +41,6 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
             // TODO Check si l'emplacmeent est disponibles sur les dates de la résa
             reservation.setCampground(newValue);
         });
-    }
-    
-    public String getIds(List<Integer> ids)
-    {
-    	String s = "(-1,";
-    	for(Integer i : ids)
-    	{
-    		s+=i+",";
-    	}
-    	s = s.substring(0, s.length()-1);
-    	s += ")";
-    	
-    	return s;
     }
 
     public void refresh() {

@@ -113,7 +113,7 @@ public class Reservation implements Item {
         setStartDate(new Date());
         setEndDate(DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(3)));
         
-        var camps = Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(startDate, endDate);
+        var camps = Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(startDate, endDate, -1);
         System.out.println(camps.size() + " emplacements disponibles trouvés");
 
         if(camps.size() == 0) {

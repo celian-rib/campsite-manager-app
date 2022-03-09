@@ -1,6 +1,7 @@
 package pt4.flotsblancs.database.daos;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,27 +19,57 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
         super(conn, class1);
     }
 
-    public List<CampGround> getAvailablesCampgrounds(Date start, Date end) throws SQLException {
-        Long startDate = start.toInstant().toEpochMilli() / 1000; // TODO faire une méthode dans DateUtils
-        Long endDate = end.toInstant().toEpochMilli() / 1000;
-
-        //TODO rework complet prcq ça ne marche pas
+    /**
+     * Permet de retourner les emplacements compatibles entre deux dates
+     * 
+     * @param start
+     * @param end
+     * @param reservationId -> On mets l'id de la reservation pour éviter de la supprimer de la liste ce qui pose des soucis d'intégrité, mettre -1 si pas d'id
+     * @return Liste de campground
+     * @throws SQLException
+     */
+    public List<CampGround> getAvailablesCampgrounds(Date start, Date end, int reservationId) throws SQLException {
+        
         var dbr = Database.getInstance().getReservationDao();
+        var dbc = Database.getInstance().getCampgroundDao();
+        
+        List<Reservation> emplacementIncompatible = dbr.query(
+        		(dbr.queryBuilder()
+        		.where()
+        		.raw("("+start+" <= UNIX_TIMESTAMP(start_date) AND "+end+" >= UNIX_TIMESTAMP(start_date)) OR ("
+        				+start+" <= UNIX_TIMESTAMP(end_date) AND "+end+" >= UNIX_TIMESTAMP(start_date))"
+        				)
+				.prepare()));
+       
+        List<Integer> ids = new ArrayList<>();
+        
+        //On récupère les ids des réservations incompatibles
+        for(Reservation r : emplacementIncompatible)
+        {
+        	if(r.getId()!=reservationId) {
+        		ids.add(r.getCampground().getId());
+        	}
+        }
 
-        List<Reservation> reservationsOnDates = dbr.query((dbr.queryBuilder()
-                .where()
-                // Attention emillien j'ai changé les < > par rapport à ton code, 
-                // prend ton code si tu rework ici :)
-                .raw(startDate + " > UNIX_TIMESTAMP(start_date)")
-                .and()
-                .raw(endDate + " < UNIX_TIMESTAMP(start_date)")
-                .or()
-                .raw(startDate + " > UNIX_TIMESTAMP(end_date)")
-                .and()
-                .raw(endDate + " < UNIX_TIMESTAMP(end_date)")
-                .prepare()));
-        List<CampGround> camps = reservationsOnDates.stream().map(r -> r.getCampground()).collect(Collectors.toList());
+        //On check dans la table des campground qu'il n'y a pas un id incompatible et on l'ajoute
+        
+        List<CampGround> campgrounds = dbc.query(
+        		(dbc.queryBuilder().where().raw("id NOT IN "+getIds(ids)).prepare()
+        	));
 
-        return queryForAll().stream().filter(c -> !camps.contains(c)).collect(Collectors.toList());
+        return campgrounds;
+    }
+    
+    public String getIds(List<Integer> ids)
+    {
+    	String s = "(-1,";
+    	for(Integer i : ids)
+    	{
+    		s+=i+",";
+    	}
+    	s = s.substring(0, s.length()-1);
+    	s += ")";
+    	
+    	return s;
     }
 }
