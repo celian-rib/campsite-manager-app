@@ -12,9 +12,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import lombok.Getter;
+import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.utils.DateUtils;
 
 public class ReservationCard extends BorderPane {
 
@@ -22,6 +24,8 @@ public class ReservationCard extends BorderPane {
     private Reservation reservation;
 
     private MFXButton createOpenButton() {
+        if (reservation == null)
+            return null;
         MFXButton openBtn = new MFXButton("");
         var tooltip = new Tooltip("Voir la reservation du client");
         tooltip.setShowDelay(new Duration(0));
@@ -42,15 +46,26 @@ public class ReservationCard extends BorderPane {
         FontIcon icon = new FontIcon("far-calendar-alt:19");
         icon.setIconColor(Color.rgb(51, 59, 97));
 
-        VBox clientInfos = new VBox(2);
-        Label name = new Label(reservation.getId() + " " + reservation.getCampground());
-        name.setFont(new Font(15));
-        Label id = new Label("#" + reservation.getStartDate() + " - " + reservation.getEndDate());
-        id.setFont(new Font(11));
-        id.setTextFill(Color.GRAY);
-        clientInfos.getChildren().addAll(name, id);
+        if (reservation == null) {
+            var noResa = new Label("Aucune réservation en cours");
+            noResa.setFont(new Font(15));
+            noResa.setTextFill(Color.GRAY);
+            container.getChildren().addAll(icon,noResa);
+            return container;
+        }
 
-        container.getChildren().addAll(icon, clientInfos);
+        VBox resaInfos = new VBox(2);
+        Label name = new Label("Réservation #" + reservation.getId() + " - " + reservation.getClient().getName());
+        name.setFont(new Font(15));
+
+        Label dates = new Label("Du " + DateUtils.toFormattedString(reservation.getStartDate()) + " au "
+                + DateUtils.toFormattedString(reservation.getEndDate()));
+        dates.setFont(new Font(11));
+        dates.setTextFill(Color.GRAY);
+
+        resaInfos.getChildren().addAll(name, dates);
+
+        container.getChildren().addAll(icon, resaInfos);
         container.setAlignment(Pos.CENTER);
         return container;
     }
@@ -59,6 +74,14 @@ public class ReservationCard extends BorderPane {
         this.reservation = reservation;
         setLeft(createClientInfos());
         setRight(createOpenButton());
-        setMaxWidth(width);
+        setMinWidth(width);
+    }
+
+    public ReservationCard(Client client, int width) {
+        this.reservation = client.getReservations().stream().filter(r -> r.getPaymentDate() == null).findFirst()
+                .orElse(null);
+        setLeft(createClientInfos());
+        setRight(createOpenButton());
+        setMinWidth(width);
     }
 }

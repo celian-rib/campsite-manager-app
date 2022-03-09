@@ -459,7 +459,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     private boolean isReducedSize(HBreakPoint currentBp) {
-        return currentBp.getWidth() <= HBreakPoint.LARGE.getWidth();
+        return currentBp.getWidth() <= HBreakPoint.MEDIUM.getWidth();
     }
 
     @Override
