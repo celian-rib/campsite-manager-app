@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum HBreakPoint {
-    LARGE(1400), MEDIUM(1000), SMALL(900), NONE(Integer.MAX_VALUE);
+    LARGE(1600), MEDIUM(1200), SMALL(900), NONE(Integer.MAX_VALUE);
 
     @Getter
     private int width;

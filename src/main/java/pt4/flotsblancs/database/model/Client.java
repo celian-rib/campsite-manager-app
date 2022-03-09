@@ -1,6 +1,6 @@
 package pt4.flotsblancs.database.model;
 
-
+import java.sql.SQLException;
 import java.util.Collection;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -8,10 +8,11 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.*;
+import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.scenes.items.Item;
 
-@NoArgsConstructor
 @EqualsAndHashCode
+@NoArgsConstructor
 @DatabaseTable(tableName = "clients")
 public class Client implements Item {
 
@@ -21,12 +22,12 @@ public class Client implements Item {
 
     @Getter
     @Setter
-    @DatabaseField(uniqueCombo = true, canBeNull = false)
+    @DatabaseField(canBeNull = false)
     private String name;
 
     @Getter
     @Setter
-    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "first_name")
+    @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
 
     @Getter
@@ -53,9 +54,19 @@ public class Client implements Item {
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Reservation> reservations;
 
-    public Client(String name, String firstName) {
-        this.name = name;
-        this.firstName = firstName;
+
+    public Client(String name) throws SQLException {
+        this.setFirstName(name);
+        this.setName("Dupond");
+        this.setAddresse("Adresse");
+        this.setPhone("00 00 00 00 00");
+        Database.getInstance().getClientsDao().create(this);
+        Database.getInstance().getClientsDao().refresh(this);
+    }
+
+    public Reservation getOpenReservation() {
+        return reservations.stream().filter(r -> r.getPaymentDate() == null).findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -71,12 +82,12 @@ public class Client implements Item {
     @Override
     public String getSearchString() {
         return new StringBuilder()
-            .append(this.id).append(';')
-            .append(this.firstName).append(';')
-            .append(this.name).append(';')
-            .append(this.addresse).append(';')
-            .append(this.phone).append(';')
-            .toString().trim().toLowerCase();
+                .append(this.id).append(';')
+                .append(this.firstName).append(';')
+                .append(this.name).append(';')
+                .append(this.addresse).append(';')
+                .append(this.phone).append(';')
+                .toString().trim().toLowerCase();
     }
-    
+
 }

@@ -227,7 +227,11 @@ public class ProblemesScene extends ItemScene<Problem> {
 
     @Override
     public void onUnfocus() {
-        // TODO remplacer par onContainerUnFocus
+        onContainerUnfocus();
+    }
+
+    @Override
+    public void onContainerUnfocus() {
         refreshDatabase();
     }
 }

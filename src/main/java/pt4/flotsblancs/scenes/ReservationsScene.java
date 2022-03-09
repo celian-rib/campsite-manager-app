@@ -464,7 +464,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     private boolean isReducedSize(HBreakPoint currentBp) {
-        return currentBp.getWidth() <= HBreakPoint.LARGE.getWidth();
+        return currentBp.getWidth() <= HBreakPoint.MEDIUM.getWidth();
     }
 
     @Override
@@ -486,5 +486,15 @@ public class ReservationsScene extends ItemScene<Reservation> {
             if (!bottomSlot.getChildren().contains(problemsContainer))
                 bottomSlot.getChildren().add(problemsContainer);
         }
+    }
+
+    @Override
+    public void onUnfocus() {
+        onContainerUnfocus();
+    }
+
+    @Override
+    public void onContainerUnfocus() {
+        //refreshDatabase();
     }
 }
