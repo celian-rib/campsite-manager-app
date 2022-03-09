@@ -1,8 +1,6 @@
 package pt4.flotsblancs.components.ComboBoxes;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.enums.FloatMode;
@@ -15,23 +13,17 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
 
     private final Reservation reservation;
 
-    @SuppressWarnings("unchecked")
-	public CampGroundComboBox(Reservation reservation) throws SQLException {
+    public CampGroundComboBox(Reservation reservation) throws SQLException {
         this.reservation = reservation;
 
         setFloatingText("Emplacement");
         setFloatMode(FloatMode.INLINE);
-        // TODO afficher que les emplacements dispos sur les dates de la résa
-        
-        getItems().addAll(Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(reservation.getStartDate(),reservation.getEndDate(),reservation.getId()));
 
-        
-        //db.executeRaw("SELECT * FROM reservations WHERE start_date >= "+endDate+" OR end_date <= "+startDate);
-        
-        //On selectionne les reservations où:
-        //La date de fin X <= date de fin Y
-        // OU QUE  date de début X => date début Y
-        
+        var dao = Database.getInstance().getCampgroundDao();
+        var camps = dao.getAvailablesCampgrounds(reservation.getStartDate(), reservation.getEndDate(),
+                reservation.getId());
+        getItems().addAll(camps);
+
         setMinWidth(180);
         setAnimated(false);
         refresh();
@@ -39,6 +31,7 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
             if (oldValue == null)
                 return;
             // TODO Check si l'emplacmeent est disponibles sur les dates de la résa
+            // Enfaite non faudra pas le faire la (mais faut le faire)
             reservation.setCampground(newValue);
         });
     }
