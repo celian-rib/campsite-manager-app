@@ -70,10 +70,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private MFXButton sendBillBtn;
     private ConfirmButton cancelBtn;
 
-    ProblemsListCard problemsContainer;
+    private ProblemsListCard problemsContainer;
 
-    ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
-        // Check if we need to refresh the page and the database
+    private ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
+        // Check si on a vraiment besoin de refresh la page et la bd
         if (oldValue == newValue || oldValue == null)
             return;
         refreshPage();
@@ -81,9 +81,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
     };
 
     private void refreshPage() {
-        if(!reservation.checkEquipmentsConstraints() || !reservation.checkServicesConstraint()) {
-            updateDatabase();
-        };
+        // TODO check constraintes à l'ouverture (@celian-rib)
+        // if(!reservation.checkEquipmentsConstraints() || !reservation.checkServicesConstraint()) {
+        //     updateDatabase();
+        // };
         
         equipmentsComboBox.refresh();
         campComboBox.refresh();

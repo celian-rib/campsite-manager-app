@@ -3,9 +3,15 @@ package pt4.flotsblancs.database.model;
 import lombok.*;
 
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.types.LogType;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.utils.ToastType;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.security.*;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -119,26 +125,22 @@ public class User {
      * @param message : Message de débug
      */
     private static void log(String message) {
+        // TODO vrai système de logging
         System.out.println("[UserStore] " + message);
     }
 
-    private static void addlog(User user,String message){
-        QueryBuilder<User, String> queryBuilder;
+    public void addlog(LogType type, String message) {
+        var log = new Log();
+        log.setType(type);
+        log.setMessage(message);
+        log.setUser(this);
+        log.setTime(new Date());
         try {
-            queryBuilder = Database.getInstance().getUsersDao().queryBuilder();
-            queryBuilder.where().eq("login", user);
-            PreparedQuery<User> preparedQuery = queryBuilder.prepare();
-            List<User> accountList = Database.getInstance().getUsersDao().query(preparedQuery);//
-
-            for (User u : accountList) {
-                String s = sha256(message);
-
-                if (u.getPassword().equals(s)) {
-                    connected = u;
-                }
-            }
-        } catch (Exception e1) {
-            e1.printStackTrace();
+            Database.getInstance().getLogDao().create(log);
+        } catch (SQLException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
+            Router.goToScreen(Routes.CONN_FALLBACK);
         }
     }
 }
