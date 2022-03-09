@@ -134,11 +134,13 @@ public class User {
         log.setType(type);
         log.setMessage(message);
         log.setUser(this);
-        log.setTime(new Date());
+        log.setDate(new Date());
         try {
             Database.getInstance().getLogDao().create(log);
+            Database.getInstance().getLogDao().refresh(log);
         } catch (SQLException e) {
             System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
             Router.goToScreen(Routes.CONN_FALLBACK);
         }

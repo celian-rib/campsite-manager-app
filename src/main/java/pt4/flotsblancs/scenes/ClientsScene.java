@@ -21,6 +21,8 @@ import pt4.flotsblancs.components.VBoxSpacer;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.User;
+import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.items.ItemScene;
@@ -137,6 +139,7 @@ public class ClientsScene extends ItemScene<Client> {
             client.setPreferences(textPreference.getText());
             Database.getInstance().getClientsDao().update(client);
             Router.showToast(ToastType.SUCCESS, "Client mis à jour");
+            User.getConnected().addlog(LogType.MODIFY, "Mise à jour du client "+textFieldFName+" "+textFieldName);
         } catch (SQLRecoverableException e) {
             System.err.println(e);
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
@@ -151,7 +154,6 @@ public class ClientsScene extends ItemScene<Client> {
     @Override
     public void onUnfocus() {
         // TODO remplacer par onContainerUnfocus
-        updateDatabase(client);
     }
 
     private HBox createActionsButtonsSlot() {
