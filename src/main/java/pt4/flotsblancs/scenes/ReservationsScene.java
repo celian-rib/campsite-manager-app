@@ -487,4 +487,14 @@ public class ReservationsScene extends ItemScene<Reservation> {
                 bottomSlot.getChildren().add(problemsContainer);
         }
     }
+
+    @Override
+    public void onUnfocus() {
+        onContainerUnfocus();
+    }
+
+    @Override
+    public void onContainerUnfocus() {
+        //refreshDatabase();
+    }
 }
