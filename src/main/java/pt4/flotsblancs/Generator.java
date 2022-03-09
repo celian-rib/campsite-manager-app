@@ -2,6 +2,7 @@ package pt4.flotsblancs;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -68,9 +69,9 @@ public class Generator {
             var cashbacks = CashBack.values();
             resa.setCashBack(cashbacks[rdmNbrBtwn(0, cashbacks.length)]);
 
-            resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
-            resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
-            resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+            resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? Date.from(f.date().past(50, TimeUnit.DAYS).toInstant()) : null);
+            resa.setStartDate(Date.from(f.date().future(200, TimeUnit.DAYS, new java.util.Date()).toInstant()));
+            resa.setEndDate(Date.from(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()).toInstant()));
 
             var equipments = resa.getCampground().getCompatiblesEquipments();
             resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
@@ -137,7 +138,7 @@ public class Generator {
             p.setCampground(p.getReservation().getCampground());
             p.setClient(p.getReservation().getClient());
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().between(p.getReservation().getStartDate(), p.getReservation().getEndDate()));
+            p.setStartDate(Date.from(f.date().between(p.getReservation().getStartDate(), p.getReservation().getEndDate()).toInstant()));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);
@@ -151,7 +152,7 @@ public class Generator {
             var p = new Problem();
             p.setClient(ClientsList.get(rdmNbrBtwn(0, ClientsList.size())));
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().past(30, TimeUnit.DAYS));
+            p.setStartDate(Date.from(f.date().past(30, TimeUnit.DAYS).toInstant()));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);
@@ -166,7 +167,7 @@ public class Generator {
             var p = new Problem();
             p.setCampground(CGlist.get(rdmNbrBtwn(0, CGlist.size())));
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().past(30, TimeUnit.DAYS));
+            p.setStartDate(Date.from(f.date().past(30, TimeUnit.DAYS).toInstant()));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);
