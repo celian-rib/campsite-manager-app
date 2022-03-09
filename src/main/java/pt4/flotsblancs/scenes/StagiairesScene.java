@@ -2,12 +2,18 @@ package pt4.flotsblancs.scenes;
 
 import javafx.scene.control.Label;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import javafx.geometry.Pos;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.IScene;
+import pt4.flotsblancs.scenes.items.ItemScene;
 
-public class StagiairesScene extends VBox implements IScene {
+public class StagiairesScene extends ItemScene<User> implements IScene {
 
     @Override
     public String getName() {
@@ -20,30 +26,26 @@ public class StagiairesScene extends VBox implements IScene {
     }
 
     @Override
-    public void onFocus() {
-
-    }
-
-    @Override
     public void onUnfocus() {
         onContainerUnfocus();
     }
 
-    //@Override - Décommenter si CampgroundsScene extends ItemScene
+    @Override
     public void onContainerUnfocus() {
         //refreshDatabase();
     }
 
     @Override
-    public void start() {
-        setAlignment(Pos.CENTER);
+    protected Region createContainer(User item) {
+        VBox container = new VBox();
+        Label label = new Label(item.getDisplayName());
+        container.getChildren().add(label);
+        return container;
+    }
 
-        // Création des élèments de cette page
-        Label label = new Label(this.getName());
-
-        // On ajoute tous les élèments de cette page comme enfant de BaseScene
-        // Ils seront grace à cela affichés.
-        getChildren().addAll(label);
+    @Override
+    protected List<User> queryAll() throws SQLException {
+        return Database.getInstance().getUsersDao().queryForAll();
     }
     
 }

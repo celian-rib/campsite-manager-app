@@ -6,8 +6,10 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import com.j256.ormlite.table.DatabaseTable;
+
 
 import java.security.*;
 import java.sql.SQLException;
@@ -21,7 +23,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @DatabaseTable(tableName = "users")
-public class User {
+public class User implements Item {
 
     @Getter
     @DatabaseField(generatedId = true)
@@ -142,5 +144,15 @@ public class User {
             Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
             Router.goToScreen(Routes.CONN_FALLBACK);
         }
+    }
+
+    @Override
+    public String getDisplayName() {
+        return getFirstName() + " " + getName();
+    }
+
+    @Override
+    public String getSearchString() {
+        return String.join(";", getFirstName(), getName(), getLogin(), "#"+getId());
     }
 }
