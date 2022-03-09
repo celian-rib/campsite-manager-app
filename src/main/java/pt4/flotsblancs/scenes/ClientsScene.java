@@ -173,7 +173,12 @@ public class ClientsScene extends ItemScene<Client> {
         });
 
         addReservationButton.setOnAction(e -> {
-           Router.goToScreen(Routes.RESERVATIONS, new Reservation(client));
+           try {
+                Router.goToScreen(Routes.RESERVATIONS, new Reservation(client));
+            } catch (SQLException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
         });
 
         return container;

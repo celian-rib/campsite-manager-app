@@ -6,10 +6,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 import org.kordamp.ikonli.javafx.FontIcon;
+
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.enums.FloatMode;
+
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,16 +22,17 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.components.*;
-import pt4.flotsblancs.components.ComboBoxes.CampGroundComboBox;
-import pt4.flotsblancs.components.ComboBoxes.EquipmentComboBox;
-import pt4.flotsblancs.components.ComboBoxes.PersonCountComboBox;
-import pt4.flotsblancs.components.ComboBoxes.ServiceComboBox;
+
+import pt4.flotsblancs.components.ComboBoxes.*;
+
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;
+
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+
 import pt4.flotsblancs.scenes.breakpoints.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
