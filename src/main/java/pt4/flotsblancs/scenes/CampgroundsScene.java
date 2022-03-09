@@ -24,7 +24,12 @@ public class CampgroundsScene extends VBox implements IScene {
 
     @Override
     public void onUnfocus() {
+        onContainerUnfocus();
+    }
 
+    //@Override - Décommenter si CampgroundsScene extends ItemScene
+    public void onContainerUnfocus() {
+        //refreshDatabase();
     }
 
     @Override

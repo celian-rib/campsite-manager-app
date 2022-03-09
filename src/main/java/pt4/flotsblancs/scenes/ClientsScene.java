@@ -49,11 +49,13 @@ public class ClientsScene extends ItemScene<Client> {
     private MFXButton saveButton;
     private MFXButton addReservationButton;
 
+
     private ChangeListener<? super Object> changeListener = (obs, oldVal, newVal) -> {
         if (oldVal == null || newVal == null || oldVal == newVal)
             return;
         saveButton.setDisable(false);
     };
+
 
     @Override
     public String getName() {
@@ -245,6 +247,7 @@ public class ClientsScene extends ItemScene<Client> {
 
     @Override
     public void onUnfocus() {
+        onContainerUnfocus();
         if (!saveButton.isDisabled())
             updateDatabase(client);
     }
@@ -273,4 +276,12 @@ public class ClientsScene extends ItemScene<Client> {
             preferences.setMinWidth(350);
         }
     }
+
+    @Override
+    public void onContainerUnfocus() {
+        if (client != null) {
+            updateDatabase(client);
+        }
+    }
+
 }
