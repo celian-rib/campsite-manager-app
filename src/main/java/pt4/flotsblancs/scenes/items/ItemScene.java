@@ -137,7 +137,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         }
     }
 
-    public void selectItem(Item item) {
+    @SuppressWarnings("unchecked")
+	public void selectItem(Item item) {
         itemList.selectItem((I) item);
     }
 }

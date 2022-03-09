@@ -21,6 +21,7 @@ import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
+@SuppressWarnings("serial")
 public class Router {
 	
     @AllArgsConstructor
@@ -178,7 +179,9 @@ public class Router {
         if(rootScene == null)
             return;
         if (parameterizedRoutes.contains(newRoute)) {
-            ItemScene<I> nextScene = (ItemScene<I>)routes.get(newRoute);
+            
+			@SuppressWarnings("unchecked")
+			ItemScene<I> nextScene = (ItemScene<I>)routes.get(newRoute);
             nextScene.selectItem(item);
             log("[Router] Selecting " + item.getDisplayName() + " on " + newRoute.name());
         }

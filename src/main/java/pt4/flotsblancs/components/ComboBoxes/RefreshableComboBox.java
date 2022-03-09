@@ -20,7 +20,8 @@ public abstract class RefreshableComboBox<T> extends MFXComboBox<T> {
      */
     public void addUserChangedValueListener(ChangeListener<? super T> listener) {
         var wrapper = new ChangeListener<>() {
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+            @SuppressWarnings("unchecked")
+			public void changed(@SuppressWarnings("rawtypes") ObservableValue observable, Object oldValue, Object newValue) {
                 if (oldValue == null || newValue == null || oldValue == newValue)
                     return;
                 if (isShowing())
