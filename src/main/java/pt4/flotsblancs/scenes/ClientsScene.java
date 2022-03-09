@@ -143,7 +143,7 @@ public class ClientsScene extends ItemScene<Client> {
         var clientSince = new Label("Client depuis :    TODO");
         clientSince.setFont(new Font(15));
         clientSince.setTextFill(Color.GRAY);
-        
+
         var nbReservations = new Label("Nombre de réservations : " + client.getReservations().size());
         nbReservations.setFont(new Font(15));
         nbReservations.setTextFill(Color.GRAY);
@@ -159,7 +159,6 @@ public class ClientsScene extends ItemScene<Client> {
         name.textProperty().addListener(changeListener);
         firstName = createTextField(client.getFirstName(), "Prénom");
         firstName.textProperty().addListener(changeListener);
-
 
         container.getChildren().addAll(name, firstName);
         return container;
@@ -241,7 +240,8 @@ public class ClientsScene extends ItemScene<Client> {
 
     @Override
     public void onUnfocus() {
-        updateDatabase(client);
+        if (!saveButton.isDisabled())
+            updateDatabase(client);
     }
 
     @Override
