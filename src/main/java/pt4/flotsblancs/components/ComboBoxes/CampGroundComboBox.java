@@ -32,15 +32,11 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
         List<Reservation> emplacementIncompatible = dbr.query(
         		(dbr.queryBuilder()
         		.where()
-        		.raw(startDate+" <= UNIX_TIMESTAMP(start_date)")
-				.and()
-				.raw(endDate+" >= UNIX_TIMESTAMP(start_date)")
-				.or()
-        		.raw(startDate+" <= UNIX_TIMESTAMP(end_date)")
-				.and()
-				.raw(endDate+" >= UNIX_TIMESTAMP(end_date)")
+        		.raw("("+startDate+" <= UNIX_TIMESTAMP(start_date) AND "+endDate+" >= UNIX_TIMESTAMP(start_date)) OR ("
+        				+startDate+" <= UNIX_TIMESTAMP(end_date) AND "+endDate+" >= UNIX_TIMESTAMP(start_date))"
+        				)
 				.prepare()));
-        
+       
         
         /*
          * SELECT * FROM reservations WHERE start <= UNIX_TIMESTAMP(start_date) AND end >= UNIX_TIMESTAMP(start_date)
@@ -55,9 +51,7 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
         {
         	if(r.getId()!=this.reservation.getId()) {
         		ids.add(r.getCampground().getId());
-        		System.out.println(this.reservation.getId()+" incompatible avec:"+r.getId());
         	}
-        	System.out.println("");
         }
 
         //On check dans la table des campground qu'il n'y a pas un id incompatible et on l'ajoute
@@ -65,8 +59,6 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
         List<CampGround> campgrounds = dbc.query(
         		(dbc.queryBuilder().where().raw("id NOT IN "+getIds(ids)).prepare()
         	));
-        
-        System.out.println(campgrounds.size());
         
         getItems().addAll(campgrounds);
 
