@@ -1,5 +1,7 @@
 package pt4.flotsblancs.database;
 
+import pt4.flotsblancs.database.daos.CampgroundDAO;
+import pt4.flotsblancs.database.daos.ReservationDAO;
 import pt4.flotsblancs.database.model.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -28,7 +30,7 @@ public class Database {
     private Dao<User, String> usersDao;
 
     @Getter
-    private Dao<CampGround, String> campgroundDao;
+    private CampgroundDAO campgroundDao;
 
     @Getter
     private Dao<ProviderBill, String> billDao;
@@ -40,7 +42,7 @@ public class Database {
     private Dao<Problem, String> problemDao;
 
     @Getter
-    private Dao<Reservation, String> reservationDao;
+    private ReservationDAO reservationDao;
 
     @Getter
     private Dao<Stock, String> stockDao;
@@ -96,11 +98,11 @@ public class Database {
     private void createAllDAOs() throws SQLException {
         clientsDao = DaoManager.createDao(conn, Client.class);
         usersDao = DaoManager.createDao(conn, User.class);
-        campgroundDao = DaoManager.createDao(conn, CampGround.class);
+        campgroundDao = new CampgroundDAO(conn, CampGround.class);
         billDao = DaoManager.createDao(conn, ProviderBill.class);
         logDao = DaoManager.createDao(conn, Log.class);
         problemDao = DaoManager.createDao(conn, Problem.class);
-        reservationDao = DaoManager.createDao(conn, Reservation.class);
+        reservationDao = new ReservationDAO(conn, Reservation.class);
         stockDao = DaoManager.createDao(conn, Stock.class);
     }
 }
