@@ -7,6 +7,7 @@ import java.util.List;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.enums.FloatMode;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -45,8 +46,14 @@ public class ClientsScene extends ItemScene<Client> {
     private MFXTextField phone;
     private MFXTextField preferences;
 
-    private MFXButton updateButton;
+    private MFXButton saveButton;
     private MFXButton addReservationButton;
+
+    private ChangeListener<? super Object> changeListener = (obs, oldVal, newVal) -> {
+        if (oldVal == null || newVal == null || oldVal == newVal)
+            return;
+        saveButton.setDisable(false);
+    };
 
     @Override
     public String getName() {
@@ -76,6 +83,8 @@ public class ClientsScene extends ItemScene<Client> {
 
     private void refreshPage() {
         title.setText(client.getDisplayName());
+
+        addReservationButton.setDisable(client.getOpenReservation() != null);
     }
 
     /**
@@ -102,7 +111,7 @@ public class ClientsScene extends ItemScene<Client> {
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.TOP_CENTER);
 
-        container.getChildren().add(new ReservationCard(client, 250));
+        container.getChildren().add(new ReservationCard(client.getOpenReservation(), 250));
         container.getChildren().add(new HBoxSpacer());
         container.getChildren().add(createNameFirstNameContainer());
         return container;
@@ -131,7 +140,10 @@ public class ClientsScene extends ItemScene<Client> {
         container.setAlignment(Pos.CENTER);
 
         name = createTextField(client.getName(), "Nom");
+        name.textProperty().addListener(changeListener);
         firstName = createTextField(client.getFirstName(), "Prénom");
+        firstName.textProperty().addListener(changeListener);
+
 
         container.getChildren().addAll(name, firstName);
         return container;
@@ -147,9 +159,11 @@ public class ClientsScene extends ItemScene<Client> {
 
         adresse = createTextField(client.getAddresse(), "Adresse");
         adresse.setMinWidth(isReduced ? 180 : 350);
+        adresse.textProperty().addListener(changeListener);
 
         preferences = createTextField(client.getPreferences(), "Préférences");
         preferences.setMinWidth(isReduced ? 180 : 350);
+        preferences.textProperty().addListener(changeListener);
 
         container.getChildren().addAll(phone, adresse, preferences);
         return container;
@@ -158,17 +172,19 @@ public class ClientsScene extends ItemScene<Client> {
     private HBox createActionsButtonsSlot() {
         var container = new HBox(10);
 
-        updateButton = new MFXButton("Mettre à jour");
-        updateButton.getStyleClass().add("action-button");
+        saveButton = new MFXButton("Sauvegarder");
+        saveButton.getStyleClass().add("action-button");
+        saveButton.setDisable(true);
 
         addReservationButton = new MFXButton("Créer une réservation");
         addReservationButton.getStyleClass().add("action-button");
 
         container.setAlignment(Pos.CENTER_RIGHT);
-        container.getChildren().addAll(updateButton, addReservationButton);
+        container.getChildren().addAll(saveButton, addReservationButton);
 
-        updateButton.setOnAction(e -> {
+        saveButton.setOnAction(e -> {
             updateDatabase(client);
+            saveButton.setDisable(true);
         });
 
         addReservationButton.setOnAction(e -> {
@@ -186,7 +202,7 @@ public class ClientsScene extends ItemScene<Client> {
     }
 
     private void updateDatabase(Client client) {
-        if(client == null)
+        if (client == null)
             return;
         try {
             client.setFirstName(firstName.getText());

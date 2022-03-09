@@ -76,12 +76,4 @@ public class ReservationCard extends BorderPane {
         setRight(createOpenButton());
         setMinWidth(width);
     }
-
-    public ReservationCard(Client client, int width) {
-        this.reservation = client.getReservations().stream().filter(r -> r.getPaymentDate() == null).findFirst()
-                .orElse(null);
-        setLeft(createClientInfos());
-        setRight(createOpenButton());
-        setMinWidth(width);
-    }
 }
