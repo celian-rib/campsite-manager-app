@@ -3,9 +3,15 @@ package pt4.flotsblancs.database.model;
 import lombok.*;
 
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.types.LogType;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.utils.ToastType;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.security.*;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -60,7 +66,7 @@ public class User {
 
     public static void logOut() {
         if (!isConnected())
-            log("/!\\ Impossible de deconnecter si il ny a pas d'utilisateur déjà connecté");
+            log("/!\\ Impossible de deconnecter si il n\'y a pas d'utilisateur déjà connecté");
         connected = null;
     }
 
@@ -119,6 +125,22 @@ public class User {
      * @param message : Message de débug
      */
     private static void log(String message) {
+        // TODO vrai système de logging
         System.out.println("[UserStore] " + message);
+    }
+
+    public void addlog(LogType type, String message) {
+        var log = new Log();
+        log.setType(type);
+        log.setMessage(message);
+        log.setUser(this);
+        log.setTime(new Date());
+        try {
+            Database.getInstance().getLogDao().create(log);
+        } catch (SQLException e) {
+            System.err.println(e);
+            Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
+            Router.goToScreen(Routes.CONN_FALLBACK);
+        }
     }
 }

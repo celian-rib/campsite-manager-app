@@ -67,4 +67,16 @@ public class Client implements Item {
     public String toString() {
         return this.firstName + " " + this.name;
     }
+
+    @Override
+    public String getSearchString() {
+        return new StringBuilder()
+            .append(this.id).append(';')
+            .append(this.firstName).append(';')
+            .append(this.name).append(';')
+            .append(this.addresse).append(';')
+            .append(this.phone).append(';')
+            .toString().trim().toLowerCase();
+    }
+    
 }
