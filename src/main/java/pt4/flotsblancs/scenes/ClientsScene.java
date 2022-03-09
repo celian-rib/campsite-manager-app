@@ -83,7 +83,6 @@ public class ClientsScene extends ItemScene<Client> {
 
     private void refreshPage() {
         title.setText(client.getDisplayName());
-
         addReservationButton.setDisable(client.getOpenReservation() != null);
     }
 
@@ -111,7 +110,7 @@ public class ClientsScene extends ItemScene<Client> {
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.TOP_CENTER);
 
-        container.getChildren().add(new ReservationCard(client.getOpenReservation(), 250));
+        container.getChildren().add(createCardsContainer());
         container.getChildren().add(new HBoxSpacer());
         container.getChildren().add(createNameFirstNameContainer());
         return container;
@@ -133,6 +132,23 @@ public class ClientsScene extends ItemScene<Client> {
         textField.setFloatMode(FloatMode.INLINE);
         textField.setMinWidth(180);
         return textField;
+    }
+
+    private VBox createCardsContainer() {
+        VBox container = new VBox(CONTENT_SPACING);
+        container.setAlignment(Pos.TOP_LEFT);
+
+        var card = new ReservationCard(client.getOpenReservation(), 250);
+
+        var clientSince = new Label("Client depuis :    TODO");
+        clientSince.setFont(new Font(15));
+        clientSince.setTextFill(Color.GRAY);
+        
+        var nbReservations = new Label("Nombre de réservations : " + client.getReservations().size());
+        nbReservations.setFont(new Font(15));
+        nbReservations.setTextFill(Color.GRAY);
+        container.getChildren().addAll(card, clientSince, nbReservations);
+        return container;
     }
 
     private VBox createNameFirstNameContainer() {
