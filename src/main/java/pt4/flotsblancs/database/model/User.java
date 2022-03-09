@@ -141,6 +141,7 @@ public class User {
         } catch (SQLException e) {
             System.err.println(e);
             e.printStackTrace();
+            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"+log);
             Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
             Router.goToScreen(Routes.CONN_FALLBACK);
         }
