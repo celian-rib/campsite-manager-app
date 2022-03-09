@@ -45,6 +45,11 @@ public class ClientsScene extends ItemScene<Client> {
     }
 
     @Override
+    protected String addButtonText() {
+        return "Ajouter un client";
+    }
+
+    @Override
     protected Region createContainer(Client client) {
         this.client = client;
         var container = new VBox(10);

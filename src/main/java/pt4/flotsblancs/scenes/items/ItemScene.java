@@ -43,6 +43,13 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     protected abstract List<I> queryAll() throws SQLException;
 
     /**
+     * @return Permet d'indiquer le texte du bouton d'ajout
+     */
+    protected String addButtonText() {
+        return "Ajouter";
+    }
+
+    /**
      * Appelée au moment ou le bouton ajouter
      */
     protected void onAddButtonClicked() {

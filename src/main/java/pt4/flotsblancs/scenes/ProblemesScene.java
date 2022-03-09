@@ -69,6 +69,11 @@ public class ProblemesScene extends ItemScene<Problem> {
     }
 
     @Override
+    protected String addButtonText() {
+        return "Ajouter un problème";
+    }
+
+    @Override
     protected Region createContainer(Problem problem) {
         this.problem = problem;
 
