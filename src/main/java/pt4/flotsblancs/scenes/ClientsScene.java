@@ -151,7 +151,8 @@ public class ClientsScene extends ItemScene<Client> {
         clientSince.setFont(new Font(15));
         clientSince.setTextFill(Color.GRAY);
 
-        var nbReservations = new Label("Nombre de réservations : " + client.getReservations().size());
+        var nbReservations =
+                new Label("Nombre de réservations : " + client.getReservations().size());
         nbReservations.setFont(new Font(15));
         nbReservations.setTextFill(Color.GRAY);
         container.getChildren().addAll(card, clientSince, nbReservations);
@@ -214,7 +215,7 @@ public class ClientsScene extends ItemScene<Client> {
                 Router.goToScreen(Routes.RESERVATIONS, new Reservation(client));
                 Router.showToast(ToastType.SUCCESS, "Réservation ajoutée");
             } catch (SQLException e1) {
-                System.err.println(e);
+                e1.printStackTrace();
                 Router.showToast(ToastType.ERROR, "Erreur durant l'ajout de la réservation");
                 Router.goToScreen(Routes.CONN_FALLBACK);
             }
@@ -235,11 +236,11 @@ public class ClientsScene extends ItemScene<Client> {
             Database.getInstance().getClientsDao().update(client);
             Router.showToast(ToastType.SUCCESS, "Client mis à jour");
         } catch (SQLRecoverableException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
             Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
         }
@@ -248,7 +249,12 @@ public class ClientsScene extends ItemScene<Client> {
     @Override
     public void onUnfocus() {
         onContainerUnfocus();
-        if (saveButton != null && !saveButton.isDisabled())
+    }
+    
+    @Override
+    public void onContainerUnfocus() {
+        if (this.saveButton != null)
+        if (!saveButton.isDisabled())
             updateDatabase(client);
     }
 
@@ -276,12 +282,4 @@ public class ClientsScene extends ItemScene<Client> {
             preferences.setMinWidth(350);
         }
     }
-
-    @Override
-    public void onContainerUnfocus() {
-        if (client != null) {
-            updateDatabase(client);
-        }
-    }
-
 }
