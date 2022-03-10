@@ -135,11 +135,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
         } catch (SQLRecoverableException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
             Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);

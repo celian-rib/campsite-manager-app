@@ -260,9 +260,10 @@ public class Reservation implements Item {
 
     @Override
     public String getDisplayName() {
+        var clientStr = client == null ? "Aucun client" : client.getName(); // TODO supprimer ça ou mieux gérer l'intégrité de la BD
         SimpleDateFormat format = new SimpleDateFormat("dd/MM");
         if (canceled)
-            return "[Annulée] " + client.getName();
-        return format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
+            return "[Annulée] " + clientStr;
+        return format.format(startDate) + "-" + format.format(endDate) + " " + clientStr;
     }
 }
