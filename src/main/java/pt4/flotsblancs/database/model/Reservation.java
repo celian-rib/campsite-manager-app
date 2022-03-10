@@ -38,27 +38,23 @@ public class Reservation implements Item {
 
     @Getter
     @Setter
-    @ToString.Include
     @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = false, columnName = "nb_persons")
     private int nbPersons;
 
     @Getter
     @Setter
-    @ToString.Include
     @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = true, columnName = "cash_back")
     private CashBack cashBack;
 
     @Getter
     @Setter
-    @ToString.Include
     @DatabaseField(columnName = "deposit_date")
     private Date depositDate;
 
     @Getter
     @Setter
-    @ToString.Include
     @DatabaseField(columnName = "payment_date")
     private Date paymentDate;
 
@@ -89,7 +85,6 @@ public class Reservation implements Item {
 
     @Getter
     @Setter
-    @ToString.Include
     @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private Client client;
 
@@ -113,7 +108,7 @@ public class Reservation implements Item {
         setStartDate(new Date());
         setEndDate(DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(3)));
         
-        var camps = Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(startDate, endDate);
+        var camps = Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(startDate, endDate, -1);
         System.out.println(camps.size() + " emplacements disponibles trouvés");
 
         if(camps.size() == 0) {
