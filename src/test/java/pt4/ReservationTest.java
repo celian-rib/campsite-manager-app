@@ -1,5 +1,6 @@
 package pt4;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
@@ -22,11 +23,9 @@ import pt4.flotsblancs.utils.DateUtils;
 @TestInstance(Lifecycle.PER_CLASS)
 public class ReservationTest {
     
-    private List<Client> testClients = new ArrayList<>();
-    private List<Reservation> testReservations = new ArrayList<>();
-    private int nbGenerated = 0;
+    private static int nbGenerated = 0;
 
-    private void createReservation(String start, String end) throws SQLException {
+    private Reservation createReservation(String start, String end) throws SQLException {
         var client = new Client();
         client.setAddresse("15 rue Naudet, Gradignan, 33170" + nbGenerated);
         client.setFirstName("test_firstname" + nbGenerated);
@@ -44,35 +43,42 @@ public class ReservationTest {
         Database.getInstance().getReservationDao().refresh(resa);
         System.out.println("Création réservation de test");
         
-        testClients.add(client);
-        testReservations.add(resa);
         nbGenerated ++;
+        return resa;
     }
+
+    private Reservation r1;
+    private Reservation r2;
 
     @BeforeAll
     public void setup() throws SQLException {
-        createReservation("2022-10-01", "2022-10-05");
-        createReservation("2022-10-01", "2022-10-05");
+        r1 = createReservation("1111-10-01", "1111-10-05");
+        r2 = createReservation("1111-11-23", "1111-12-10"); // TODO check si je crois que le moi est bien le mois :/
     }
 
     @Test
 	public void testLogin() throws SQLException {
-        var start = DateUtils.fromLocale(LocalDate.parse("2022-09-25"));
-        var end = DateUtils.fromLocale(LocalDate.parse("2022-10-02"));
+        // Dates qui ne sont pas prisent par aucune réservation
+        var start = DateUtils.fromLocale(LocalDate.parse("1111-09-25"));
+        var end = DateUtils.fromLocale(LocalDate.parse("1111-09-26"));
         var camps = Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(start, end, -1);
-
-        assertTrue(camps.contains(testReservations.get(0).getCampground()));
+        assertTrue(camps.contains(r1.getCampground()));
+        assertTrue(camps.contains(r2.getCampground()));
+        
+        // Dates qui ne sont prisent par r1
+        start = DateUtils.fromLocale(LocalDate.parse("1111-09-25"));
+        end = DateUtils.fromLocale(LocalDate.parse("1111-10-01"));
+        camps = Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(start, end, -1);
+        assertTrue(camps.contains(r1.getCampground()));
+        assertTrue(camps.contains(r2.getCampground()));
 	}
 
     @AfterAll
     public void delete() throws SQLException {
-        for(var r : testReservations) {
-            System.out.println("Suppression de " + r);
-            Database.getInstance().getReservationDao().delete(r); 
-        }
-        for(var c : testClients) {
-            System.out.println("Suppression de " + c);
-            Database.getInstance().getClientsDao().delete(c); 
-        }        
+        Database.getInstance().getClientsDao().delete(r1.getClient()); 
+        Database.getInstance().getReservationDao().delete(r1);
+
+        Database.getInstance().getClientsDao().delete(r2.getClient()); 
+        Database.getInstance().getReservationDao().delete(r2); 
     }
 }

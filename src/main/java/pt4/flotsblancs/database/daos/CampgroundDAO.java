@@ -32,12 +32,15 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
         
         var dbr = Database.getInstance().getReservationDao();
         var dbc = Database.getInstance().getCampgroundDao();
+
+        Long startTime = start.toInstant().toEpochMilli() / 1000;
+        Long endTime = end.toInstant().toEpochMilli() / 1000;
         
         List<Reservation> emplacementIncompatible = dbr.query(
         		(dbr.queryBuilder()
         		.where()
-        		.raw("("+start+" <= UNIX_TIMESTAMP(start_date) AND "+end+" >= UNIX_TIMESTAMP(start_date)) OR ("
-        				+start+" <= UNIX_TIMESTAMP(end_date) AND "+end+" >= UNIX_TIMESTAMP(start_date))"
+        		.raw("("+startTime+" < UNIX_TIMESTAMP(start_date) AND "+endTime+" > UNIX_TIMESTAMP(start_date)) OR ("
+        				+startTime+" < UNIX_TIMESTAMP(end_date) AND "+endTime+" > UNIX_TIMESTAMP(start_date))"
         				)
 				.prepare()));
        
