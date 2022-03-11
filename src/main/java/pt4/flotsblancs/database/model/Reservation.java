@@ -10,9 +10,7 @@ import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
-import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.DateUtils;
 
 import java.sql.SQLException;
@@ -59,13 +57,11 @@ public class Reservation implements Item {
     private Date paymentDate;
 
     @Getter
-    @Setter
     @ToString.Include
     @DatabaseField(canBeNull = false, columnName = "start_date")
     private Date startDate;
 
     @Getter
-    @Setter
     @ToString.Include
     @DatabaseField(canBeNull = false, columnName = "end_date")
     private Date endDate;
@@ -99,24 +95,29 @@ public class Reservation implements Item {
     /**
      * Permet de créer une réservation dite "vide" à partir d'un client
      * 
-     * @param client
-     * @throws SQLException
+     * Des données valides et cohérente seront données à la réservation.
+     * 
+     * @param client client a assigner à cette réservation
+     * @throws SQLException erreur technique de création
+     * @throws ConstraintException la création à subit des modfications par effet de bords à cause
+     *         des ses contraintes entre équipements / services / emplacement / dates
      */
-    public Reservation(Client client) throws SQLException {
+    public Reservation(Client client) throws SQLException, ConstraintException {
         setClient(client);
-        
-        setStartDate(new Date());
-        setEndDate(DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(3)));
-        
-        var camps = Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(startDate, endDate, -1);
-        System.out.println(camps.size() + " emplacements disponibles trouvés");
 
-        if(camps.size() == 0) {
+        // Date par défaut : de aujourd'hui à ajd + 5jours
+        setStartDate(new Date());
+        setEndDate(DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(5)));
+
+        var availablesCamps = Database.getInstance().getCampgroundDao()
+                .getAvailablesCampgrounds(startDate, endDate, -1);
+
+        if (availablesCamps.size() == 0) {
             // TODO gérer ce cas
             // (Attention si il y en a plus de dispo décaler date résa)
         }
-        
-        setCampground(camps.get(0));
+
+        setCampground(availablesCamps.get(0));
         setEquipments(campground.getAllowedEquipments());
         setSelectedServices(campground.getProvidedServices());
         setNbPersons(1);
@@ -132,8 +133,17 @@ public class Reservation implements Item {
      * équipements et les services demandés (Ces derniers peuvent changer par effet de bord)
      * 
      * @param camp nouvel emplacement de la réservation
+     * @throws ConstraintException
+     * @throws SQLException
      */
-    public void setCampground(CampGround camp) {
+    public void setCampground(CampGround camp) throws ConstraintException, SQLException {
+        var availableCamps = Database.getInstance().getCampgroundDao()
+                .getAvailablesCampgrounds(startDate, endDate, -1);
+
+        if (!availableCamps.contains(camp)) {
+            throw new ConstraintException(
+                    "Cet emplacement n'est pas disponibles sur les dates de la réservation", false);
+        }
         this.campground = camp;
         checkEquipmentsConstraints();
         checkServicesConstraint();
@@ -144,8 +154,9 @@ public class Reservation implements Item {
      * imposées par l'emplacement
      * 
      * @param equipment
+     * @throws ConstraintException
      */
-    public void setEquipments(Equipment equipment) {
+    public void setEquipments(Equipment equipment) throws ConstraintException {
         this.equipments = equipment;
         checkEquipmentsConstraints();
     }
@@ -155,8 +166,9 @@ public class Reservation implements Item {
      * imposées par l'emplacement
      * 
      * @param service
+     * @throws ConstraintException
      */
-    public void setSelectedServices(Service service) {
+    public void setSelectedServices(Service service) throws ConstraintException {
         this.selectedServices = service;
         checkServicesConstraint();
     }
@@ -167,20 +179,18 @@ public class Reservation implements Item {
      * 
      * En cas de non compatibilité l'équipement sera modifié pour répondre à la contrainte
      * 
-     * @return vrai si la contrainte était bien respectée
+     * @throws ConstraintException
      */
-    public boolean checkEquipmentsConstraints() {
-        if (this.equipments == null || campground == null) // Gére le cas ou la réservation n'est
-                                                           // pas encore bien construite
-            return true;
-        boolean isOk = true;
+    private void checkEquipmentsConstraints() throws ConstraintException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.equipments == null || campground == null)
+            return;
         if (!equipments.isCompatibleWithCampEquipment(campground.getAllowedEquipments())) {
-            isOk = false;
             equipments = campground.getAllowedEquipments();
-            Router.showToast(ToastType.WARNING,
-                    "Equipements de la réservation modifiés pour correspondre à l'emplacement selectionné");
+            throw new ConstraintException(
+                    "Equipements de la réservation modifiés pour correspondre à l'emplacement selectionné",
+                    true);
         }
-        return isOk;
     }
 
     /**
@@ -189,26 +199,62 @@ public class Reservation implements Item {
      * 
      * En cas de non compatibilité le service sera modifié pour répondre à la contrainte
      * 
-     * @return vrai si la contrainte était bien respectée
+     * @throws ConstraintException
      */
-    public boolean checkServicesConstraint() {
-        if (this.selectedServices == null || campground == null) // Gére le cas ou la réservation
-                                                                 // n'est pas encore bien construite
-            return true;
-        boolean isOk = true;
-        if (campground.getAllowedEquipments() == Equipment.MOBILHOME) {
-            isOk = false;
+    private void checkServicesConstraint() throws ConstraintException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.selectedServices == null || campground == null)
+            return;
+
+        String err =
+                "Services modifiés pour correspondre aux services proposés par l'emplacement selectionné";
+        System.out.println("LAAAAAAAAAAA");
+        // Cas ou l'emplacement est un mobilhome, on force eau et électricité
+        if (campground.getAllowedEquipments() == Equipment.MOBILHOME
+                && selectedServices != Service.WATER_AND_ELECTRICITY) {
             selectedServices = Service.WATER_AND_ELECTRICITY;
-            Router.showToast(ToastType.WARNING,
-                    "Services de la réservation modifiés pour correspondre aux services proposés par l'emplacement selectionné");
+            throw new ConstraintException(err, true);
         }
+
+        // Cas ou le service sélectionné n'est pas disponible sur l'emplacement
         if (!selectedServices.isCompatibleWithCampService(campground.getProvidedServices())) {
-            isOk = false;
             selectedServices = campground.getProvidedServices();
-            Router.showToast(ToastType.WARNING,
-                    "Services de la réservation modifiés pour correspondre aux services proposés par l'emplacement selectionné");
+            throw new ConstraintException(err, true);
         }
-        return isOk;
+    }
+
+    public void setStartDate(Date newStartDate) throws ConstraintException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.endDate == null) {
+            this.startDate = newStartDate;
+            return;
+        }
+
+        if (DateUtils.isInPast(newStartDate)) {
+            throw new ConstraintException(
+                    "La date de début sélectionnée est antérieur à la date actuelle", false);
+        }
+
+        if (DateUtils.isAfter(newStartDate, endDate)) {
+            throw new ConstraintException(
+                    "La date de début sélectionnée est ultérieure à la date de fin", false);
+        }
+        this.startDate = newStartDate;
+    }
+
+    public void setEndDate(Date newEndDate) throws ConstraintException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.startDate == null) {
+            this.endDate = newEndDate;
+            return;
+        }
+
+        if (DateUtils.toLocale(newEndDate).isBefore(DateUtils.toLocale(startDate))) {
+            throw new ConstraintException(
+                    "La date de fin sélectionnée est antérieure à la date de début de la réservation.",
+                    false);
+        }
+        this.endDate = newEndDate;
     }
 
     /**
@@ -255,7 +301,11 @@ public class Reservation implements Item {
 
     @Override
     public String getDisplayName() {
-        var clientStr = client == null ? "Aucun client" : client.getName(); // TODO supprimer ça ou mieux gérer l'intégrité de la BD
+        // TODO supprimer ça ou mieux gérer l'intégrité de la BD
+        // Client peut être null si il a été supprimé, das ce cas l'applic crash de partout (pas que
+        // ici)
+        var clientStr = client == null ? "Aucun client" : client.getName();
+
         SimpleDateFormat format = new SimpleDateFormat("dd/MM");
         if (canceled)
             return "[Annulée] " + clientStr;

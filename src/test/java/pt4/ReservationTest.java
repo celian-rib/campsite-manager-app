@@ -13,13 +13,14 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.utils.DateUtils;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class ReservationTest {
 
-    private Reservation createReservation(String start, String end) throws SQLException {
+    private Reservation createReservation(String start, String end) throws SQLException, ConstraintException {
         var client = new Client();
         client.setAddresse("15 rue Naudet, Gradignan, 33170");
         client.setFirstName("test_firstname");
@@ -43,7 +44,7 @@ public class ReservationTest {
     private Reservation tResa;
 
     @BeforeAll
-    public void setup() throws SQLException {
+    public void setup() throws SQLException, ConstraintException {
         tResa = createReservation("1900-09-02", "1900-09-20");
         System.out.println("Date début réservation de test : " + tResa.getStartDate());
         System.out.println("Date fin réservation de test : " + tResa.getEndDate());
