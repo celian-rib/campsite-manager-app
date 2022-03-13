@@ -75,6 +75,9 @@ public class Generator {
 
             var equipments = resa.getCampground().getCompatiblesEquipments();
             resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
+            
+            var services = resa.getCampground().getCompatiblesServices();
+            resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
 
             Database.getInstance().getReservationDao().create(resa);
             System.out.println(resa);
