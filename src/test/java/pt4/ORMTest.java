@@ -45,8 +45,8 @@ public class ORMTest {
         testReservation.setStartDate(new Date());
         testReservation.setEndDate(new Date());
         testReservation.setDepositDate(new Date());
-        testReservation.setEquipments(Equipment.CAMPINGCAR);
-        testReservation.setSelectedServices(Service.WATER_ONLY);
+        testReservation.setEquipments(Equipment.MOBILHOME);
+        testReservation.setSelectedServices(Service.WATER_AND_ELECTRICITY);
         Database.getInstance().getReservationDao().refresh(testReservation);
         testReservation.setCampground(testReservationCampground);
 

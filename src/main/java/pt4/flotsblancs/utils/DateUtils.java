@@ -17,4 +17,12 @@ public class DateUtils {
     public static String toFormattedString(Date date) {
         return toLocale(date).format(DateTimeFormatter.ofPattern("MMM dd, yyyy"));
     }
+
+    public static boolean isInPast(Date date) {
+        return toLocale(date).isBefore(LocalDate.now());
+    }
+    
+    public static boolean isAfter(Date date, Date comparedWith) {
+        return toLocale(date).isAfter(toLocale(comparedWith));
+    }
 }

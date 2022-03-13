@@ -281,10 +281,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
         VBox container = new VBox(CONTENT_SPACING);
 
         startDatePicker = new ReservationDatePicker(reservation, true);
-        startDatePicker.addListener(changeListener);
+        startDatePicker.addUserChangedValueListener(changeListener);
 
         endDatePicker = new ReservationDatePicker(reservation, false);
-        endDatePicker.addListener(changeListener);
+        endDatePicker.addUserChangedValueListener(changeListener);
 
         container.getChildren().addAll(startDatePicker, endDatePicker);
 

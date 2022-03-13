@@ -35,17 +35,15 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
             throws SQLException {
 
         var dbr = Database.getInstance().getReservationDao();
-        var dbc = Database.getInstance().getCampgroundDao();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String startTime = dateFormat.format(start);
         String endTime = dateFormat.format(end);
 
         List<Reservation> overlappingReservations = dbr.query((dbr.queryBuilder().where()
                 .raw("('" + startTime + "' < DATE(start_date) AND '" + endTime + "'"
-                        + " > DATE(start_date)) OR ('" + startTime + "'"
-                        + " < DATE(end_date) AND '" + endTime + "'"
-                        + " > DATE(start_date))")
+                        + " > DATE(start_date)) OR ('" + startTime + "'" + " < DATE(end_date) AND '"
+                        + endTime + "'" + " > DATE(start_date))")
                 .prepare()));
 
         List<Integer> ids = new ArrayList<>();
@@ -59,12 +57,12 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
 
         // On check dans la table des campground qu'il n'y a pas un id incompatible et on l'ajoute
         List<CampGround> campgrounds =
-                dbc.query((dbc.queryBuilder().where().raw("id NOT IN " + getIds(ids)).prepare()));
+                query((queryBuilder().where().raw("id NOT IN " + getIds(ids)).prepare()));
 
         return campgrounds;
     }
 
-    public String getIds(List<Integer> ids) {
+    private String getIds(List<Integer> ids) {
         String s = "(-1,";
         for (Integer i : ids) {
             s += i + ",";
@@ -73,5 +71,15 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
         s += ")";
 
         return s;
+    }
+
+    public boolean isAvailable(Reservation reservation, CampGround camp, Date start, Date end)
+            throws SQLException {
+        // TODO faire une vrai requete plus opti ??
+        // TODO TU
+
+        // On a besoin de la réservation pour ne pas que l'emplacement soit marqué comme prit par sa
+        // réservation initiale
+        return getAvailablesCampgrounds(start, end, reservation.getId()).contains(camp);
     }
 }
