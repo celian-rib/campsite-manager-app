@@ -46,7 +46,6 @@ public class ProblemesScene extends ItemScene<Problem> {
     private TextArea description;
 
     private ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
-        // Check si on a vraiment besoin de refresh la page et la bd
         if (oldValue == newValue || oldValue == null)
             return;
         refreshPage();
@@ -57,10 +56,7 @@ public class ProblemesScene extends ItemScene<Problem> {
     public void onAddButtonClicked()
     {
         try {
-        	
-        	//Crée le problème
-        	Problem p = new Problem();
-        	Router.goToScreen(Routes.PROBLEMS_ADD, p);
+        	Router.goToScreen(Routes.PROBLEMS_ADD);
         } catch (Exception e1) {
             e1.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur durant l'ajout du problème");

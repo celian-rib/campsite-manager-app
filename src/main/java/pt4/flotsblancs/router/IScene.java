@@ -1,5 +1,7 @@
 package pt4.flotsblancs.router;
 
+import pt4.flotsblancs.database.model.Problem;
+
 public interface IScene {
     /**
      * Permet de spécifier si oui ou non la barre de navigation doit être affichée quand cette page
@@ -31,5 +33,7 @@ public interface IScene {
     /**
      * Appelée au moment ou cette scène est retiré de l'écran par le routeur
      */
-    public default void onUnfocus() {};
+    public default void onUnfocus() {}
+
+	
 }

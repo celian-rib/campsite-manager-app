@@ -20,12 +20,13 @@ import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
-public class ProblemsAddScene extends ItemScene<Problem>
+public class ProblemsAddScene extends Region implements IScene
 {
 
 	private Problem problem;
@@ -49,21 +50,18 @@ public class ProblemsAddScene extends ItemScene<Problem>
     private ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         refreshPage();
     };
-
+    
 	@Override
-	protected Region createContainer(Problem problem) {
+	public void start() {
 		
-		this.problem = problem;
-
+		this.problem = new Problem();
+		
         VBox container = new VBox();
         container.setPadding(new Insets(50));
         container.getChildren().add(createHeader());
         container.getChildren().add(createBottom());
 
-        return container;
-				
-		//Mettre start à la création, lastupdate à la creation
-		
+        this.getChildren().add(container);
 	}
 	
 	public HBox createHeader()
@@ -235,11 +233,5 @@ public class ProblemsAddScene extends ItemScene<Problem>
 			this.campground = null;
 			this.reservation = null;
 		}	
-	}
-
-	@Override
-	protected List<Problem> queryAll() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
