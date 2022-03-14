@@ -30,7 +30,7 @@ public abstract class RefreshableComboBox<T> extends MFXComboBox<T> {
         valueProperty().addListener(wrapper);
     }
     
-    public void addUserChangedValueListener(ChangeListener<? super T> listener, boolean oldNewCheck) {
+    public void addUserChangedValueListenerNoCheck(ChangeListener<? super T> listener) {
         var wrapper = new ChangeListener<>() {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 if (isShowing())

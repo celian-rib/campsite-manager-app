@@ -74,17 +74,17 @@ public class ProblemsAddScene extends ItemScene<Problem>
 			campCombo      = new CampGroundComboBox(this.problem);
 			clientCombo    = new ClientComboBox(this.problem);
 			
-			resaCombo.addUserChangedValueListener(changeListener,true);
+			resaCombo.addUserChangedValueListenerNoCheck(changeListener);
 			resaCombo.setOnAction(e -> {
 				changed = resaCombo;
 			});
 			
-			campCombo.addUserChangedValueListener(changeListener,true);
+			campCombo.addUserChangedValueListenerNoCheck(changeListener);
 			campCombo.setOnAction(e -> {
 				changed = campCombo;
 			});
 			
-			clientCombo.addUserChangedValueListener(changeListener,true);
+			clientCombo.addUserChangedValueListenerNoCheck(changeListener);
 			clientCombo.setOnAction(e -> {
 				changed = clientCombo;
 			});
