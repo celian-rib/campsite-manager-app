@@ -9,7 +9,7 @@ import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 
-public class CampGroundComboBox extends MFXComboBox<CampGround> {
+public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
 
     private Reservation reservation;
     private Problem problem;
@@ -40,7 +40,7 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
         getItems().addAll(Database.getInstance().getCampgroundDao().queryForAll());
         setMinWidth(180);
         setAnimated(false);
-        refresh();
+       // refresh();
         valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue == null)
                 return;
@@ -48,13 +48,14 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
             problem.setCampground(newValue);
         });
     }
+    
+    public void addListener(ChangeListener<? super CampGround> listener) {
+        valueProperty().addListener(listener);
+    }
 
     public void refresh() {
     	
         selectItem(reservation.getCampground());
     }
 
-    public void addListener(ChangeListener<? super CampGround> listener) {
-        valueProperty().addListener(listener);
-    }
 }

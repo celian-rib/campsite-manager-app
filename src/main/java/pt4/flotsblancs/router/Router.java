@@ -64,6 +64,7 @@ public class Router {
             add(Routes.RESERVATIONS);
             add(Routes.CLIENTS);
             add(Routes.PROBLEMES);
+            add(Routes.PROBLEMS_ADD);
         }
     };
 

@@ -59,7 +59,6 @@ public class ProblemesScene extends ItemScene<Problem> {
         try {
         	
         	//Crée le problème
-        	
         	Problem p = new Problem();
         	Router.goToScreen(Routes.PROBLEMS_ADD, p);
         } catch (Exception e1) {
