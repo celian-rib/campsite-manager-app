@@ -3,6 +3,8 @@ package pt4.flotsblancs.scenes;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -105,6 +107,26 @@ public class StagiairesScene extends ItemScene<User> {
         return container;
     }
 
+     /**
+     * @return Header de la page (Numéro de réservations + Label avec dates)
+     */
+    private BorderPane createMiddleSlot() {
+        BorderPane container = new BorderPane();
+
+        
+        var heuresLabel = new Label("Heures hebdomadaires");
+        SpinnerValueFactory<Integer> vFact = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 7*24, stagiaire.getWeeklyHours());
+        Spinner<Integer> heures = new Spinner<Integer>();
+        heures.setEditable(true);
+        heures.setValueFactory(vFact);
+
+        
+
+        container.setLeft(heuresLabel);
+        container.setRight(heures);
+        return container;
+    }
+
     
 
     @Override
@@ -117,7 +139,7 @@ public class StagiairesScene extends ItemScene<User> {
         
         
         
-        container.getChildren().addAll(createHeader(), createTopSlot());
+        container.getChildren().addAll(createHeader(), createTopSlot(), createMiddleSlot());
         return container;
     }
 

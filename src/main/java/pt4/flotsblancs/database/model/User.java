@@ -60,6 +60,12 @@ public class User implements Item {
     private String firstName;
 
     @Getter
+    @Setter
+    @EqualsAndHashCode.Include
+    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "weekly_hours", defaultValue = "35")
+    private Integer weeklyHours;
+
+    @Getter
     private static User connected;
 
     public static boolean isConnected() {
