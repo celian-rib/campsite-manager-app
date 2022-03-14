@@ -43,26 +43,22 @@ public class User implements Item {
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = false, columnName = "is_admin")
     private boolean isAdmin;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(uniqueCombo = true, canBeNull = false)
+    @DatabaseField(canBeNull = false)
     private String name;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "first_name")
+    @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "weekly_hours", defaultValue = "35")
+    @DatabaseField(canBeNull = false, columnName = "weekly_hours", defaultValue = "35")
     private Integer weeklyHours;
 
     @Getter
