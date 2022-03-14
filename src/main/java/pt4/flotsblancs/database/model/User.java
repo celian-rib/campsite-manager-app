@@ -133,15 +133,17 @@ public class User {
         var log = new Log();
         log.setType(type);
         log.setMessage(message);
-        log.setUser(this);
-        log.setDate(new Date());
         try {
-            Database.getInstance().getLogDao().create(log);
+            log.setDate(new Date());
             Database.getInstance().getLogDao().refresh(log);
+            log.setUser(this);
+            Database.getInstance().getLogDao().create(log);
         } catch (SQLException e) {
             System.err.println(e);
             e.printStackTrace();
-            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"+log);
+            System.out.println(
+                    "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+                            + log);
             Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
             Router.goToScreen(Routes.CONN_FALLBACK);
         }
