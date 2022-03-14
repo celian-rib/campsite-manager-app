@@ -29,7 +29,7 @@ public class Log {
 
     @Getter
     @Setter
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = true)
     private Date date;
 
     @Getter

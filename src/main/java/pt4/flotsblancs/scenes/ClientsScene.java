@@ -242,7 +242,7 @@ public class ClientsScene extends ItemScene<Client> {
             client.setPhone(phone.getText());
             client.setPreferences(preferences.getText());
             Database.getInstance().getClientsDao().update(client);
-            User.getConnected().addlog(LogType.MODIFY, "Mise à jour du client "+textFieldFName.getText()+" "+textFieldName.getText());
+            User.getConnected().addlog(LogType.MODIFY, "Mise à jour du client "+firstName.getText()+" "+name.getText());
             Router.showToast(ToastType.SUCCESS, "Client mis à jour");
         } catch (SQLRecoverableException e) {
             e.printStackTrace();
