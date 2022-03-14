@@ -39,17 +39,6 @@ public class ORMTest {
         testReservationCampground.setProvidedServices(Service.WATER_AND_ELECTRICITY);
         Database.getInstance().getCampgroundDao().create(testReservationCampground);
 
-        System.out.println("Création réservation de test");
-        testReservation = new Reservation();
-        testReservation.setClient(testClient);
-        testReservation.setStartDate(new Date());
-        testReservation.setEndDate(new Date());
-        testReservation.setDepositDate(new Date());
-        testReservation.setEquipments(Equipment.MOBILHOME);
-        testReservation.setSelectedServices(Service.WATER_AND_ELECTRICITY);
-        Database.getInstance().getReservationDao().refresh(testReservation);
-        testReservation.setCampground(testReservationCampground);
-
         System.out.println("Création client de test");
         testClient = new Client();
         testClient.setAddresse("15 rue Naudet, Gradignan, 33170");
@@ -59,6 +48,16 @@ public class ORMTest {
         testClient.setPreferences("Camping car avec famille");
         Database.getInstance().getClientsDao().create(testClient);
         Database.getInstance().getClientsDao().refresh(testClient);
+
+        System.out.println("Création réservation de test");
+        testReservation = new Reservation();
+        testReservation.setClient(testClient);
+        testReservation.setEquipments(Equipment.MOBILHOME);
+        testReservation.setSelectedServices(Service.WATER_AND_ELECTRICITY);
+        testReservation.setStartDate(new Date());
+        testReservation.setEndDate(new Date());
+        testReservation.setCampground(testReservationCampground);
+        Database.getInstance().getReservationDao().refresh(testReservation);
 
         testClient.getReservations().add(testReservation);
 
