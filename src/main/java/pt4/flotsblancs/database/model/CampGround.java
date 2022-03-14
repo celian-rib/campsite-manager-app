@@ -58,13 +58,19 @@ public class CampGround {
      * @return Tous les services possibles pour cet emplacement
      */
     public List<Service> getCompatiblesServices() {
+        if (this.allowedEquipments == Equipment.MOBILHOME)
+            return new ArrayList<Service>() {
+                {
+                    add(Service.WATER_AND_ELECTRICITY);
+                }
+            };
         var list = new ArrayList<Service>();
         for (var v : Service.values())
             if (v.isCompatibleWithCampService(providedServices))
                 list.add(v);
         return list;
     }
-    
+
     /**
      * @return Tous les services possibles pour cet emplacement
      */
