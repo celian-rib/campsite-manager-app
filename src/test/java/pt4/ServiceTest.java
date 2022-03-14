@@ -1,12 +1,12 @@
 package pt4;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-
+import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.database.model.types.Service;
 
 public class ServiceTest {
@@ -42,5 +42,39 @@ public class ServiceTest {
                 .isCompatibleWithCampService(Service.WATER_AND_ELECTRICITY));
         assertFalse(Service.ELECTRICITY_ONLY.isCompatibleWithCampService(Service.WATER_ONLY));
         assertTrue(Service.ELECTRICITY_ONLY.isCompatibleWithCampService(Service.ELECTRICITY_ONLY));
+    }
+
+    @Test
+    public void getCompatiblesServices() {
+        CampGround camp = new CampGround();
+        camp.setAllowedEquipments(Equipment.MOBILHOME);
+        camp.setProvidedServices(Service.WATER_AND_ELECTRICITY);
+        assertEquals(1, camp.getCompatiblesServices().size());
+        assertTrue(camp.getCompatiblesServices().contains(Service.WATER_AND_ELECTRICITY));
+        
+        camp.setAllowedEquipments(Equipment.TENT);
+        camp.setProvidedServices(Service.WATER_AND_ELECTRICITY);
+        assertEquals(4, camp.getCompatiblesServices().size());
+        assertTrue(camp.getCompatiblesServices().contains(Service.WATER_AND_ELECTRICITY));
+        assertTrue(camp.getCompatiblesServices().contains(Service.WATER_ONLY));
+        assertTrue(camp.getCompatiblesServices().contains(Service.ELECTRICITY_ONLY));
+        assertTrue(camp.getCompatiblesServices().contains(Service.NONE));
+        
+        camp.setAllowedEquipments(Equipment.TENT);
+        camp.setProvidedServices(Service.WATER_ONLY);
+        assertEquals(2, camp.getCompatiblesServices().size());
+        assertTrue(camp.getCompatiblesServices().contains(Service.WATER_ONLY));
+        assertTrue(camp.getCompatiblesServices().contains(Service.NONE));
+       
+        camp.setAllowedEquipments(Equipment.TENT);
+        camp.setProvidedServices(Service.ELECTRICITY_ONLY);
+        assertEquals(2, camp.getCompatiblesServices().size());
+        assertTrue(camp.getCompatiblesServices().contains(Service.ELECTRICITY_ONLY));
+        assertTrue(camp.getCompatiblesServices().contains(Service.NONE));
+        
+        camp.setAllowedEquipments(Equipment.TENT);
+        camp.setProvidedServices(Service.NONE);
+        assertEquals(1, camp.getCompatiblesServices().size());
+        assertTrue(camp.getCompatiblesServices().contains(Service.NONE));
     }
 }

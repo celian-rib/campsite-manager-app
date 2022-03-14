@@ -14,6 +14,7 @@ import pt4.flotsblancs.scenes.ClientsScene;
 import pt4.flotsblancs.scenes.ConnectionFallbackScene;
 import pt4.flotsblancs.scenes.DashboardScene;
 import pt4.flotsblancs.scenes.LoginScene;
+import pt4.flotsblancs.scenes.LogsScene;
 import pt4.flotsblancs.scenes.ProblemesScene;
 import pt4.flotsblancs.scenes.ReservationsScene;
 import pt4.flotsblancs.scenes.StagiairesScene;
@@ -35,7 +36,8 @@ public class Router {
         CAMPGROUNDS("Emplacements"), 
         ADMIN("Administration"), // TODO remove méthode getName de IScene et utiliser valeur de l'enum
     	PROBLEMES("Problèmes"), // TODO renommer en PROBLEMS
-        STAGIAIRES("Stagiaires");
+        STAGIAIRES("Stagiaires"),
+        LOGS("Logs");
 
         @Getter
         private String routeName; // TODO remove ça
@@ -56,6 +58,7 @@ public class Router {
             put(Routes.ADMIN, new AdminScene());
             put(Routes.PROBLEMES, new ProblemesScene());
             put(Routes.STAGIAIRES, new StagiairesScene());
+            put(Routes.LOGS, new LogsScene());
         }
     };
 

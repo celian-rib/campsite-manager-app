@@ -1,5 +1,7 @@
 package pt4.flotsblancs;
 
+import java.util.Date; //ne pas supprimer, cette ligne EST utilisé
+//si vous supprimez vous êtes un Billy Débilus esclave de Virilus
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
@@ -11,6 +13,7 @@ import com.github.javafaker.Pokemon;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Stock;
@@ -21,7 +24,7 @@ import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
 public class Generator {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ConstraintException {
         Database.getInstance(); // Initialisation connexion BD
 
         var f = new Faker();
@@ -29,13 +32,13 @@ public class Generator {
         generateAdmin();
         generateUsers();
         
-        generateStocks(f, 10);
-        generateClients(f, 50);
-        generateCampGrounds(f, 100);
-        generateReservations(f, 20);
-        generateProblemsResa(f, 5);
-        generateProblemsCg(f, 3);
-        generateProblemsClient(f, 3);
+        // generateStocks(f, 100);
+        // generateClients(f, 50);
+        // generateCampGrounds(f, 100);
+        // generateReservations(f, 20);
+        // generateProblemsResa(f, 5);
+        // generateProblemsCg(f, 3);
+        // generateProblemsClient(f, 3);
     }
 
     private static int rdmNbrBtwn(int min, int max) {
@@ -77,7 +80,7 @@ public class Generator {
         }
     }
 
-    private static void generateReservations(Faker f, int nbr) throws SQLException {
+    private static void generateReservations(Faker f, int nbr) throws SQLException, ConstraintException {
         List<CampGround> CGlist = Database.getInstance().getCampgroundDao().queryForAll();
         List<Client> ClientsList = Database.getInstance().getClientsDao().queryForAll();
         for (int i = 0; i < nbr; i++) {
@@ -89,15 +92,20 @@ public class Generator {
 
             var cashbacks = CashBack.values();
             resa.setCashBack(cashbacks[rdmNbrBtwn(0, cashbacks.length)]);
+            
+            var equipments = resa.getCampground().getCompatiblesEquipments();
+            resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
+            
+            var services = resa.getCampground().getCompatiblesServices();
+            resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
+            
 
             resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
             resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
-
-            var equipments = resa.getCampground().getCompatiblesEquipments();
-            resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
-
+            
             Database.getInstance().getReservationDao().create(resa);
+            Database.getInstance().getReservationDao().refresh(resa);
             System.out.println(resa);
         }
     }

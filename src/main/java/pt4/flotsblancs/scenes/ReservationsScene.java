@@ -29,7 +29,6 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;
-
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 
@@ -281,10 +280,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
         VBox container = new VBox(CONTENT_SPACING);
 
         startDatePicker = new ReservationDatePicker(reservation, true);
-        startDatePicker.addListener(changeListener);
+        startDatePicker.addUserChangedValueListener(changeListener);
 
         endDatePicker = new ReservationDatePicker(reservation, false);
-        endDatePicker.addListener(changeListener);
+        endDatePicker.addUserChangedValueListener(changeListener);
 
         container.getChildren().addAll(startDatePicker, endDatePicker);
 

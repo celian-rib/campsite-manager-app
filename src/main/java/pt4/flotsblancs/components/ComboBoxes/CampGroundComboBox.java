@@ -7,7 +7,10 @@ import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.beans.value.ChangeListener;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class CampGroundComboBox extends MFXComboBox<CampGround> {
 
@@ -30,9 +33,14 @@ public class CampGroundComboBox extends MFXComboBox<CampGround> {
         valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue == null)
                 return;
-            // TODO Check si l'emplacmeent est disponibles sur les dates de la résa
-            // Enfaite non faudra pas le faire la (mais faut le faire)
-            reservation.setCampground(newValue);
+            try {
+                reservation.setCampground(newValue);
+            } catch (ConstraintException e) {
+                Router.showToast(ToastType.WARNING, e.getMessage());
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         });
     }
 

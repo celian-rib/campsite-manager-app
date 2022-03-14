@@ -2,8 +2,11 @@ package pt4.flotsblancs.components.ComboBoxes;
 
 import io.github.palexdev.materialfx.enums.FloatMode;
 import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.Equipment;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class EquipmentComboBox extends RefreshableComboBox<Equipment> {
 
@@ -24,7 +27,11 @@ public class EquipmentComboBox extends RefreshableComboBox<Equipment> {
         valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue == null || newValue == null)
                 return;
-            reservation.setEquipments(newValue);
+            try {
+                reservation.setEquipments(newValue);
+            } catch (ConstraintException e) {
+                Router.showToast(ToastType.WARNING, e.getMessage());
+            }
         });
     }
 

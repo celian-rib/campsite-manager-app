@@ -12,14 +12,28 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.types.Equipment;
+import pt4.flotsblancs.database.model.types.Service;
 import pt4.flotsblancs.utils.DateUtils;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class ReservationTest {
 
-    private Reservation createReservation(String start, String end) throws SQLException {
+    private Reservation createReservation(String start, String end)
+            throws SQLException, ConstraintException {
+
+        var camp = new CampGround();
+        camp.setDescription("Belle vue sur les poubelles");
+        camp.setPricePerDays(28);
+        camp.setSurface(34.5f);
+        camp.setAllowedEquipments(Equipment.MOBILHOME);
+        camp.setProvidedServices(Service.WATER_AND_ELECTRICITY);
+        Database.getInstance().getCampgroundDao().create(camp);
+
         var client = new Client();
         client.setAddresse("15 rue Naudet, Gradignan, 33170");
         client.setFirstName("test_firstname");
@@ -30,9 +44,16 @@ public class ReservationTest {
         Database.getInstance().getClientsDao().refresh(client);
         System.out.println("Création client de test");
 
-        var resa = new Reservation(client);
+        System.out.println("Création réservation de test");
+        var resa = new Reservation();
+        resa.setClient(client);
+        resa.setEquipments(Equipment.MOBILHOME);
+        resa.setSelectedServices(Service.WATER_AND_ELECTRICITY);
+        resa.setCampground(camp);
+
         resa.setStartDate(DateUtils.fromLocale(LocalDate.parse(start)));
         resa.setEndDate(DateUtils.fromLocale(LocalDate.parse(end)));
+
         Database.getInstance().getReservationDao().create(resa);
         Database.getInstance().getReservationDao().refresh(resa);
         System.out.println("Création réservation de test");
@@ -43,8 +64,8 @@ public class ReservationTest {
     private Reservation tResa;
 
     @BeforeAll
-    public void setup() throws SQLException {
-        tResa = createReservation("1900-09-02", "1900-09-20");
+    public void setup() throws SQLException, ConstraintException {
+        tResa = createReservation("3000-09-02", "3000-09-20");
         System.out.println("Date début réservation de test : " + tResa.getStartDate());
         System.out.println("Date fin réservation de test : " + tResa.getEndDate());
     }
@@ -59,36 +80,36 @@ public class ReservationTest {
     }
 
     @Test
-    public void testLogin() throws SQLException {
+    public void testGetAvailablesCampgrounds() throws SQLException {
         // Range qui débute après tResa
         // tResa ->@@@@|--------------------|@@@@@@@@@@@@
-        // test  ->@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|-----|@@
-        testDates("1900-09-25", "1900-09-26", true);
+        // test ->@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|-----|@@
+        testDates("3000-09-25", "3000-09-26", true);
 
         // Range qui avant après tResa
         // tResa ->@@@@@@@@@@@@|--------------------|@@@
-        // test  ->@@@|-----|@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        testDates("1900-08-25", "1900-08-26", true);
+        // test ->@@@|-----|@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        testDates("3000-08-25", "3000-08-26", true);
 
         // Range qui durant tResa et fini après tResa
         // tResa ->@@@@@|--------------------|@@@@@@@@@@@
-        // test  ->@@@@@@@@@@@@@|-----------------------|
-        testDates("1900-09-10", "1900-09-25", false);
+        // test ->@@@@@@@@@@@@@|-----------------------|
+        testDates("3000-09-10", "3000-09-25", false);
 
         // Range qui débute durant tResa et fini avant la fin de tResa
         // tResa ->@@@@@|--------------------|@@@@@@@@@@@
-        // test  ->@@@@@@@@@@|-----------|@@@@@@@@@@@@@@@
-        testDates("1900-09-03", "1900-09-10", false);
+        // test ->@@@@@@@@@@|-----------|@@@@@@@@@@@@@@@
+        testDates("3000-09-03", "3000-09-10", false);
 
         // Range qui débute pile à la fin de tResa
         // tResa ->@@@@|--------------------|@@@@@@@@@@@@
-        // test  ->@@@@@@@@@@@@@@@@@@@@@@@@@|------|@@@@@
-        testDates("1900-09-20", "1900-10-10", true);
+        // test ->@@@@@@@@@@@@@@@@@@@@@@@@@|------|@@@@@
+        testDates("3000-09-20", "3000-10-10", true);
 
         // Range qui termine pile au début de tResa
         // tResa ->@@@@@@@@@@@|--------------------|@@@@@
-        // test  ->@@@@|------|@@@@@@@@@@@@@@@@@@@@@@@@@@
-        testDates("1900-08-10", "1900-09-02", true);
+        // test ->@@@@|------|@@@@@@@@@@@@@@@@@@@@@@@@@@
+        testDates("3000-08-10", "3000-09-02", true);
     }
 
     @AfterAll

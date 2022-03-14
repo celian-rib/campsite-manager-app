@@ -5,26 +5,23 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
-import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.DateUtils;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
-@NoArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "reservations")
@@ -37,41 +34,34 @@ public class Reservation implements Item {
     private int id;
 
     @Getter
-    @Setter
     @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = false, columnName = "nb_persons")
     private int nbPersons;
 
     @Getter
-    @Setter
     @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = true, columnName = "cash_back")
     private CashBack cashBack;
 
     @Getter
-    @Setter
     @DatabaseField(columnName = "deposit_date")
     private Date depositDate;
 
     @Getter
-    @Setter
     @DatabaseField(columnName = "payment_date")
     private Date paymentDate;
 
     @Getter
-    @Setter
     @ToString.Include
     @DatabaseField(canBeNull = false, columnName = "start_date")
     private Date startDate;
 
     @Getter
-    @Setter
     @ToString.Include
     @DatabaseField(canBeNull = false, columnName = "end_date")
     private Date endDate;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false, defaultValue = "false")
     private Boolean canceled;
 
@@ -84,7 +74,6 @@ public class Reservation implements Item {
     private Equipment equipments;
 
     @Getter
-    @Setter
     @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private Client client;
 
@@ -96,119 +85,247 @@ public class Reservation implements Item {
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Problem> problems;
 
+    public Reservation() {
+        this.canceled = false;
+    }
+
     /**
      * Permet de créer une réservation dite "vide" à partir d'un client
      * 
-     * @param client
-     * @throws SQLException
+     * Des données valides et cohérente seront données à la réservation.
+     * 
+     * @param client client a assigner à cette réservation
+     * @throws SQLException        erreur technique de création
+     * @throws ConstraintException la création à subit des modfications par effet de
+     *                             bords à cause
+     *                             des ses contraintes entre équipements / services
+     *                             / emplacement / dates
      */
-    public Reservation(Client client) throws SQLException {
-        setClient(client);
-        
-        setStartDate(new Date());
-        setEndDate(DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(3)));
-        
-        var camps = Database.getInstance().getCampgroundDao().getAvailablesCampgrounds(startDate, endDate, -1);
-        System.out.println(camps.size() + " emplacements disponibles trouvés");
+    public Reservation(Client client) throws SQLException, ConstraintException {
+        this.client = client;
 
-        if(camps.size() == 0) {
+        // Date par défaut : de aujourd'hui à ajd + 5jours
+        this.startDate = new Date();
+        this.endDate = DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(5));
+
+        List<CampGround> availablesCamps = Database.getInstance().getCampgroundDao()
+                .getAvailablesCampgrounds(startDate, endDate, -1);
+
+        if (availablesCamps.size() == 0) {
             // TODO gérer ce cas
             // (Attention si il y en a plus de dispo décaler date résa)
         }
-        
-        setCampground(camps.get(0));
-        setEquipments(campground.getAllowedEquipments());
-        setSelectedServices(campground.getProvidedServices());
-        setNbPersons(1);
-        setCashBack(CashBack.NONE);
+
+        // // Refresh pour setup les relations
+        // Database.getInstance().getReservationDao().refresh(this);
+
+        this.nbPersons = 1;
+        this.cashBack = CashBack.NONE;
+        this.campground = availablesCamps.get(0);
+        this.equipments = campground.getAllowedEquipments();
+        this.selectedServices = campground.getProvidedServices();
+        this.canceled = false;
 
         Database.getInstance().getReservationDao().create(this);
-        // Refresh pour setup les relations
         Database.getInstance().getReservationDao().refresh(this);
+        User.addlog(LogType.ADD, "Création de la réservation #" + id);
     }
 
     /**
-     * Change l'emplacement actuel de la réservation tout en respectant les contraintes sur les
-     * équipements et les services demandés (Ces derniers peuvent changer par effet de bord)
+     * Change l'emplacement actuel de la réservation tout en respectant les
+     * contraintes sur les
+     * équipements et les services demandés (Ces derniers peuvent changer par effet
+     * de bord)
      * 
      * @param camp nouvel emplacement de la réservation
+     * @throws ConstraintException
+     * @throws SQLException
      */
-    public void setCampground(CampGround camp) {
+    public void setCampground(CampGround camp) throws ConstraintException, SQLException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.startDate == null || this.endDate == null) {
+            this.campground = camp;
+        } else {
+            if (!Database.getInstance().getCampgroundDao().isAvailable(this, camp, startDate, endDate)) {
+                throw new ConstraintException(
+                        "Cet emplacement n'est pas disponibles sur les dates de la réservation",
+                        false);
+            }
+        }
+
+        User.addlog(LogType.MODIFY, "Emplacement de la réservation #" + id + " changé à " + campground); // TODO
+                                                                                                                      // mettre
+                                                                                                                      // displayName
+                                                                                                                      // de
+                                                                                                                      // campground
         this.campground = camp;
-        checkEquipmentsConstraints();
-        checkServicesConstraint();
+
+        // Gestion des contraintes equipements et services
+        // ATTENTION -> changer l'emplacement prend la priorité en terme de contrainte
+        // et change
+        // donc servies et equipement si ils ne sont pas compatibles
+        ConstraintException exceptionHandler = null;
+
+        try {
+            checkEquipmentsConstraints();
+        } catch (ConstraintException e) {
+            // On ne relance pas l'exception tout de suite, il faut avant vérifier les
+            // services
+            exceptionHandler = e;
+        }
+
+        try {
+            checkServicesConstraint();
+        } catch (Exception e) {
+            if (exceptionHandler == null)
+                throw e; // Seul les services ont bloqué
+            else
+                throw new ConstraintException(
+                        "Les services et equipement demandés ont été modifiés pour correspondre au nouvel emplacement",
+                        true);
+        }
+
+        if (exceptionHandler != null) // Seul les equipement ont bloqué
+            throw exceptionHandler;
     }
 
     /**
-     * Permet de changer les équipements demandés par la réservation en conservant les contraintes
+     * Permet de changer les équipements demandés par la réservation en conservant
+     * les contraintes
      * imposées par l'emplacement
      * 
      * @param equipment
+     * @throws ConstraintException
      */
-    public void setEquipments(Equipment equipment) {
+    public void setEquipments(Equipment equipment) throws ConstraintException {
+        User.addlog(LogType.MODIFY,
+                "Equipements de la réservation #" + id + " changés à " + equipment.getName());
         this.equipments = equipment;
         checkEquipmentsConstraints();
     }
 
     /**
-     * Permet de changer les services demandés par la réservation en conservant les contraintes
+     * Permet de changer les services demandés par la réservation en conservant les
+     * contraintes
      * imposées par l'emplacement
      * 
      * @param service
+     * @throws ConstraintException
      */
-    public void setSelectedServices(Service service) {
+    public void setSelectedServices(Service service) throws ConstraintException {
+        User.addlog(LogType.MODIFY,
+                "Services de la réservation #" + id + " changés à " + service.getName());
         this.selectedServices = service;
         checkServicesConstraint();
     }
 
     /**
-     * Vérifie l'intégrité des contrainte entre les equipement demandés par la réservation et son
+     * Vérifie l'intégrité des contrainte entre les equipement demandés par la
+     * réservation et son
      * emplacement
      * 
-     * En cas de non compatibilité l'équipement sera modifié pour répondre à la contrainte
+     * En cas de non compatibilité l'équipement sera modifié pour répondre à la
+     * contrainte
      * 
-     * @return vrai si la contrainte était bien respectée
+     * @throws ConstraintException
      */
-    public boolean checkEquipmentsConstraints() {
-        if (this.equipments == null || campground == null) // Gére le cas ou la réservation n'est
-                                                           // pas encore bien construite
-            return true;
-        boolean isOk = true;
+    private void checkEquipmentsConstraints() throws ConstraintException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.equipments == null || campground == null)
+            return;
         if (!equipments.isCompatibleWithCampEquipment(campground.getAllowedEquipments())) {
-            isOk = false;
             equipments = campground.getAllowedEquipments();
-            Router.showToast(ToastType.WARNING,
-                    "Equipements de la réservation modifiés pour correspondre à l'emplacement selectionné");
+            User.addlog(LogType.MODIFY,
+                    "Equipements de la réservation #" + id + " changés à " + equipments.getName());
+            throw new ConstraintException(
+                    "Equipements de la réservation modifiés pour correspondre à l'emplacement selectionné",
+                    true);
         }
-        return isOk;
     }
 
     /**
-     * Vérifie l'intégrité des contrainte entre les services demandés par la réservation et son
+     * Vérifie l'intégrité des contrainte entre les services demandés par la
+     * réservation et son
      * emplacement
      * 
-     * En cas de non compatibilité le service sera modifié pour répondre à la contrainte
+     * En cas de non compatibilité le service sera modifié pour répondre à la
+     * contrainte
      * 
-     * @return vrai si la contrainte était bien respectée
+     * @throws ConstraintException
      */
-    public boolean checkServicesConstraint() {
-        if (this.selectedServices == null || campground == null) // Gére le cas ou la réservation
-                                                                 // n'est pas encore bien construite
-            return true;
-        boolean isOk = true;
-        if (campground.getAllowedEquipments() == Equipment.MOBILHOME) {
-            isOk = false;
+    private void checkServicesConstraint() throws ConstraintException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.selectedServices == null || campground == null)
+            return;
+
+        String err = "Services modifiés pour correspondre aux services proposés par l'emplacement selectionné";
+        // Cas ou l'emplacement est un mobilhome, on force eau et électricité
+        if (campground.getAllowedEquipments() == Equipment.MOBILHOME
+                && selectedServices != Service.WATER_AND_ELECTRICITY) {
             selectedServices = Service.WATER_AND_ELECTRICITY;
-            Router.showToast(ToastType.WARNING,
-                    "Services de la réservation modifiés pour correspondre aux services proposés par l'emplacement selectionné");
+            User.addlog(LogType.MODIFY,
+                    "Services de la réservation #" + id + " changés à " + selectedServices.getName());
+            throw new ConstraintException(err, true);
         }
+
+        // Cas ou le service sélectionné n'est pas disponible sur l'emplacement
         if (!selectedServices.isCompatibleWithCampService(campground.getProvidedServices())) {
-            isOk = false;
             selectedServices = campground.getProvidedServices();
-            Router.showToast(ToastType.WARNING,
-                    "Services de la réservation modifiés pour correspondre aux services proposés par l'emplacement selectionné");
+            User.addlog(LogType.MODIFY,
+                    "Services de la réservation #" + id + " changés à " + selectedServices.getName());
+            throw new ConstraintException(err, true);
         }
-        return isOk;
+    }
+
+    public void setStartDate(Date newStartDate) throws ConstraintException, SQLException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.endDate == null || this.campground == null) {
+            this.startDate = newStartDate;
+            return;
+        }
+
+        var campDao = Database.getInstance().getCampgroundDao();
+        if (!campDao.isAvailable(this, this.campground, newStartDate, endDate)) {
+            throw new ConstraintException(
+                    "L'emplacement sélectionné n'est pas disponibles avec cette date de début",
+                    false);
+        }
+
+        if (DateUtils.isInPast(newStartDate)) {
+            throw new ConstraintException(
+                    "La date de début sélectionnée est antérieur à la date actuelle", false);
+        }
+
+        if (DateUtils.isAfter(newStartDate, endDate)) {
+            throw new ConstraintException(
+                    "La date de début sélectionnée est ultérieure à la date de fin", false);
+        }
+        User.addlog(LogType.MODIFY,
+                "Date de début de la réservation #" + id + " changé à " + newStartDate);
+        this.startDate = newStartDate;
+    }
+
+    public void setEndDate(Date newEndDate) throws ConstraintException, SQLException {
+        // Gére le cas ou la réservation n'est pas encore bien construite
+        if (this.startDate == null || this.campground == null) {
+            this.endDate = newEndDate;
+            return;
+        }
+
+        var campDao = Database.getInstance().getCampgroundDao();
+        if (!campDao.isAvailable(this, this.campground, startDate, newEndDate)) {
+            throw new ConstraintException(
+                    "L'emplacement sélectionné n'est pas disponibles avec cette date de fin",
+                    false);
+        }
+
+        if (DateUtils.toLocale(newEndDate).isBefore(DateUtils.toLocale(startDate))) {
+            throw new ConstraintException(
+                    "La date de fin sélectionnée est antérieure à la date de début de la réservation.",
+                    false);
+        }
+        User.addlog(LogType.MODIFY, "Date de fin de la réservation #" + id + " changé à " + newEndDate);
+        this.endDate = newEndDate;
     }
 
     /**
@@ -237,7 +354,8 @@ public class Reservation implements Item {
     }
 
     /**
-     * @return vrai si cette réservation est dans le passé (Soit sa date de fin est passée)
+     * @return vrai si cette réservation est dans le passé (Soit sa date de fin est
+     *         passée)
      */
     public boolean isInPast() {
         return new Date().compareTo(this.getEndDate()) >= 0;
@@ -255,10 +373,55 @@ public class Reservation implements Item {
 
     @Override
     public String getDisplayName() {
-        var clientStr = client == null ? "Aucun client" : client.getName(); // TODO supprimer ça ou mieux gérer l'intégrité de la BD
+        if(startDate == null || endDate == null || client == null)
+        return "Reservation " + getId();
+        
         SimpleDateFormat format = new SimpleDateFormat("dd/MM");
-        if (canceled)
-            return "[Annulée] " + clientStr;
-        return format.format(startDate) + "-" + format.format(endDate) + " " + clientStr;
+        var prefix = canceled ? "[Annulée] " : "";
+        return prefix + format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
+    }
+
+    public void setNbPersons(int nbP) {
+        User.addlog(LogType.MODIFY,
+                "Nombre de personnes de la réservation #" + id + " changé pour " + nbP);
+        this.nbPersons = nbP;
+    }
+
+    public void setPaymentDate(Date date) {
+        if (date == null){
+            User.addlog(LogType.DELETE,
+            "Paiement annulé pour la réservation #" + id);
+        } else {
+            User.addlog(LogType.ADD,
+            "Paiement effectué pour la réservation #" + id);
+        }
+        this.paymentDate = date;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+        User.addlog(LogType.MODIFY,
+                "Client de la réservation #" + id + " changé pour " + this.client.getDisplayName());
+    }
+
+    public void setDepositDate(Date date) {
+        if (date == null){
+            User.addlog(LogType.DELETE,
+            "Accompte annulé pour la réservation #" + id);
+        } else {
+            User.addlog(LogType.ADD,
+            "Accompte versé pour la réservation #" + id);
+        }
+        this.depositDate = date;
+    }
+
+    public void setCashBack(CashBack cb) {
+        User.addlog(LogType.MODIFY, "Remise de la réservation #" + id + " changé pour " + cb);
+        this.cashBack = cb;
+    }
+
+    public void setCanceled(boolean canceled) {
+        User.addlog(LogType.DELETE, "Réservation #" + id + " annulée");
+        this.canceled = canceled;
     }
 }
