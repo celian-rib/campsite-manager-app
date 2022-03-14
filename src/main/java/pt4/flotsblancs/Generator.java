@@ -31,9 +31,9 @@ public class Generator {
 
         generateAdmin();
         
-        // generateStocks(f, 100);
-        // generateClients(f, 50);
-        // generateCampGrounds(f, 100);
+        generateStocks(f, 100);
+        generateClients(f, 50);
+        generateCampGrounds(f, 100);
         generateReservations(f, 20);
         generateProblemsResa(f, 5);
         generateProblemsCg(f, 3);
