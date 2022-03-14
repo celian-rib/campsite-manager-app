@@ -177,9 +177,12 @@ public class ClientsScene extends ItemScene<Client> {
         VBox container = new VBox(CONTENT_SPACING);
         container.setAlignment(Pos.BASELINE_LEFT);
 
-        phone = createTextField(client.getPhone(), "Téléphone");
-
         boolean isReduced = isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint());
+        
+        phone = createTextField(client.getPhone(), "Téléphone");
+        phone.setMinWidth(isReduced ? 180 : 350);
+        phone.textProperty().addListener(changeListener);
+
 
         adresse = createTextField(client.getAddresse(), "Adresse");
         adresse.setMinWidth(isReduced ? 180 : 350);

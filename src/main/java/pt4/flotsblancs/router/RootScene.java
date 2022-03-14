@@ -224,7 +224,7 @@ public class RootScene extends StackPane implements BreakPointListener {
         // 1750 caractères à lire par minute, donc le temps =
         // donc : msg.lenght*60000/1750 = temps à montrer le toast:
         // 60 000 car en mili secondes :)
-        showToast(type, message, message.length() * 60000 / 1750, 1000);
+        showToast(type, message, message.length() * 60000 / 1750 + 3000, 1000);
     }
 
     /**
