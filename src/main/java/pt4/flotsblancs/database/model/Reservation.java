@@ -15,6 +15,7 @@ import pt4.flotsblancs.utils.DateUtils;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.j256.ormlite.dao.ForeignCollection;
@@ -38,38 +39,18 @@ public class Reservation implements Item {
     @DatabaseField(canBeNull = false, columnName = "nb_persons")
     private int nbPersons;
 
-    public void setNbPersons(int nbP) {
-        this.nbPersons = nbP;
-        User.addlog(LogType.MODIFY, "Nombre de personnes de la réservation " + getDisplayName() + " changé pour " + nbP);
-    }
-
     @Getter
     @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = true, columnName = "cash_back")
     private CashBack cashBack;
 
-    public void setCashBack(CashBack cb){
-        this.cashBack = cb;
-        User.addlog(LogType.MODIFY, "Remise de la réservation " + getDisplayName() + " changé pour " +cb);
-    }
-
     @Getter
     @DatabaseField(columnName = "deposit_date")
     private Date depositDate;
 
-    public void setDepositDate(Date date){
-        this.depositDate = date;
-        User.addlog(LogType.MODIFY, "Date de dépot d'accompte de la réservation " + getDisplayName() + " changé pour " + date);
-    }
-
     @Getter
     @DatabaseField(columnName = "payment_date")
     private Date paymentDate;
-
-    public void setPaymentDate(Date date){
-        this.paymentDate = date;
-        User.addlog(LogType.MODIFY, "Date de payement de la réservation " + getDisplayName() + " changé pour " + date);
-    }
 
     @Getter
     @ToString.Include
@@ -85,11 +66,6 @@ public class Reservation implements Item {
     @DatabaseField(canBeNull = false, defaultValue = "false")
     private Boolean canceled;
 
-    public void setCanceled(boolean canceled){
-        this.canceled = canceled;
-        User.addlog(LogType.DELETE, "Réservation " + getDisplayName() + " annulée");
-    }
-
     @Getter
     @DatabaseField(canBeNull = false, defaultValue = "NONE", columnName = "selected_services")
     private Service selectedServices;
@@ -101,11 +77,6 @@ public class Reservation implements Item {
     @Getter
     @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private Client client;
-
-    public void setClient(Client client) {
-        this.client = client;
-        User.addlog(LogType.MODIFY, "Client de la réservation " + getDisplayName() + " changé pour " + client.getDisplayName());
-    }
 
     @Getter
     @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
@@ -134,7 +105,7 @@ public class Reservation implements Item {
         this.startDate = new Date();
         this.endDate = DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(5));
 
-        var availablesCamps = Database.getInstance().getCampgroundDao()
+        List<CampGround> availablesCamps = Database.getInstance().getCampgroundDao()
                 .getAvailablesCampgrounds(startDate, endDate, -1);
 
         if (availablesCamps.size() == 0) {
@@ -142,14 +113,17 @@ public class Reservation implements Item {
             // (Attention si il y en a plus de dispo décaler date résa)
         }
 
+        // // Refresh pour setup les relations
+        // Database.getInstance().getReservationDao().refresh(this);
+
+        this.nbPersons = 1;
+        this.cashBack = CashBack.NONE;
         this.campground = availablesCamps.get(0);
         this.equipments = campground.getAllowedEquipments();
         this.selectedServices = campground.getProvidedServices();
-        this.nbPersons = 1;
-        this.cashBack = CashBack.NONE;
+        this.canceled = false;
 
         Database.getInstance().getReservationDao().create(this);
-        // Refresh pour setup les relations
         Database.getInstance().getReservationDao().refresh(this);
         User.addlog(LogType.ADD, "Création de la réservation " + getDisplayName());
     }
@@ -176,7 +150,11 @@ public class Reservation implements Item {
             }
         }
 
-        User.addlog(LogType.MODIFY, "Emplacement de la réservation " + getDisplayName() + " changé à " + campground); // TODO mettre displayName de campground
+        User.addlog(LogType.MODIFY, "Emplacement de la réservation " + getDisplayName() + " changé à " + campground); // TODO
+                                                                                                                      // mettre
+                                                                                                                      // displayName
+                                                                                                                      // de
+                                                                                                                      // campground
         this.campground = camp;
 
         // Gestion des contraintes equipements et services
@@ -217,8 +195,9 @@ public class Reservation implements Item {
      * @throws ConstraintException
      */
     public void setEquipments(Equipment equipment) throws ConstraintException {
+        User.addlog(LogType.MODIFY,
+                "Equipements de la réservation " + getDisplayName() + " changés à " + equipments.getName());
         this.equipments = equipment;
-        User.addlog(LogType.MODIFY, "Equipements de la réservation " + getDisplayName() + " changés à " + equipments.getName());
         checkEquipmentsConstraints();
     }
 
@@ -231,8 +210,9 @@ public class Reservation implements Item {
      * @throws ConstraintException
      */
     public void setSelectedServices(Service service) throws ConstraintException {
+        User.addlog(LogType.MODIFY,
+                "Services de la réservation " + getDisplayName() + " changés à " + selectedServices.getName());
         this.selectedServices = service;
-        User.addlog(LogType.MODIFY, "Services de la réservation " + getDisplayName() + " changés à " + selectedServices.getName());
         checkServicesConstraint();
     }
 
@@ -252,7 +232,8 @@ public class Reservation implements Item {
             return;
         if (!equipments.isCompatibleWithCampEquipment(campground.getAllowedEquipments())) {
             equipments = campground.getAllowedEquipments();
-            User.addlog(LogType.MODIFY, "Equipements de la réservation " + getDisplayName() + " changés à " + equipments.getName());
+            User.addlog(LogType.MODIFY,
+                    "Equipements de la réservation " + getDisplayName() + " changés à " + equipments.getName());
             throw new ConstraintException(
                     "Equipements de la réservation modifiés pour correspondre à l'emplacement selectionné",
                     true);
@@ -279,13 +260,16 @@ public class Reservation implements Item {
         if (campground.getAllowedEquipments() == Equipment.MOBILHOME
                 && selectedServices != Service.WATER_AND_ELECTRICITY) {
             selectedServices = Service.WATER_AND_ELECTRICITY;
-            User.addlog(LogType.MODIFY, "Services de la réservation " + getDisplayName() + " changés à " + selectedServices.getName());
+            User.addlog(LogType.MODIFY,
+                    "Services de la réservation " + getDisplayName() + " changés à " + selectedServices.getName());
             throw new ConstraintException(err, true);
         }
 
         // Cas ou le service sélectionné n'est pas disponible sur l'emplacement
         if (!selectedServices.isCompatibleWithCampService(campground.getProvidedServices())) {
             selectedServices = campground.getProvidedServices();
+            User.addlog(LogType.MODIFY,
+                    "Services de la réservation " + getDisplayName() + " changés à " + selectedServices.getName());
             throw new ConstraintException(err, true);
         }
     }
@@ -313,7 +297,8 @@ public class Reservation implements Item {
             throw new ConstraintException(
                     "La date de début sélectionnée est ultérieure à la date de fin", false);
         }
-        User.addlog(LogType.MODIFY, "Date de début de la réservation " + getDisplayName() + " changé à " + newStartDate);
+        User.addlog(LogType.MODIFY,
+                "Date de début de la réservation " + getDisplayName() + " changé à " + newStartDate);
         this.startDate = newStartDate;
     }
 
@@ -395,5 +380,49 @@ public class Reservation implements Item {
         if (canceled)
             return "[Annulée] " + clientStr;
         return format.format(startDate) + "-" + format.format(endDate) + " " + clientStr;
+    }
+
+    public void setNbPersons(int nbP) {
+        User.addlog(LogType.MODIFY,
+                "Nombre de personnes de la réservation " + getDisplayName() + " changé pour " + nbP);
+        this.nbPersons = nbP;
+    }
+
+    public void setPaymentDate(Date date) {
+        if (date == null){
+            User.addlog(LogType.DELETE,
+            "Paiement annulé pour la réservation " + getDisplayName());
+        } else {
+            User.addlog(LogType.ADD,
+            "Paiement effectué pour la réservation " + getDisplayName());
+        }
+        this.paymentDate = date;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+        User.addlog(LogType.MODIFY,
+                "Client de la réservation " + getDisplayName() + " changé pour " + client.getDisplayName());
+    }
+
+    public void setDepositDate(Date date) {
+        if (date == null){
+            User.addlog(LogType.DELETE,
+            "Accompte annulé pour la réservation " + getDisplayName());
+        } else {
+            User.addlog(LogType.ADD,
+            "Accompte versé pour la réservation " + getDisplayName());
+        }
+        this.depositDate = date;
+    }
+
+    public void setCashBack(CashBack cb) {
+        User.addlog(LogType.MODIFY, "Remise de la réservation " + getDisplayName() + " changé pour " + cb);
+        this.cashBack = cb;
+    }
+
+    public void setCanceled(boolean canceled) {
+        User.addlog(LogType.DELETE, "Réservation " + getDisplayName() + " annulée");
+        this.canceled = canceled;
     }
 }
