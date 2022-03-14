@@ -3,6 +3,7 @@ package pt4.flotsblancs.utils;
 import java.util.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class DateUtils {
     public static LocalDate toLocale(Date dateToConvert) {
@@ -11,5 +12,17 @@ public class DateUtils {
 
     public static Date fromLocale(LocalDate dateToConvert) {
         return Date.from(dateToConvert.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static String toFormattedString(Date date) {
+        return toLocale(date).format(DateTimeFormatter.ofPattern("MMM dd, yyyy"));
+    }
+
+    public static boolean isInPast(Date date) {
+        return toLocale(date).isBefore(LocalDate.now());
+    }
+    
+    public static boolean isAfter(Date date, Date comparedWith) {
+        return toLocale(date).isAfter(toLocale(comparedWith));
     }
 }

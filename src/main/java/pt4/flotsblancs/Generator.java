@@ -13,6 +13,7 @@ import com.github.javafaker.Pokemon;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Stock;
@@ -23,7 +24,7 @@ import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
 public class Generator {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ConstraintException {
         Database.getInstance(); // Initialisation connexion BD
 
         var f = new Faker();
@@ -57,7 +58,7 @@ public class Generator {
         }
     }
 
-    private static void generateReservations(Faker f, int nbr) throws SQLException {
+    private static void generateReservations(Faker f, int nbr) throws SQLException, ConstraintException {
         List<CampGround> CGlist = Database.getInstance().getCampgroundDao().queryForAll();
         List<Client> ClientsList = Database.getInstance().getClientsDao().queryForAll();
         for (int i = 0; i < nbr; i++) {

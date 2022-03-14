@@ -135,11 +135,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
         } catch (SQLRecoverableException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
             Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
@@ -149,6 +149,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
     @Override
     public String getName() {
         return "Réservations";
+    }
+
+    @Override
+    protected String addButtonText() {
+        return "Créer une réservation";
     }
 
     @Override
@@ -276,10 +281,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
         VBox container = new VBox(CONTENT_SPACING);
 
         startDatePicker = new ReservationDatePicker(reservation, true);
-        startDatePicker.addListener(changeListener);
+        startDatePicker.addUserChangedValueListener(changeListener);
 
         endDatePicker = new ReservationDatePicker(reservation, false);
-        endDatePicker.addListener(changeListener);
+        endDatePicker.addUserChangedValueListener(changeListener);
 
         container.getChildren().addAll(startDatePicker, endDatePicker);
 
@@ -459,7 +464,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     private boolean isReducedSize(HBreakPoint currentBp) {
-        return currentBp.getWidth() <= HBreakPoint.LARGE.getWidth();
+        return currentBp.getWidth() <= HBreakPoint.MEDIUM.getWidth();
     }
 
     @Override
@@ -481,5 +486,15 @@ public class ReservationsScene extends ItemScene<Reservation> {
             if (!bottomSlot.getChildren().contains(problemsContainer))
                 bottomSlot.getChildren().add(problemsContainer);
         }
+    }
+
+    @Override
+    public void onUnfocus() {
+        onContainerUnfocus();
+    }
+
+    @Override
+    public void onContainerUnfocus() {
+        //refreshDatabase();
     }
 }

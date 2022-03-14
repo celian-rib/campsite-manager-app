@@ -119,7 +119,7 @@ public class NavBar extends BorderPane implements BreakPointListener {
 
     @Override
     public void onHorizontalBreak(HBreakPoint oldBp, HBreakPoint newBp) {
-        if (newBp.getWidth() <= HBreakPoint.LARGE.getWidth()) {
+        if (newBp.getWidth() <= HBreakPoint.MEDIUM.getWidth()) {
             navButtons.forEach((r, btn) -> {
                 setTop(smallLogo);
                 btn.setText("         ");

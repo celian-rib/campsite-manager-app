@@ -1,12 +1,13 @@
 package pt4.flotsblancs.components;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.utils.ToastType;
@@ -16,11 +17,11 @@ public class ReservationDatePicker extends MFXDatePicker {
 
     private Reservation reservation;
 
-    private LocalDate skipNotif;
+    private boolean skipNextListener;
 
     public ReservationDatePicker(Reservation reservation, boolean isStartDate) {
         this.reservation = reservation;
-        this.skipNotif = null;
+        this.skipNextListener = false;
 
         String text = isStartDate ? "Date de début" : "Date de fin";
         setPromptText(text);
@@ -32,7 +33,7 @@ public class ReservationDatePicker extends MFXDatePicker {
 
         Date defaultDate = isStartDate ? reservation.getStartDate() : reservation.getEndDate();
         setValue(DateUtils.toLocale(defaultDate));
-        setText(DateUtils.toLocale(defaultDate).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
+        setText(DateUtils.toFormattedString(defaultDate));
 
         setDisable(DateUtils.toLocale(defaultDate).isBefore(LocalDate.now()));
 
@@ -43,45 +44,52 @@ public class ReservationDatePicker extends MFXDatePicker {
     }
 
     private void createStartDateListener() {
-        valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (newDate.isBefore(LocalDate.now())) {
-                this.skipNotif = oldDate;
-                Router.showToast(ToastType.ERROR,
-                "La date de début sélectionnée est antérieur à la date actuelle");
-                setValue(oldDate);
-            } else if (newDate.isAfter(DateUtils.toLocale(reservation.getEndDate()))) {
-                this.skipNotif = oldDate;
-                Router.showToast(ToastType.ERROR,
-                        "La date de début sélectionnée est ultérieure à la date de fin");
-                setValue(oldDate);
-            } else {
+        addUserChangedValueListener((obs, oldDate, newDate) -> {
+            if (oldDate == null || newDate == null || oldDate == newDate)
+                return;
+            try {
                 reservation.setStartDate(DateUtils.fromLocale(newDate));
+            } catch (ConstraintException e) {
+                Router.showToast(ToastType.ERROR, e.getMessage());
+                this.skipNextListener = true;
+                setValue(oldDate);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         });
     }
 
     private void createEndDateListener() {
-        valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (newDate.isBefore(DateUtils.toLocale(reservation.getStartDate()))) {
-                this.skipNotif = oldDate;
-                Router.showToast(ToastType.ERROR,
-                        "La date de fin sélectionnée est antérieure à la date de début de la réservation.");
-                setValue(oldDate);
-            } else {
+        addUserChangedValueListener((obs, oldDate, newDate) -> {
+            if (oldDate == null || newDate == null || oldDate == newDate)
+                return;
+            try {
                 reservation.setEndDate(DateUtils.fromLocale(newDate));
+            } catch (ConstraintException e) {
+                Router.showToast(ToastType.ERROR, e.getMessage());
+                this.skipNextListener = true;
+                setValue(oldDate);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         });
     }
 
-    public void addListener(ChangeListener<? super LocalDate> listener) {
-        valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (this.skipNotif ==  newDate) {
-                this.skipNotif = null;
-                System.out.println("Skipped");
-            } else {
-                listener.changed(obs, oldDate, newDate);
-                System.out.println("Notified");
-            }
-        });
+    public void addUserChangedValueListener(ChangeListener<? super LocalDate> listener) {
+        var wrapper = new ChangeListener<>() {
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if (oldValue == null || newValue == null || oldValue == newValue)
+                    return;
+                if (skipNextListener) {
+                    skipNextListener = false;
+                    return;
+                }
+                if (isShowing())
+                    listener.changed(observable, (LocalDate) oldValue, (LocalDate) newValue);
+            };
+        };
+        valueProperty().addListener(wrapper);
     }
 }

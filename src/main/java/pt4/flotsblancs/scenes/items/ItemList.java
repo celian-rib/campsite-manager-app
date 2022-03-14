@@ -2,7 +2,6 @@ package pt4.flotsblancs.scenes.items;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,8 +23,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import pt4.flotsblancs.database.model.Reservation;
-import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ItemList<I extends Item> extends StackPane {
 
@@ -225,7 +222,7 @@ public class ItemList<I extends Item> extends StackPane {
 
     private HBox createAddButton() {
         var container = new HBox();
-        var btn = new MFXButton("Ajouter");
+        var btn = new MFXButton(itemScene.addButtonText());
         btn.getStyleClass().add("action-button");
         btn.setOnAction(e -> {
             itemScene.onAddButtonClicked();
