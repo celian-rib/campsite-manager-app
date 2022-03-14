@@ -10,8 +10,6 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.List;
 
-
-
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -194,7 +192,7 @@ public class StagiairesScene extends ItemScene<User> {
     
     @Override
     public void onContainerUnfocus() {
-            updateDatabase(stagiaire);
+        updateDatabase(stagiaire);
     }
 
     @Override
