@@ -56,12 +56,11 @@ public class ProblemsAddScene extends Region implements IScene
 		
 		this.problem = new Problem();
 		
-        VBox container = new VBox();
-        container.setPadding(new Insets(50));
-        container.getChildren().add(createHeader());
-        container.getChildren().add(createBottom());
+        BorderPane content = new BorderPane();
+        content.setTop(createHeader());
+        content.setCenter(createBottom());
 
-        this.getChildren().add(container);
+        this.getChildren().add(content);
 	}
 	
 	public HBox createHeader()
