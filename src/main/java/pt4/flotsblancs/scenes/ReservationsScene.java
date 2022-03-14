@@ -27,9 +27,10 @@ import pt4.flotsblancs.components.ComboBoxes.*;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;
-
+import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 

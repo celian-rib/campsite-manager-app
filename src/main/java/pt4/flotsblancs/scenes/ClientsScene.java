@@ -52,13 +52,11 @@ public class ClientsScene extends ItemScene<Client> {
     private MFXButton saveButton;
     private MFXButton addReservationButton;
 
-
     private ChangeListener<? super Object> changeListener = (obs, oldVal, newVal) -> {
         if (oldVal == null || newVal == null || oldVal == newVal)
             return;
         saveButton.setDisable(false);
     };
-
 
     @Override
     public String getName() {
@@ -154,8 +152,7 @@ public class ClientsScene extends ItemScene<Client> {
         clientSince.setFont(new Font(15));
         clientSince.setTextFill(Color.GRAY);
 
-        var nbReservations =
-                new Label("Nombre de réservations : " + client.getReservations().size());
+        var nbReservations = new Label("Nombre de réservations : " + client.getReservations().size());
         nbReservations.setFont(new Font(15));
         nbReservations.setTextFill(Color.GRAY);
         container.getChildren().addAll(card, clientSince, nbReservations);
@@ -236,13 +233,20 @@ public class ClientsScene extends ItemScene<Client> {
         if (client == null)
             return;
         try {
-            client.setFirstName(firstName.getText());
-            client.setName(name.getText());
-            client.setAddresse(adresse.getText());
-            client.setPhone(phone.getText());
-            client.setPreferences(preferences.getText());
+            if (!client.getFirstName().equals(firstName.getText()))
+                client.setFirstName(firstName.getText());
+            if (!client.getName().equals(name.getText()))
+                client.setName(name.getText());
+            if (!client.getAddresse().equals(adresse.getText()))
+                client.setAddresse(adresse.getText());
+            if (!client.getPhone().equals(phone.getText()))
+                client.setPhone(phone.getText());
+
+            if (preferences.getText() != null)
+                if (!preferences.getText().equals(client.getPreferences()))
+                    client.setPreferences(preferences.getText());
+
             Database.getInstance().getClientsDao().update(client);
-            User.getConnected().addlog(LogType.MODIFY, "Mise à jour du client "+firstName.getText()+" "+name.getText());
             Router.showToast(ToastType.SUCCESS, "Client mis à jour");
         } catch (SQLRecoverableException e) {
             e.printStackTrace();
