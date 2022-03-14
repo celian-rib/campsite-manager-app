@@ -129,16 +129,21 @@ public class User {
         System.out.println("[UserStore] " + message);
     }
 
-    public void addlog(LogType type, String message) {
+    public static void addlog(LogType type, String message) {
+        if (User.getConnected() == null)
+            return;
         var log = new Log();
         log.setType(type);
         log.setMessage(message);
-        log.setUser(this);
-        log.setTime(new Date());
         try {
+            log.setDate(new Date());
+            Database.getInstance().getLogDao().refresh(log);
+            log.setUser(User.getConnected());
             Database.getInstance().getLogDao().create(log);
         } catch (SQLException e) {
             System.err.println(e);
+            e.printStackTrace();
+            System.out.println(log);
             Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
             Router.goToScreen(Routes.CONN_FALLBACK);
         }
