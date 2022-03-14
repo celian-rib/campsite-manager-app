@@ -3,9 +3,7 @@ package pt4.flotsblancs.scenes;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.List;
-
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -28,7 +26,6 @@ import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
-
 public class ProblemesScene extends ItemScene<Problem> {
 
     private final int INNER_PADDING = 20;
@@ -44,6 +41,8 @@ public class ProblemesScene extends ItemScene<Problem> {
     private Label lastUpdateDate;
 
     private TextArea description;
+
+    private boolean descriptionModified;
 
     private ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         if (oldValue == newValue || oldValue == null)
@@ -77,6 +76,7 @@ public class ProblemesScene extends ItemScene<Problem> {
     @Override
     protected Region createContainer(Problem problem) {
         this.problem = problem;
+        this.descriptionModified = false;
 
         VBox container = new VBox();
 
@@ -108,12 +108,9 @@ public class ProblemesScene extends ItemScene<Problem> {
         pane.setPadding(new Insets(25));
 
         description = new TextArea(problem.getDescription());
-        description.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> observable,
-                    final String oldValue, final String newValue) {
-                problem.setDescription(newValue);
-            }
+        description.textProperty().addListener((obs, oldVal, newVal) -> {
+            if(oldVal != null && oldVal != newVal)
+                this.descriptionModified = true;
         });
 
         BorderPane spacing = new BorderPane();
@@ -210,11 +207,11 @@ public class ProblemesScene extends ItemScene<Problem> {
             Database.getInstance().getProblemDao().update(problem);
             Router.showToast(ToastType.SUCCESS, "Problème mis à jour");
         } catch (SQLRecoverableException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
             Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
@@ -228,7 +225,12 @@ public class ProblemesScene extends ItemScene<Problem> {
 
     @Override
     public void onUnfocus() {
-        // TODO remplacer par onContainerUnFocus
-        refreshDatabase();
+        onContainerUnfocus();
+    }
+    
+    @Override
+    public void onContainerUnfocus() {
+        if(this.descriptionModified)
+            refreshDatabase();
     }
 }

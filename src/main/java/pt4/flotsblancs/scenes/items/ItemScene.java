@@ -27,6 +27,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         implements IScene, BreakPointListener {
 
     private ItemList<I> itemList;
+    private I item;
 
     /**
      * Permet de créer le conteneur affichant l'item actuellement sélectionné
@@ -81,7 +82,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
                         itemList.updateItems(allItems);
                     } catch (Exception e) {
                         // TODO gestion erreur
-                        System.err.println(e);
+                        e.printStackTrace();
                     }
                 });
                 return allItems;
@@ -97,12 +98,17 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         new Thread(updateListTask).start();
     }
 
+    public abstract void onContainerUnfocus();
+
     /**
      * Met à jour le conteneur droit de la page, affichant les informations de l'item sélectionné
      * 
      * @param item item selectionné qui doit être affiché
      */
     void updateContainer(I item) {
+        if (item != null) {
+            onContainerUnfocus();
+        }
         // Stack pane pour pouvoir créer une ombre derrière le conteneur
         StackPane stack = new StackPane();
 
@@ -122,6 +128,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         container.setBackground(background);
 
         stack.getChildren().addAll(shadowPane, container);
+        this.item = item;
 
         setCenter((Parent) stack);
     }

@@ -72,6 +72,7 @@ public class NavBar extends BorderPane implements BreakPointListener {
         addNavButton(Routes.CAMPGROUNDS, "fas-caravan:16", 11);
         addNavButton(Routes.PROBLEMES, "fas-exclamation-triangle:16", 11);
         addNavButton(Routes.ADMIN, "fas-user-cog:16", 11);
+        addNavButton(Routes.LOGS, "far-list-alt", 15);
 
         centerButtons.getChildren().addAll(navButtons.values());
 

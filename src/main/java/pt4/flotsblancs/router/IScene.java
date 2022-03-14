@@ -33,7 +33,5 @@ public interface IScene {
     /**
      * Appelée au moment ou cette scène est retiré de l'écran par le routeur
      */
-    public default void onUnfocus() {}
-
-	
+    public default void onUnfocus() {};
 }

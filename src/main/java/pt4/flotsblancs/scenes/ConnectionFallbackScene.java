@@ -48,7 +48,7 @@ public class ConnectionFallbackScene extends VBox implements IScene {
                     throw new Exception("getInstance error");
                 }
             } catch (Exception ex) {
-                System.err.println(ex);
+                ex.printStackTrace();
                 Router.showToast(ToastType.ERROR, "Impossible de se connecter");
             }
         });

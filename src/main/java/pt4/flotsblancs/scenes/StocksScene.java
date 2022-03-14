@@ -162,26 +162,26 @@ public class StocksScene extends VBox implements IScene {
             table.getItems().clear();
             table.getItems().addAll(queryAll());
         } catch (SQLRecoverableException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
             Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
             Router.goToScreen(Routes.HOME);
         }
     }
-
+    
     private void updateDatabase(Stock stock) {
         try {
             Database.getInstance().getStockDao().update(stock);
             Router.showToast(ToastType.SUCCESS, "Stock mis à jour");
         } catch (SQLRecoverableException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
             Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
         }
@@ -206,7 +206,7 @@ public class StocksScene extends VBox implements IScene {
                 Database.getInstance().getStockDao()
                         .delete(table.getSelectionModel().getSelectedItem());
             } catch (SQLException e1) {
-                System.err.println(e);
+                e1.printStackTrace();
                 Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
                 Router.goToScreen(Routes.HOME);
             }
@@ -222,7 +222,7 @@ public class StocksScene extends VBox implements IScene {
             try {
                 Database.getInstance().getStockDao().create(s);
             } catch (SQLException e1) {
-                System.err.println(e);
+                e1.printStackTrace();
                 Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
                 Router.goToScreen(Routes.HOME);
             }

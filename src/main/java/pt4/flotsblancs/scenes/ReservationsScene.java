@@ -29,7 +29,6 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;
-
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 
@@ -135,11 +134,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
         } catch (SQLRecoverableException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
             Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
@@ -281,10 +280,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
         VBox container = new VBox(CONTENT_SPACING);
 
         startDatePicker = new ReservationDatePicker(reservation, true);
-        startDatePicker.addListener(changeListener);
+        startDatePicker.addUserChangedValueListener(changeListener);
 
         endDatePicker = new ReservationDatePicker(reservation, false);
-        endDatePicker.addListener(changeListener);
+        endDatePicker.addUserChangedValueListener(changeListener);
 
         container.getChildren().addAll(startDatePicker, endDatePicker);
 
@@ -486,5 +485,15 @@ public class ReservationsScene extends ItemScene<Reservation> {
             if (!bottomSlot.getChildren().contains(problemsContainer))
                 bottomSlot.getChildren().add(problemsContainer);
         }
+    }
+
+    @Override
+    public void onUnfocus() {
+        onContainerUnfocus();
+    }
+
+    @Override
+    public void onContainerUnfocus() {
+        //refreshDatabase();
     }
 }
