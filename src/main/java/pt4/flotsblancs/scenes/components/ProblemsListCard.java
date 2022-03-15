@@ -1,4 +1,4 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.scenes.components;
 
 import java.util.ArrayList;
 import java.util.Collection;
