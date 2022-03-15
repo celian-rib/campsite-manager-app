@@ -23,7 +23,10 @@ import pt4.flotsblancs.components.ReservationCard;
 import pt4.flotsblancs.components.VBoxSpacer;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.database.model.User;
+import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
@@ -49,13 +52,11 @@ public class ClientsScene extends ItemScene<Client> {
     private MFXButton saveButton;
     private MFXButton addReservationButton;
 
-
     private ChangeListener<? super Object> changeListener = (obs, oldVal, newVal) -> {
         if (oldVal == null || newVal == null || oldVal == newVal)
             return;
         saveButton.setDisable(false);
     };
-
 
     @Override
     public String getName() {
@@ -224,9 +225,14 @@ public class ClientsScene extends ItemScene<Client> {
                 Router.goToScreen(Routes.RESERVATIONS, new Reservation(client));
                 Router.showToast(ToastType.SUCCESS, "Réservation ajoutée");
             } catch (SQLException e1) {
-                System.err.println(e);
+                e1.printStackTrace();
                 Router.showToast(ToastType.ERROR, "Erreur durant l'ajout de la réservation");
                 Router.goToScreen(Routes.CONN_FALLBACK);
+            } catch (ConstraintException e1) {
+                // Si il y a eu un soucis sur les contraintes de la réservation, on l'indique à
+                // l'utilisateur
+                Router.showToast(ToastType.WARNING, e1.getMessage());
+                e1.printStackTrace();
             }
         });
 
@@ -237,19 +243,27 @@ public class ClientsScene extends ItemScene<Client> {
         if (client == null)
             return;
         try {
-            client.setFirstName(firstName.getText());
-            client.setName(name.getText());
-            client.setAddresse(adresse.getText());
-            client.setPhone(phone.getText());
-            client.setPreferences(preferences.getText());
+            if (!client.getFirstName().equals(firstName.getText()))
+                client.setFirstName(firstName.getText());
+            if (!client.getName().equals(name.getText()))
+                client.setName(name.getText());
+            if (!client.getAddresse().equals(adresse.getText()))
+                client.setAddresse(adresse.getText());
+            if (!client.getPhone().equals(phone.getText()))
+                client.setPhone(phone.getText());
+
+            if (preferences.getText() != null)
+                if (!preferences.getText().equals(client.getPreferences()))
+                    client.setPreferences(preferences.getText());
+
             Database.getInstance().getClientsDao().update(client);
             Router.showToast(ToastType.SUCCESS, "Client mis à jour");
         } catch (SQLRecoverableException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de connexion");
             Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
+            e.printStackTrace();
             Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
             Router.goToScreen(Routes.HOME);
         }
@@ -258,8 +272,16 @@ public class ClientsScene extends ItemScene<Client> {
     @Override
     public void onUnfocus() {
         onContainerUnfocus();
-        if (!saveButton.isDisabled())
-            updateDatabase(client);
+        if (this.saveButton != null)
+            if (!saveButton.isDisabled())
+                updateDatabase(client);
+    }
+
+    @Override
+    public void onContainerUnfocus() {
+        if (this.saveButton != null)
+            if (!saveButton.isDisabled())
+                updateDatabase(client);
     }
 
     @Override
@@ -286,12 +308,4 @@ public class ClientsScene extends ItemScene<Client> {
             preferences.setMinWidth(350);
         }
     }
-
-    @Override
-    public void onContainerUnfocus() {
-        if (client != null) {
-            updateDatabase(client);
-        }
-    }
-
 }

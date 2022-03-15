@@ -1,5 +1,7 @@
 package pt4.flotsblancs;
 
+import java.util.Date; //ne pas supprimer, cette ligne EST utilisé
+//si vous supprimez vous êtes un Billy Débilus esclave de Virilus
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
@@ -11,6 +13,7 @@ import com.github.javafaker.Pokemon;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Stock;
@@ -21,14 +24,14 @@ import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
 public class Generator {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ConstraintException {
         Database.getInstance(); // Initialisation connexion BD
 
         var f = new Faker();
 
         generateAdmin();
         
-        generateStocks(f, 10);
+        generateStocks(f, 100);
         generateClients(f, 50);
         generateCampGrounds(f, 100);
         generateReservations(f, 20);
@@ -55,7 +58,7 @@ public class Generator {
         }
     }
 
-    private static void generateReservations(Faker f, int nbr) throws SQLException {
+    private static void generateReservations(Faker f, int nbr) throws SQLException, ConstraintException {
         List<CampGround> CGlist = Database.getInstance().getCampgroundDao().queryForAll();
         List<Client> ClientsList = Database.getInstance().getClientsDao().queryForAll();
         for (int i = 0; i < nbr; i++) {
@@ -74,6 +77,9 @@ public class Generator {
 
             var equipments = resa.getCampground().getCompatiblesEquipments();
             resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
+            
+            var services = resa.getCampground().getCompatiblesServices();
+            resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
 
             Database.getInstance().getReservationDao().create(resa);
             System.out.println(resa);

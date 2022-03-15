@@ -9,6 +9,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.*;
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.scenes.items.Item;
 
 @EqualsAndHashCode
@@ -31,17 +32,14 @@ public class Client implements Item {
     private String firstName;
 
     @Getter
-    @Setter
     @DatabaseField
     private String preferences;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false)
     private String addresse;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false)
     private String phone;
 
@@ -56,12 +54,38 @@ public class Client implements Item {
 
 
     public Client(String name) throws SQLException {
-        this.setFirstName(name);
-        this.setName("Dupond");
-        this.setAddresse("Adresse");
-        this.setPhone("00 00 00 00 00");
+        this.firstName = "Jean";
+        this.name = "Dupond";
+        this.addresse = "Adresse";
+        this.phone = "00 00 00 00 00";
         Database.getInstance().getClientsDao().create(this);
         Database.getInstance().getClientsDao().refresh(this);
+        User.addlog(LogType.ADD, "Ajout d'un nouveau client");
+    }
+
+    public void setPhone(String phone) {
+        User.addlog(LogType.MODIFY, "Téléphone du client " + getDisplayName() + " changé pour " + phone);
+        this.phone = phone;
+    }
+
+    public void setAddresse(String addresse) {
+        User.addlog(LogType.MODIFY, "Addresse du client " + getDisplayName() + " changé pour " + addresse);
+        this.addresse = addresse;
+    }
+
+    public void setPreferences(String preferences) {
+        User.addlog(LogType.MODIFY, "Préférences du client " + getDisplayName() + " changé pour " + preferences);
+        this.preferences = preferences;
+    }
+
+    public void setFirstName(String firstName) {
+        User.addlog(LogType.MODIFY, "Prénom du client " + getDisplayName() + " changé pour " + firstName);
+        this.firstName = firstName;
+    }
+
+    public void setName(String name) {
+        User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
+        this.name = name;
     }
 
     public Reservation getOpenReservation() {
