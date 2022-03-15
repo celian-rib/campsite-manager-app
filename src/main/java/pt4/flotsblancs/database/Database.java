@@ -48,7 +48,7 @@ public class Database {
     private Dao<Stock, String> stockDao;
 
     private Database() throws SQLException {
-        Logger.setGlobalLogLevel(Level.DEBUG);
+        Logger.setGlobalLogLevel(Level.WARNING);
 
         // Chargement variables d'environnement
         Dotenv dotenv = Dotenv.load();
