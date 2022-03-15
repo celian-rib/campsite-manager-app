@@ -13,8 +13,11 @@ import pt4.flotsblancs.database.model.types.*;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.utils.DateUtils;
 
+import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -98,9 +101,11 @@ public class Reservation implements Item {
      * Des données valides et cohérente seront données à la réservation.
      * 
      * @param client client a assigner à cette réservation
-     * @throws SQLException erreur technique de création
-     * @throws ConstraintException la création à subit des modfications par effet de bords à cause
-     *         des ses contraintes entre équipements / services / emplacement / dates
+     * @throws SQLException        erreur technique de création
+     * @throws ConstraintException la création à subit des modfications par effet de
+     *                             bords à cause
+     *                             des ses contraintes entre équipements / services
+     *                             / emplacement / dates
      */
     public Reservation(Client client) throws SQLException, ConstraintException {
         setClient(client);
@@ -129,8 +134,10 @@ public class Reservation implements Item {
     }
 
     /**
-     * Change l'emplacement actuel de la réservation tout en respectant les contraintes sur les
-     * équipements et les services demandés (Ces derniers peuvent changer par effet de bord)
+     * Change l'emplacement actuel de la réservation tout en respectant les
+     * contraintes sur les
+     * équipements et les services demandés (Ces derniers peuvent changer par effet
+     * de bord)
      * 
      * @param camp nouvel emplacement de la réservation
      * @throws ConstraintException
@@ -151,14 +158,16 @@ public class Reservation implements Item {
         this.campground = camp;
 
         // Gestion des contraintes equipements et services
-        // ATTENTION -> changer l'emplacement prend la priorité en terme de contrainte et change
+        // ATTENTION -> changer l'emplacement prend la priorité en terme de contrainte
+        // et change
         // donc servies et equipement si ils ne sont pas compatibles
         ConstraintException exceptionHandler = null;
 
         try {
             checkEquipmentsConstraints();
         } catch (ConstraintException e) {
-            // On ne relance pas l'exception tout de suite, il faut avant vérifier les services
+            // On ne relance pas l'exception tout de suite, il faut avant vérifier les
+            // services
             exceptionHandler = e;
         }
 
@@ -178,7 +187,8 @@ public class Reservation implements Item {
     }
 
     /**
-     * Permet de changer les équipements demandés par la réservation en conservant les contraintes
+     * Permet de changer les équipements demandés par la réservation en conservant
+     * les contraintes
      * imposées par l'emplacement
      * 
      * @param equipment
@@ -190,7 +200,8 @@ public class Reservation implements Item {
     }
 
     /**
-     * Permet de changer les services demandés par la réservation en conservant les contraintes
+     * Permet de changer les services demandés par la réservation en conservant les
+     * contraintes
      * imposées par l'emplacement
      * 
      * @param service
@@ -202,10 +213,12 @@ public class Reservation implements Item {
     }
 
     /**
-     * Vérifie l'intégrité des contrainte entre les equipement demandés par la réservation et son
+     * Vérifie l'intégrité des contrainte entre les equipement demandés par la
+     * réservation et son
      * emplacement
      * 
-     * En cas de non compatibilité l'équipement sera modifié pour répondre à la contrainte
+     * En cas de non compatibilité l'équipement sera modifié pour répondre à la
+     * contrainte
      * 
      * @throws ConstraintException
      */
@@ -222,10 +235,12 @@ public class Reservation implements Item {
     }
 
     /**
-     * Vérifie l'intégrité des contrainte entre les services demandés par la réservation et son
+     * Vérifie l'intégrité des contrainte entre les services demandés par la
+     * réservation et son
      * emplacement
      * 
-     * En cas de non compatibilité le service sera modifié pour répondre à la contrainte
+     * En cas de non compatibilité le service sera modifié pour répondre à la
+     * contrainte
      * 
      * @throws ConstraintException
      */
@@ -234,8 +249,7 @@ public class Reservation implements Item {
         if (this.selectedServices == null || campground == null)
             return;
 
-        String err =
-                "Services modifiés pour correspondre aux services proposés par l'emplacement selectionné";
+        String err = "Services modifiés pour correspondre aux services proposés par l'emplacement selectionné";
         // Cas ou l'emplacement est un mobilhome, on force eau et électricité
         if (campground.getAllowedEquipments() == Equipment.MOBILHOME
                 && selectedServices != Service.WATER_AND_ELECTRICITY) {
@@ -282,7 +296,7 @@ public class Reservation implements Item {
             this.endDate = newEndDate;
             return;
         }
-        
+
         var campDao = Database.getInstance().getCampgroundDao();
         if (!campDao.isAvailable(this, this.campground, startDate, newEndDate)) {
             throw new ConstraintException(
@@ -310,21 +324,30 @@ public class Reservation implements Item {
      * @return Prix total de la réservation
      */
     public float getTotalPrice() {
+
         var dayCount = getDayCount();
         var rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
         var withService = rawPrice + selectedServices.getPricePerDay() * dayCount;
-        return withService * cashBack.getReduction();
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        return Float.parseFloat(df.format(withService * cashBack.getReduction()));
+        
     }
 
     /**
      * @return Prix d'acompte de la réservation
      */
     public float getDepositPrice() {
-        return getTotalPrice() * 0.3f; // Acompte de 30%
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        return Float.parseFloat(df.format((getTotalPrice() * 0.3f) * cashBack.getReduction()));// Acompte de 30%
     }
 
     /**
-     * @return vrai si cette réservation est dans le passé (Soit sa date de fin est passée)
+     * @return vrai si cette réservation est dans le passé (Soit sa date de fin est
+     *         passée)
      */
     public boolean isInPast() {
         return new Date().compareTo(this.getEndDate()) >= 0;
@@ -343,7 +366,8 @@ public class Reservation implements Item {
     @Override
     public String getDisplayName() {
         // TODO supprimer ça ou mieux gérer l'intégrité de la BD
-        // Client peut être null si il a été supprimé, das ce cas l'applic crash de partout (pas que
+        // Client peut être null si il a été supprimé, das ce cas l'applic crash de
+        // partout (pas que
         // ici)
         var clientStr = client == null ? "Aucun client" : client.getName();
 
