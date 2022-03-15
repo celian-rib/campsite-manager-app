@@ -40,6 +40,10 @@ public class Client implements Item {
     @Getter
     @DatabaseField(canBeNull = false)
     private String phone;
+    
+    @Getter
+    @DatabaseField(canBeNull = false)
+    private String email;
 
     @Getter
     @ForeignCollectionField(eager = false)
@@ -84,6 +88,11 @@ public class Client implements Item {
     public void setName(String name) {
         User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
         this.name = name;
+    }
+    
+    public void setEmail(String email) {
+        User.addlog(LogType.MODIFY, "Email du client " + getDisplayName() + " changé pour " + email);
+        this.email = email;
     }
 
     public Reservation getOpenReservation() {
