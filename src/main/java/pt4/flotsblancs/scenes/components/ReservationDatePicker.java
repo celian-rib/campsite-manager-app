@@ -1,4 +1,4 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.scenes.components;
 
 import java.sql.SQLException;
 import java.time.LocalDate;

@@ -5,11 +5,11 @@
 ## Setup projet
 
 1. Clone le projet `git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
-2. Installer dépendances `mvn clean package`
-3. Installer ojdbc (Gestionnaire base de donnée pour l'ORM)
+2. Installer ojdbc (Gestionnaire base de donnée pour l'ORM)
     ```
     mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar
     ```
+2. Installer le reste des dépendances `mvn clean package`
 4. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
 5. Lancer un serveur sql en local
 6. Editer le fichier `.env` et mettre les informations de connexion au serveur SQL
@@ -99,3 +99,9 @@ Ne pas oublier de faire chmod u+x launcher.sh.
 2. L'application est build et est mise dans /target
 
 3. Pour la lancer, utilisez votre launcher avec la commande sur linux ./launcher.sh, ou sur windows en cliquant sur le .bat
+
+### Résoudre erreur (Type mismatch: cannot convert from Date to Date)
+
+> C'est une erreur entre vscode et maven, pour le coup le code n'est probablement pas le problème
+
+** Résoudre le problème avec : ** `mvn clean package`
