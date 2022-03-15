@@ -13,16 +13,16 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-
-import pt4.flotsblancs.components.*;
+import pt4.flotsblancs.components.CampgroundCard;
+import pt4.flotsblancs.components.ClientCard;
+import pt4.flotsblancs.components.HBoxSpacer;
+import pt4.flotsblancs.components.ReservationCard;
+import pt4.flotsblancs.components.VBoxSpacer;
 import pt4.flotsblancs.components.ComboBoxes.ProblemStatusComboBox;
-
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Problem;
-
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
-
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
@@ -45,12 +45,23 @@ public class ProblemesScene extends ItemScene<Problem> {
     private boolean descriptionModified;
 
     private ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
-        // Check si on a vraiment besoin de refresh la page et la bd
         if (oldValue == newValue || oldValue == null)
             return;
         refreshPage();
         refreshDatabase();
     };
+    
+    @Override
+    public void onAddButtonClicked()
+    {
+        try {
+        	Router.goToScreen(Routes.PROBLEMS_ADD);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            Router.showToast(ToastType.ERROR, "Erreur durant l'ajout du problème");
+            Router.goToScreen(Routes.CONN_FALLBACK);
+        }
+    }
 
     @Override
     public String getName() {
@@ -83,8 +94,6 @@ public class ProblemesScene extends ItemScene<Problem> {
     }
 
     private void refreshPage() {
-        // Mise à jour des labels
-
         // TODO bien formatter les dates
         startDate.setText("Date de début : " + problem.getStartDate().toString());
         endDate.setText("Date de fin : "
