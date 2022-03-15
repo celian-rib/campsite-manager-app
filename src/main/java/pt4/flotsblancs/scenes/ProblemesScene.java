@@ -94,8 +94,6 @@ public class ProblemesScene extends ItemScene<Problem> {
     }
 
     private void refreshPage() {
-        // Mise à jour des labels
-
         // TODO bien formatter les dates
         startDate.setText("Date de début : " + problem.getStartDate().toString());
         endDate.setText("Date de fin : "
