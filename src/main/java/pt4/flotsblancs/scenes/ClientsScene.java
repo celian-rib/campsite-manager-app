@@ -67,6 +67,16 @@ public class ClientsScene extends ItemScene<Client> {
     }
 
     @Override
+    protected void onAddButtonClicked() {
+        try {
+            Router.goToScreen(Routes.CLIENTS, new Client("Jean"));
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     protected Region createContainer(Client client) {
         this.client = client;
 
