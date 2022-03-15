@@ -25,8 +25,6 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
-import pt4.flotsblancs.database.model.User;
-import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;

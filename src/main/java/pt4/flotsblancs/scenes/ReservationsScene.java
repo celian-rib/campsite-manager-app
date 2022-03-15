@@ -290,7 +290,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         try {
             // TODO ne pas fetch les emplacements à chaque fois
             campComboBox = new CampGroundComboBox(reservation);
-            campComboBox.addListener(changeListener);
+            campComboBox.addUserChangedValueListener(changeListener);
             container.getChildren().add(campComboBox);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
