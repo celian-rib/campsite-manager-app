@@ -17,11 +17,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import pt4.flotsblancs.components.EmptyItemContainer;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
+import pt4.flotsblancs.scenes.components.EmptyItemContainer;
 
 public abstract class ItemScene<I extends Item> extends BorderPane
         implements IScene, BreakPointListener {

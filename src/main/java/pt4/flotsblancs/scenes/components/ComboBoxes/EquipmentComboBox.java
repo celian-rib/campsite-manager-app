@@ -1,23 +1,23 @@
-package pt4.flotsblancs.components.ComboBoxes;
+package pt4.flotsblancs.scenes.components.ComboBoxes;
 
 import io.github.palexdev.materialfx.enums.FloatMode;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
-import pt4.flotsblancs.database.model.types.Service;
+import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
-public class ServiceComboBox extends RefreshableComboBox<Service> {
+public class EquipmentComboBox extends RefreshableComboBox<Equipment> {
 
     private final Reservation reservation;
     private final CampGround campground;
 
-    public ServiceComboBox(Reservation reservation) {
+    public EquipmentComboBox(Reservation reservation) {
         this.campground = null;
         this.reservation = reservation;
 
-        setFloatingText("Services demandés");
+        setFloatingText("Equipements client");
         setFloatMode(FloatMode.INLINE);
         setMinWidth(180);
         setAnimated(false);
@@ -28,18 +28,18 @@ public class ServiceComboBox extends RefreshableComboBox<Service> {
             if (oldValue == null || newValue == null)
                 return;
             try {
-                reservation.setSelectedServices(newValue);
+                reservation.setEquipments(newValue);
             } catch (ConstraintException e) {
                 Router.showToast(ToastType.WARNING, e.getMessage());
             }
         });
     }
 
-    public ServiceComboBox(CampGround campground) {
+    public EquipmentComboBox(CampGround campground) {
         this.campground = campground;
         this.reservation = null;
 
-        setFloatingText("Services fournis");
+        setFloatingText("Equipements autorisés");
         setFloatMode(FloatMode.INLINE);
         setMinWidth(180);
         setAnimated(false);
@@ -49,19 +49,18 @@ public class ServiceComboBox extends RefreshableComboBox<Service> {
         valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue == null || newValue == null)
                 return;
-            campground.setProvidedServices(newValue);
+            campground.setAllowedEquipments(newValue);
         });
     }
 
-    @Override
     public void refresh() {
         getItems().clear();
         if (this.campground != null) {
-            getItems().addAll(Service.values());
-            selectItem(campground.getProvidedServices());
+            getItems().addAll(Equipment.values());
+            selectItem(campground.getAllowedEquipments());
         } else if (this.reservation != null) {
-            getItems().addAll(reservation.getCampground().getCompatiblesServices());
-            selectItem(reservation.getSelectedServices());
+            getItems().addAll(reservation.getCampground().getCompatiblesEquipments());
+            selectItem(reservation.getEquipments());
         }
     }
 }

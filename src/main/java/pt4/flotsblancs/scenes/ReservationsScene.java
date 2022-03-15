@@ -21,10 +21,6 @@ import javafx.scene.control.OverrunStyle;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import pt4.flotsblancs.components.*;
-
-import pt4.flotsblancs.components.ComboBoxes.*;
-
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
@@ -33,6 +29,8 @@ import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 
 import pt4.flotsblancs.scenes.breakpoints.*;
+import pt4.flotsblancs.scenes.components.*;
+import pt4.flotsblancs.scenes.components.ComboBoxes.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 

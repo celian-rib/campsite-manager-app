@@ -1,4 +1,4 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.scenes.components;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
