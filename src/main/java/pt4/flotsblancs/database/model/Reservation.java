@@ -4,7 +4,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
