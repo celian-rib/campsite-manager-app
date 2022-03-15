@@ -22,12 +22,10 @@ public class Client implements Item {
     private int id;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false)
     private String name;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
 
@@ -48,7 +46,6 @@ public class Client implements Item {
     private Collection<Problem> problems;
 
     @Getter
-    @Setter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Reservation> reservations;
 
@@ -58,6 +55,7 @@ public class Client implements Item {
         this.name = "Dupond";
         this.addresse = "Adresse";
         this.phone = "00 00 00 00 00";
+        this.preferences = null;
         Database.getInstance().getClientsDao().create(this);
         Database.getInstance().getClientsDao().refresh(this);
         User.addlog(LogType.ADD, "Ajout d'un nouveau client");

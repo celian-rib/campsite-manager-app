@@ -31,13 +31,13 @@ public class Generator {
 
         generateAdmin();
         
-        generateStocks(f, 100);
-        generateClients(f, 50);
-        generateCampGrounds(f, 100);
-        generateReservations(f, 20);
-        generateProblemsResa(f, 5);
-        generateProblemsCg(f, 3);
-        generateProblemsClient(f, 3);
+        generateStocks(f, 1);
+        generateClients(f, 1);
+        generateCampGrounds(f, 1);
+        generateReservations(f, 1);
+        generateProblemsResa(f, 1);
+        generateProblemsCg(f, 1);
+        generateProblemsClient(f, 1);
     }
 
     private static int rdmNbrBtwn(int min, int max) {
