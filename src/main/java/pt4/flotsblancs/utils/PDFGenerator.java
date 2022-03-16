@@ -1,9 +1,13 @@
-package pt4.flotsblancs;
+package pt4.flotsblancs.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import javax.swing.filechooser.FileSystemView;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -17,17 +21,61 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import pt4.flotsblancs.database.model.Client;
-import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
+import java.awt.Desktop;
 
 public class PDFGenerator {
 
-    private static String FILE = "facture.pdf";
+    /**
+     * Télécharge la facture de la réservation donnée (Si il y en a une) et l'ouvre via
+     * l'explorateur de fichier de l'os La facture est stocké dans le répertoire d'accueil de
+     * l'ordinateur
+     * 
+     * @param reservation réservation contenant la facture à ouvrir
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static void openFile(Reservation reservation) throws FileNotFoundException, IOException {
+        if (reservation.getBill() == null) {
+            System.out.println(
+                    "Impossible d'ouvrir le fichier de facture une réservation sans facture");
+            return;
+        }
 
-    public static void main(String args[]) throws DocumentException, MalformedURLException,
-            IOException, SQLException, ConstraintException {
+        System.out.println("Exportation PDF : " + reservation);
+
+        var fileName = "facture_" + reservation.getClient().getName() + "_" + reservation.getId();
+        var home = FileSystemView.getFileSystemView().getDefaultDirectory();
+
+        File outputFile = new File(home.getPath() + "/" + fileName);
+        try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+            outputStream.write(reservation.getBill());
+        }
+
+        System.out.println("Ouverture PDF : " + reservation);
+        Desktop desktop = Desktop.getDesktop();
+        desktop.open(outputFile);
+    }
+
+    /**
+     * Permet de générer une facture à partir d'une réservation
+     * 
+     * @param reservation réservation
+     * @return Stream de byte correspondant au fichier PDF de la facture
+     * @throws SQLException
+     * @throws DocumentException
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+    public static ByteArrayOutputStream generateReservationBillPDF(Reservation reservation)
+            throws SQLException, DocumentException, MalformedURLException, IOException {
+        System.out.println("Génération PDF : " + reservation);
+
         Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream(FILE));
+
+        var outputStream = new ByteArrayOutputStream();
+
+        PdfWriter.getInstance(document, outputStream);
         document.open();
 
         Image img = Image.getInstance("src/main/resources/logo_dark.png");
@@ -52,21 +100,13 @@ public class PDFGenerator {
 
         document.add(line);
 
-        var client = new Client();
-        client.setAddresse("15 rue Naudet, Gradignan, 33170");
-        client.setFirstName("Michel");
-        client.setName("Soulas");
-        client.setPhone("+33 07 69 66 65 41");
-        client.setEmail("unemail.super@gmail.com");
-        client.setPreferences("Camping car avec famille");
-
-        var reservation = new Reservation(client);
-        reservation.setNbPersons(4);
-
-        document.add(createClientTable(client));
+        document.add(createClientTable(reservation.getClient()));
         document.add(createReservationTable(reservation));
         document.add(createPriceTable(reservation));
         document.close();
+
+        System.out.println("PDF généré");
+        return outputStream;
     }
 
     private static PdfPCell createCell(String content) {

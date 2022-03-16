@@ -4,14 +4,12 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.utils.DateUtils;
-
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
@@ -84,6 +83,10 @@ public class Reservation implements Item {
     @Getter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Problem> problems;
+    
+    @Getter
+    @DatabaseField(dataType=DataType.SERIALIZABLE)
+    private byte[] bill;
 
     public Reservation() {
         this.canceled = false;
@@ -423,5 +426,10 @@ public class Reservation implements Item {
     public void setCanceled(boolean canceled) {
         User.addlog(LogType.DELETE, "Réservation #" + id + " annulée");
         this.canceled = canceled;
+    }
+    
+    public void setBill(byte[] fileData) {
+        User.addlog(LogType.ADD, "Génération de la facture de la réservation #" + id);
+        this.bill = fileData;
     }
 }

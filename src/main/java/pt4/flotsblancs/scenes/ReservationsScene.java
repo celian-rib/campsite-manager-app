@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -33,6 +32,7 @@ import pt4.flotsblancs.scenes.components.*;
 import pt4.flotsblancs.scenes.components.ComboBoxes.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.utils.PDFGenerator;
 
 public class ReservationsScene extends ItemScene<Reservation> {
 
@@ -68,6 +68,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private PersonCountComboBox personCountComboBox;
     private EquipmentComboBox equipmentsComboBox;
 
+    private MFXButton openBillBtn;
     private MFXButton sendBillBtn;
     private ConfirmButton cancelBtn;
 
@@ -84,9 +85,9 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private void refreshPage() {
         // TODO check constraintes à l'ouverture (@celian-rib)
         // if(!reservation.checkEquipmentsConstraints() || !reservation.checkServicesConstraint()) {
-        //     updateDatabase();
+        // updateDatabase();
         // };
-        
+
         equipmentsComboBox.refresh();
         campComboBox.refresh();
         serviceComboBox.refresh();
@@ -99,6 +100,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
         dayCount.setText(reservation.getDayCount() + " jours");
         depositPrice.setText("Prix acompte : " + reservation.getDepositPrice() + "€");
         totalPrice.setText("Prix total : " + reservation.getTotalPrice() + "€");
+        sendBillBtn.setText(reservation.getBill() != null ? "Regénérer et envoyer facture"
+                : "Générer et envoyer facture");
         campCard.refresh(reservation.getCampground());
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E dd MMM", Locale.FRANCE);
@@ -112,19 +115,23 @@ public class ReservationsScene extends ItemScene<Reservation> {
         boolean isCanceled = reservation.getCanceled();
         Equipment campEquipments = reservation.getCampground().getAllowedEquipments();
         boolean isMobilhome = campEquipments == Equipment.MOBILHOME;
-        boolean isSingleEquipment = reservation.getCampground().getCompatiblesEquipments().size() == 1;
+        boolean isSingleEquipment =
+                reservation.getCampground().getCompatiblesEquipments().size() == 1;
         boolean isSingleService = reservation.getCampground().getCompatiblesServices().size() == 1;
         startDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         endDatePicker.setDisable(isDeposited || isPaid || isCanceled);
         campComboBox.setDisable(isDeposited || isPaid || isCanceled);
-        serviceComboBox.setDisable(isDeposited || isPaid || isMobilhome || isSingleService || isCanceled);
+        serviceComboBox
+                .setDisable(isDeposited || isPaid || isMobilhome || isSingleService || isCanceled);
         personCountComboBox.setDisable(isDeposited || isPaid || isCanceled);
-        equipmentsComboBox.setDisable(isDeposited || isPaid || isMobilhome || isSingleEquipment || isCanceled);
+        equipmentsComboBox.setDisable(
+                isDeposited || isPaid || isMobilhome || isSingleEquipment || isCanceled);
         cashBackComboBox.setDisable(isPaid || isCanceled);
         depositComboBox.setDisable(isPaid || isCanceled);
         paymentComboBox.setDisable(!isDeposited || isCanceled);
         sendBillBtn.setDisable(!isPaid || isCanceled);
         cancelBtn.setDisable(isPaid || isCanceled);
+        openBillBtn.setVisible(reservation.getBill() != null);
     }
 
     private void updateDatabase() {
@@ -182,8 +189,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return Conteneur avec les cartes, les equipements et services, les
-     *         sélections de dates
+     * @return Conteneur avec les cartes, les equipements et services, les sélections de dates
      */
     private HBox createTopSlot() {
         HBox container = new HBox(10);
@@ -256,8 +262,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return VBox contenant la carte du client et la carte de l'emplacement
-     *         associés à cette
+     * @return VBox contenant la carte du client et la carte de l'emplacement associés à cette
      *         réservation
      */
     private VBox cardsContainer() {
@@ -271,8 +276,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return Conteneur contenant les ComboBox des dates de début de fin de la
-     *         réservation
+     * @return Conteneur contenant les ComboBox des dates de début de fin de la réservation
      */
     private VBox datesContainer() {
         VBox container = new VBox(CONTENT_SPACING);
@@ -298,8 +302,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     }
 
     /**
-     * @return conteneur contenant les ComboBox de sélection de l'equipement /
-     *         services / nb
+     * @return conteneur contenant les ComboBox de sélection de l'equipement / services / nb
      *         personnes
      */
     private VBox selectedEquipmentAndServicesContainer() {
@@ -350,8 +353,10 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private HBox createActionsButtonsSlot() {
         var container = new HBox(10);
 
-        sendBillBtn = new MFXButton("Envoyer facture");
+        openBillBtn = new MFXButton("Voir facture");
+        sendBillBtn = new MFXButton();
         cancelBtn = new ConfirmButton("Annuler la réservation");
+
         FontIcon icon = new FontIcon("fas-exclamation-triangle:10");
         icon.setIconColor(Color.WHITE);
         cancelBtn.setGraphic(icon);
@@ -361,11 +366,36 @@ public class ReservationsScene extends ItemScene<Reservation> {
             updateDatabase();
         });
 
+        sendBillBtn.setOnAction(e -> {
+            try {
+                var bill = PDFGenerator.generateReservationBillPDF(reservation);
+                reservation.setBill(bill.toByteArray());
+                updateDatabase();
+                refreshPage();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Router.showToast(ToastType.ERROR,
+                        "Une erreur est survenue durant la génération de la facture");
+            }
+        });
+
+        openBillBtn.setOnAction(e -> {
+            Router.showToast(ToastType.INFO, "Ouverture du fichier...");
+            try {
+                PDFGenerator.openFile(reservation);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Router.showToast(ToastType.ERROR,
+                        "Une erreur est survenue durant l'ouverture du fichier");
+            }
+        });
+
         sendBillBtn.getStyleClass().add("action-button");
         cancelBtn.getStyleClass().add("action-button");
+        openBillBtn.getStyleClass().add("action-button");
 
         container.setAlignment(Pos.CENTER_RIGHT);
-        container.getChildren().addAll(sendBillBtn, cancelBtn);
+        container.getChildren().addAll(openBillBtn, sendBillBtn, cancelBtn);
         return container;
     }
 
@@ -492,6 +522,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     @Override
     public void onContainerUnfocus() {
-        //refreshDatabase();
+        // refreshDatabase();
     }
 }
