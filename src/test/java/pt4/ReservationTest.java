@@ -12,59 +12,29 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import pt4.flotsblancs.database.Database;
-import pt4.flotsblancs.database.model.CampGround;
-import pt4.flotsblancs.database.model.Client;
-import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
-import pt4.flotsblancs.database.model.types.Equipment;
-import pt4.flotsblancs.database.model.types.Service;
 import pt4.flotsblancs.utils.DateUtils;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class ReservationTest {
 
-    private Reservation createReservation(String start, String end)
-            throws SQLException, ConstraintException {
+    private Reservation createReservation(String start, String end) throws Exception {
+        TestUtils.initTestData();
 
-        var camp = new CampGround();
-        camp.setDescription("Belle vue sur les poubelles");
-        camp.setPricePerDays(28);
-        camp.setSurface(34.5f);
-        camp.setAllowedEquipments(Equipment.MOBILHOME);
-        camp.setProvidedServices(Service.WATER_AND_ELECTRICITY);
-        Database.getInstance().getCampgroundDao().create(camp);
-
-        var client = new Client();
-        client.setAddresse("15 rue Naudet, Gradignan, 33170");
-        client.setFirstName("test_firstname");
-        client.setName("test_name");
-        client.setPhone("+33 07 69 66 65 41");
-        client.setPreferences("Camping car avec famille");
-        Database.getInstance().getClientsDao().create(client);
-        Database.getInstance().getClientsDao().refresh(client);
-        System.out.println("Création client de test");
-
-        System.out.println("Création réservation de test");
-        var resa = new Reservation();
-        resa.setClient(client);
-        resa.setEquipments(Equipment.MOBILHOME);
-        resa.setSelectedServices(Service.WATER_AND_ELECTRICITY);
-        resa.setCampground(camp);
+        var resa = new Reservation(TestUtils.client);
 
         resa.setStartDate(DateUtils.fromLocale(LocalDate.parse(start)));
         resa.setEndDate(DateUtils.fromLocale(LocalDate.parse(end)));
 
         Database.getInstance().getReservationDao().create(resa);
         Database.getInstance().getReservationDao().refresh(resa);
-        System.out.println("Création réservation de test");
-
         return resa;
     }
 
     private Reservation tResa;
 
     @BeforeAll
-    public void setup() throws SQLException, ConstraintException {
+    public void setup() throws Exception {
         tResa = createReservation("3000-09-02", "3000-09-20");
         System.out.println("Date début réservation de test : " + tResa.getStartDate());
         System.out.println("Date fin réservation de test : " + tResa.getEndDate());
@@ -116,5 +86,6 @@ public class ReservationTest {
     public void delete() throws SQLException {
         Database.getInstance().getClientsDao().delete(tResa.getClient());
         Database.getInstance().getReservationDao().delete(tResa);
+        TestUtils.deleteTestData();
     }
 }
