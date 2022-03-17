@@ -478,7 +478,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     @Override
     protected List<Reservation> queryAll() throws SQLException {
-        return Database.getInstance().getReservationDao().queryForAll();
+        return Database.getInstance().getReservationDao().queryForAll()
+            .stream().filter(r -> r.getClient() != null).toList();
     }
 
     private boolean isReducedSize(HBreakPoint currentBp) {

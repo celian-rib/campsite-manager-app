@@ -55,7 +55,7 @@ public class ReservationDatePicker extends MFXDatePicker {
                 this.skipNextListener = true;
                 setValue(oldDate);
             } catch (SQLException e) {
-                ExceptionHandler.loadIssue(e);
+                ExceptionHandler.updateIssue(e);
             }
         });
     }
@@ -71,7 +71,7 @@ public class ReservationDatePicker extends MFXDatePicker {
                 this.skipNextListener = true;
                 setValue(oldDate);
             } catch (SQLException e) {
-                ExceptionHandler.loadIssue(e);
+                ExceptionHandler.updateIssue(e);
             }
         });
     }

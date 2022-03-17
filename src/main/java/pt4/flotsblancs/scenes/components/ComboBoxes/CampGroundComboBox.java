@@ -41,7 +41,7 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
             } catch (ConstraintException e) {
                 Router.showToast(ToastType.WARNING, e.getMessage());
             } catch (SQLException e) {
-                ExceptionHandler.loadIssue(e);
+                ExceptionHandler.updateIssue(e);
             }
         });
     }

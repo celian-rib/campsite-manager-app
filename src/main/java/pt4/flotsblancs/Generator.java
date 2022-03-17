@@ -1,7 +1,5 @@
 package pt4.flotsblancs;
 
-import java.util.Date; //ne pas supprimer, cette ligne EST utilisé
-//si vous supprimez vous êtes un Billy Débilus esclave de Virilus
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
