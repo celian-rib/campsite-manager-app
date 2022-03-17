@@ -109,7 +109,7 @@ public class Reservation implements Item {
 
         // Date par défaut : de aujourd'hui à ajd + 5jours
         this.startDate = new Date();
-        this.endDate = DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(5));
+        this.endDate = DateUtils.plusDays(new Date(), 5);
 
         List<CampGround> availablesCamps = Database.getInstance().getCampgroundDao()
                 .getAvailablesCampgrounds(startDate, endDate, -1);
