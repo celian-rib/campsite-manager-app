@@ -40,6 +40,7 @@ public class ReservationTest {
         client.setName("test_name");
         client.setPhone("+33 07 69 66 65 41");
         client.setPreferences("Camping car avec famille");
+        client.setEmail("super.email@email.fr");
         Database.getInstance().getClientsDao().create(client);
         Database.getInstance().getClientsDao().refresh(client);
         System.out.println("Création client de test");

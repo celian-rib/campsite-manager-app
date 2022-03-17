@@ -114,6 +114,7 @@ public class Generator {
             String hp = f.harryPotter().spell();
             c.setName((hp.split(" ").length > 1) ? hp.split(" ")[1] : hp.split(" ")[0]);
             c.setFirstName(f.dragonBall().character().split(" ")[0]);
+            c.setEmail(f.internet().emailAddress());
             try {
                 Database.getInstance().getClientsDao().create(c);
             } catch (Exception e) {

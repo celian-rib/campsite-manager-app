@@ -46,6 +46,7 @@ public class ORMTest {
         testClient.setName("test_name");
         testClient.setPhone("+33 07 69 66 65 41");
         testClient.setPreferences("Camping car avec famille");
+        testClient.setEmail("monsuperemail@gmail.com");
         Database.getInstance().getClientsDao().create(testClient);
         Database.getInstance().getClientsDao().refresh(testClient);
 
