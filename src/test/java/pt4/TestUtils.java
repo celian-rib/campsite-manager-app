@@ -40,6 +40,7 @@ public class TestUtils {
         client.setName("test_name");
         client.setPhone("+33 07 69 66 65 41");
         client.setPreferences("Camping car avec famille");
+        client.setEmail("email.tropbien@email.com")
         var existing = Database.getInstance().getClientsDao().queryForMatching(client);
         if (existing.size() > 0) {
             client = existing.get(0);
