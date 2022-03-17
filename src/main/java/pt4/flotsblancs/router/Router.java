@@ -176,6 +176,20 @@ public class Router {
         log("Switch scene -> " + newRoute);
     }
 
+    public static void goToScreenDirty(Routes newRoute) {
+        if(rootScene == null)
+        return;
+        if (!routes.containsKey(newRoute)) {
+            log("Route not implemented");
+            return;
+        }
+        currentRoute = newRoute;
+        rootScene.changeCurrentSceneDirty(routes.get(currentRoute));
+        primaryStage.setTitle(routes.get(currentRoute).getName());
+        routes.get(currentRoute).onFocus();
+        log("Switch scene (Dirty) -> " + newRoute);
+    }
+
     /**
      * Permet de change la scène actuelle (La page courante)
      * 

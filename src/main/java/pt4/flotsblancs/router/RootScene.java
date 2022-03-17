@@ -159,6 +159,22 @@ public class RootScene extends StackPane implements BreakPointListener {
         transition(baseScene, isShowbarUpdate, removeNavBar, setNavBar);
     }
 
+    protected void changeCurrentSceneDirty(IScene baseScene) {
+        currentScene = baseScene;
+        sceneContainer.setCenter((Parent) currentScene);
+        windowBar.update();
+        header.updateCurrentPage(currentScene.getName());
+        navBar.update();
+
+        if (baseScene.showNavBar() && !navBarIsActive) {
+            rootPane.setLeft(navBar);
+            this.navBarIsActive = true;
+        } else {
+            this.navBarIsActive = false;
+            rootPane.getChildren().remove(navBar);
+        }
+    }
+
     /**
      * Permet de créer une transition lisse entre deux pages
      *

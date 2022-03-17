@@ -13,13 +13,13 @@ public class ExceptionHandler {
         }
         e.printStackTrace();
         Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-        Router.goToScreen(Routes.HOME);
+        Router.goToScreenDirty(Routes.HOME);
     }
 
     public static void connectionIssue(SQLRecoverableException e) {
         e.printStackTrace();
         Router.showToast(ToastType.ERROR, "Erreur de connexion");
-        Router.goToScreen(Routes.CONN_FALLBACK);
+        Router.goToScreenDirty(Routes.CONN_FALLBACK);
     }
     
     public static void loadIssue(SQLException e) {
@@ -29,6 +29,6 @@ public class ExceptionHandler {
         }
         e.printStackTrace();
         Router.showToast(ToastType.ERROR, "Erreur de chargement");
-        Router.goToScreen(Routes.CONN_FALLBACK);
+        Router.goToScreenDirty(Routes.CONN_FALLBACK);
     }
 }
