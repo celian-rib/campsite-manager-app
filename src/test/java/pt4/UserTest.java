@@ -1,46 +1,10 @@
 package pt4;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.sql.SQLException;
-import java.util.List;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 
-@TestInstance(Lifecycle.PER_CLASS)
-public class LogInOutTest {
-
-	private static User testUser;
-
-	@BeforeAll
-	public void setUp() throws SQLException {
-		System.out.println("Connexion à la base de données");
-		assertTrue(Database.getInstance().isConnected());
-
-		System.out.println("Création utilisateur de test");
-
-		testUser = new User();
-		testUser.setName("TestName");
-		testUser.setFirstName("TestFirstName");
-		testUser.setAdmin(true);
-		testUser.setLogin("test_user_123456789");
-		testUser.setPassword(User.sha256("test_password"));
-
-		// On regarde si l'utilisteur n'est pas déjà dans la base
-		// (Ca peut être le cas si un test précédent na pas fonctionné)
-		List<User> matching = Database.getInstance().getUsersDao().queryForMatching(testUser);
-		if (matching.size() > 0) {
-			System.out.println("Utilisateur de test déjà dans la BD (Recyclage)");
-			testUser = matching.get(0);
-		} else {
-			// Si l'utilisateur de test n'est pas dans la base on l'ajoute
-			Database.getInstance().getUsersDao().create(testUser);
-		}
-	}
+public class UserTest extends DatabaseTest {
 
 	@Test
 	public void testLogin() {
@@ -65,7 +29,7 @@ public class LogInOutTest {
 		assertTrue(logInResult);
 		assertTrue(User.isConnected());
 		assertNotNull(User.getConnected());
-		assertEquals(User.getConnected(), testUser);
+		assertEquals(User.getConnected(), user);
 		// Le equals est "deep" (Donc pas par référence mais par certains attributs)
 		// grâce au :
 		// @EqualsAndHashCode
@@ -76,7 +40,7 @@ public class LogInOutTest {
 	public void testLogout() {
 		// Force login
 		User.logIn("test_user_123456789", "test_password");
-		testUser = User.getConnected();
+		var testUser = User.getConnected();
 		assertNotNull(testUser);
 		assertTrue(User.isConnected());
 
@@ -93,11 +57,4 @@ public class LogInOutTest {
 		assertEquals(User.sha256("test_password"), User.getConnected().getPassword());
 		assertNotEquals("test_password", User.getConnected().getPassword());
 	}
-
-	@AfterAll
-	public void tearDown() throws SQLException {
-		System.out.println("Supression utilisateur de test");
-		Database.getInstance().getUsersDao().delete(testUser);
-	}
-
 }
