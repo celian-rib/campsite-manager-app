@@ -1,7 +1,6 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
@@ -24,6 +23,7 @@ import pt4.flotsblancs.scenes.components.ReservationCard;
 import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.components.ComboBoxes.ProblemStatusComboBox;
 import pt4.flotsblancs.scenes.items.ItemScene;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ProblemesScene extends ItemScene<Problem> {
@@ -52,15 +52,8 @@ public class ProblemesScene extends ItemScene<Problem> {
     };
     
     @Override
-    public void onAddButtonClicked()
-    {
-        try {
-        	Router.goToScreen(Routes.PROBLEMS_ADD);
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur durant l'ajout du problème");
-            Router.goToScreen(Routes.CONN_FALLBACK);
-        }
+    public void onAddButtonClicked() {
+        Router.goToScreen(Routes.PROBLEMS_ADD);
     }
 
     @Override
@@ -204,15 +197,8 @@ public class ProblemesScene extends ItemScene<Problem> {
         try {
             Database.getInstance().getProblemDao().update(problem);
             Router.showToast(ToastType.SUCCESS, "Problème mis à jour");
-        } catch (SQLRecoverableException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
-            Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-            Router.goToScreen(Routes.HOME);
+            ExceptionHandler.updateIssue(e);
         }
     }
 

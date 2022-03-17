@@ -156,11 +156,9 @@ public class Reservation implements Item {
             }
         }
 
-        User.addlog(LogType.MODIFY, "Emplacement de la réservation #" + id + " changé à " + campground); // TODO
-                                                                                                                      // mettre
-                                                                                                                      // displayName
-                                                                                                                      // de
-                                                                                                                      // campground
+        // TODO mettre display name de campground
+        User.addlog(LogType.MODIFY, "Emplacement de la réservation #" + id + " changé à " + campground); 
+                                                                                                                     
         this.campground = camp;
 
         // Gestion des contraintes equipements et services
