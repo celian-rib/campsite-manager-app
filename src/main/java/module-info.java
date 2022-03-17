@@ -11,6 +11,7 @@ module pt4.flotsblancs {
 	requires lombok;
 	requires javafaker;
 	requires virtualizedfx;
+	requires itextpdf;
 	
 	opens pt4.flotsblancs to javafx.graphics,ormlite.jdbc;
 	opens pt4.flotsblancs.database to javafx.graphics,ormlite.jdbc;
