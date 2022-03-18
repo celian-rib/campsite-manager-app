@@ -1,11 +1,12 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -31,6 +32,7 @@ import pt4.flotsblancs.scenes.breakpoints.*;
 import pt4.flotsblancs.scenes.components.*;
 import pt4.flotsblancs.scenes.components.ComboBoxes.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.PDFGenerator;
 
@@ -138,15 +140,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
         try {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
-        } catch (SQLRecoverableException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
-            Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-            Router.goToScreen(Routes.HOME);
+            ExceptionHandler.updateIssue(e);
         }
     }
 
@@ -290,13 +285,11 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.getChildren().addAll(startDatePicker, endDatePicker);
 
         try {
-            // TODO ne pas fetch les emplacements à chaque fois
             campComboBox = new CampGroundComboBox(reservation);
             campComboBox.addUserChangedValueListener(changeListener);
             container.getChildren().add(campComboBox);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            ExceptionHandler.loadIssue(e);
         }
         return container;
     }
@@ -487,7 +480,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     @Override
     protected List<Reservation> queryAll() throws SQLException {
-        return Database.getInstance().getReservationDao().queryForAll();
+        return Database.getInstance().getReservationDao().queryForAll()
+            .stream().filter(r -> r.getClient() != null).collect(Collectors.toList());
     }
 
     private boolean isReducedSize(HBreakPoint currentBp) {
@@ -518,10 +512,5 @@ public class ReservationsScene extends ItemScene<Reservation> {
     @Override
     public void onUnfocus() {
         onContainerUnfocus();
-    }
-
-    @Override
-    public void onContainerUnfocus() {
-        // refreshDatabase();
     }
 }
