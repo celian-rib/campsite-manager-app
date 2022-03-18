@@ -129,12 +129,13 @@ public class ProblemsAddScene extends Region implements IScene
 	          {
 	        	  Router.showToast(ToastType.ERROR, "Aucun selecteur indiqué");
 	          } else {
-	          
+				  // TODO -> faire le create dans un constructeur de Problem
 		          Database.getInstance().getProblemDao().createOrUpdate(this.problem);
 		       	  Router.goToScreen(Routes.PROBLEMES);
 		          Router.showToast(ToastType.SUCCESS, "Problème ajouté");
 	          }
 	        } catch(Exception ex) {
+				// TODO catch
 	        	ex.printStackTrace();
 	        }
         });
