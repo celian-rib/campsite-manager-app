@@ -176,6 +176,12 @@ public class Router {
         log("Switch scene -> " + newRoute);
     }
 
+    /**
+     * Permet de changer la scène courante, sans transition, 
+     * sans déclenchement des événement d'unfocus sur la scène précédemment affichée
+     * 
+     * @param newRoute route de la nouvelle scène
+     */
     public static void goToScreenDirty(Routes newRoute) {
         if(rootScene == null)
         return;
