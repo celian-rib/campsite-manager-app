@@ -26,8 +26,10 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
      * 
      * @param start
      * @param end
-     * @param reservationId -> On mets l'id de la reservation pour éviter de la supprimer de la
-     *        liste ce qui pose des soucis d'intégrité, mettre -1 si pas d'id
+     * @param reservationId -> On mets l'id de la reservation pour éviter de la
+     *                      supprimer de la
+     *                      liste ce qui pose des soucis d'intégrité, mettre -1 si
+     *                      pas d'id
      * @return Liste de campground
      * @throws SQLException
      */
@@ -55,9 +57,9 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
             }
         }
 
-        // On check dans la table des campground qu'il n'y a pas un id incompatible et on l'ajoute
-        List<CampGround> campgrounds =
-                query((queryBuilder().where().raw("id NOT IN " + getIds(ids)).prepare()));
+        // On check dans la table des campground qu'il n'y a pas un id incompatible et
+        // on l'ajoute
+        List<CampGround> campgrounds = query((queryBuilder().where().raw("id NOT IN " + getIds(ids)).prepare()));
 
         return campgrounds;
     }
@@ -78,8 +80,14 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
         // TODO faire une vrai requete plus opti ??
         // TODO TU
 
-        // On a besoin de la réservation pour ne pas que l'emplacement soit marqué comme prit par sa
+        // On a besoin de la réservation pour ne pas que l'emplacement soit marqué comme
+        // prit par sa
         // réservation initiale
         return getAvailablesCampgrounds(start, end, reservation.getId()).contains(camp);
+    }
+
+    public boolean isAvailable(CampGround camp, Date start, Date end)
+            throws SQLException {
+        return getAvailablesCampgrounds(start, end, -1).contains(camp);
     }
 }

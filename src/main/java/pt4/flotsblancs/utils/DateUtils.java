@@ -27,6 +27,10 @@ public class DateUtils {
     }
     
     public static Date plusDays(Date date, int days) {
-        return DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(days));
+        return DateUtils.fromLocale(DateUtils.toLocale(date).plusDays(days));
+    }
+    
+    public static Date minusDays(Date date, int days) {
+        return DateUtils.fromLocale(DateUtils.toLocale(date).minusDays(days));
     }
 }

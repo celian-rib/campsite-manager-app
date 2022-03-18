@@ -5,7 +5,10 @@ import pt4.flotsblancs.database.model.ConstraintException;
 import java.sql.SQLException;
 import java.util.Date;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import pt4.flotsblancs.database.Database;
@@ -30,10 +33,17 @@ public abstract class DatabaseTest {
 
     @BeforeAll
     public void initTestData() throws SQLException, ConstraintException {
+        System.out.println("\n--------------[ " + getClass().getSimpleName() + " ]--------------");
         createTestUser();
         createTestCampground();
         createTestClient();
         createTestReservation(client);
+    }
+
+    @BeforeEach
+    public void showTestInfos(TestInfo info) {
+        String methodName = info.getTestMethod().orElseThrow().getName();
+        System.out.println("------------- Test " + methodName + " ------------");
     }
 
     private void createTestUser() throws SQLException {
@@ -143,5 +153,6 @@ public abstract class DatabaseTest {
             log("Supression emplacement de test");
             Database.getInstance().getCampgroundDao().delete(campground);
         }
+        System.out.println("------------------------------------------------\n");
     }
 }
