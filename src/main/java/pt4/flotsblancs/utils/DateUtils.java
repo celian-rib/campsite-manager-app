@@ -25,4 +25,8 @@ public class DateUtils {
     public static boolean isAfter(Date date, Date comparedWith) {
         return toLocale(date).isAfter(toLocale(comparedWith));
     }
+    
+    public static Date plusDays(Date date, int days) {
+        return DateUtils.fromLocale(DateUtils.toLocale(new Date()).plusDays(days));
+    }
 }

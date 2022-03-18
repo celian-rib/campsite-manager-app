@@ -135,7 +135,7 @@ public class RootScene extends StackPane implements BreakPointListener {
      * 
      * @param baseScene , La nouvelle scène à afficher
      */
-    public void changeCurrentScene(IScene baseScene) {
+    void changeCurrentScene(IScene baseScene) {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
 
         // Savoir si dans la transition on inclut la barre de navigation ou pas
@@ -157,6 +157,28 @@ public class RootScene extends StackPane implements BreakPointListener {
         }
         navBar.update();
         transition(baseScene, isShowbarUpdate, removeNavBar, setNavBar);
+    }
+
+    /**
+     * Permet de changer la scène courante, sans transition, 
+     * sans déclenchement des événement d'unfocus sur la scène précédemment affichée
+     * 
+     * @param baseScene , La nouvelle scène à afficher
+     */
+    void changeCurrentSceneDirty(IScene baseScene) {
+        currentScene = baseScene;
+        sceneContainer.setCenter((Parent) currentScene);
+        windowBar.update();
+        header.updateCurrentPage(currentScene.getName());
+        navBar.update();
+
+        if (baseScene.showNavBar() && !navBarIsActive) {
+            rootPane.setLeft(navBar);
+            this.navBarIsActive = true;
+        } else {
+            this.navBarIsActive = false;
+            rootPane.getChildren().remove(navBar);
+        }
     }
 
     /**

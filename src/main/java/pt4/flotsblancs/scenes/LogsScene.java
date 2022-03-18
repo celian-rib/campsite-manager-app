@@ -1,13 +1,11 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 
-import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -20,9 +18,7 @@ import pt4.flotsblancs.database.model.Log;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.router.IScene;
-import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.router.Router.Routes;
-import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 
 public class LogsScene extends VBox implements IScene {
 
@@ -141,14 +137,8 @@ public class LogsScene extends VBox implements IScene {
         try {
             table.getItems().clear();
             table.getItems().addAll(queryAll());
-        } catch (SQLRecoverableException e) {
-            System.err.println(e);
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            System.err.println(e);
-            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
-            Router.goToScreen(Routes.HOME);
+            ExceptionHandler.loadIssue(e);
         }
     }
 
