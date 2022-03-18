@@ -11,7 +11,7 @@ public class ORMTest extends DatabaseTest {
 
     @Test
     public void testClientReservationWithCampground() throws Exception {
-        // Récupération du client
+        // Récupération du client de test via query
         var testClient = Database.getInstance().getClientsDao().queryForSameId(client);
 
         // On regarde si le client a bien sa réservation
