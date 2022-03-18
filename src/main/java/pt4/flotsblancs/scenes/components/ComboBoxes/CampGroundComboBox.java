@@ -1,7 +1,6 @@
 package pt4.flotsblancs.scenes.components.ComboBoxes;
 
 import java.sql.SQLException;
-
 import io.github.palexdev.materialfx.enums.FloatMode;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
@@ -9,6 +8,7 @@ import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
@@ -41,8 +41,7 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
             } catch (ConstraintException e) {
                 Router.showToast(ToastType.WARNING, e.getMessage());
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                ExceptionHandler.updateIssue(e);
             }
         });
     }

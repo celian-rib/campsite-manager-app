@@ -4,9 +4,7 @@ import lombok.*;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
-import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.router.Router.Routes;
-import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.security.*;
@@ -141,11 +139,7 @@ public class User {
             log.setUser(User.getConnected());
             Database.getInstance().getLogDao().create(log);
         } catch (SQLException e) {
-            System.err.println(e);
-            e.printStackTrace();
-            System.out.println(log);
-            Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
-            Router.goToScreen(Routes.CONN_FALLBACK);
+            ExceptionHandler.loadIssue(e);
         }
     }
 }

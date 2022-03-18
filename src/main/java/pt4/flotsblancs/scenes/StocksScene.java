@@ -1,7 +1,6 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
 import java.util.List;
 
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -25,6 +24,7 @@ import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class StocksScene extends VBox implements IScene {
@@ -161,14 +161,8 @@ public class StocksScene extends VBox implements IScene {
         try {
             table.getItems().clear();
             table.getItems().addAll(queryAll());
-        } catch (SQLRecoverableException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
-            Router.goToScreen(Routes.HOME);
+            ExceptionHandler.loadIssue(e);
         }
     }
     
@@ -176,14 +170,8 @@ public class StocksScene extends VBox implements IScene {
         try {
             Database.getInstance().getStockDao().update(stock);
             Router.showToast(ToastType.SUCCESS, "Stock mis à jour");
-        } catch (SQLRecoverableException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-            Router.goToScreen(Routes.HOME);
+            ExceptionHandler.updateIssue(e);
         }
     }
 
