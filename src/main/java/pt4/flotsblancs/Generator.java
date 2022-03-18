@@ -142,7 +142,6 @@ public class Generator {
             p.setCampground(p.getReservation().getCampground());
             p.setClient(p.getReservation().getClient());
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().between(p.getReservation().getStartDate(), p.getReservation().getEndDate()));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);
@@ -156,7 +155,6 @@ public class Generator {
             var p = new Problem();
             p.setClient(ClientsList.get(rdmNbrBtwn(0, ClientsList.size())));
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().past(30, TimeUnit.DAYS));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);
@@ -171,7 +169,6 @@ public class Generator {
             var p = new Problem();
             p.setCampground(CGlist.get(rdmNbrBtwn(0, CGlist.size())));
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().past(30, TimeUnit.DAYS));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);

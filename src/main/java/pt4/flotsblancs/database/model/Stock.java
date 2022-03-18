@@ -46,7 +46,7 @@ public class Stock implements Item {
         this.quantity = quantity;
     }
 
-    public void setQuantityAlertTreshold(int quantityAlert) {
+    public void setQuantityAlertThreshold(int quantityAlert) {
         User.addlog(LogType.ADD,
                 "Mise à jour de l'alerte de " + item + " de " + this.quantityAlertThreshold + " à " + quantity);
         this.quantityAlertThreshold = quantityAlert;
