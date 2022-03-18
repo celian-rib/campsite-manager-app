@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -479,7 +481,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     @Override
     protected List<Reservation> queryAll() throws SQLException {
         return Database.getInstance().getReservationDao().queryForAll()
-            .stream().filter(r -> r.getClient() != null).toList();
+            .stream().filter(r -> r.getClient() != null).collect(Collectors.toList());
     }
 
     private boolean isReducedSize(HBreakPoint currentBp) {
