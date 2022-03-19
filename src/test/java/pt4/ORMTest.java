@@ -3,11 +3,10 @@ package pt4;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 
-public class ORMTest extends DatabaseTest {
+public class ORMTest extends DatabaseTestWrapper {
 
     @Test
     public void testClientReservationWithCampground() throws Exception {

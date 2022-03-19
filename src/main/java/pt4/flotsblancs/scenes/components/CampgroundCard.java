@@ -12,6 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
 
 public class CampgroundCard extends BorderPane {
 
@@ -28,9 +30,7 @@ public class CampgroundCard extends BorderPane {
         openBtn.setGraphic(openIcon);
         openBtn.setGraphicTextGap(10);
 
-        // TODO decommenter des que campground est un Item
-        // openBtn.setOnAction(e -> Router.goToScreen(Routes.CAMPGROUNDS, camp));
-
+        openBtn.setOnAction(e -> Router.goToScreen(Routes.CAMPGROUNDS, camp));
 
         return openBtn;
     }

@@ -123,10 +123,16 @@ public class User {
      * @param message : Message de débug
      */
     private static void log(String message) {
-        // TODO vrai système de logging
         System.out.println("[UserStore] " + message);
     }
 
+    /**
+     * Permet d'ajout un log d'action faite par l'utilisateur actuellement connecté (Rien ne se
+     * passe si aucun utilisateur n'esta atuellment connecté)
+     * 
+     * @param type type d'action faite par l'utilisateur
+     * @param message message décrivant l'action
+     */
     public static void addlog(LogType type, String message) {
         if (User.getConnected() == null)
             return;

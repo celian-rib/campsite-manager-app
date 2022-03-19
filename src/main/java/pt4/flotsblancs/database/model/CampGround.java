@@ -7,6 +7,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt4.flotsblancs.scenes.items.Item;
+
 import com.j256.ormlite.field.DatabaseField;
 
 import lombok.*;
@@ -15,7 +17,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @DatabaseTable(tableName = "campgrounds")
-public class CampGround {
+public class CampGround implements Item {
 
     @Getter
     @DatabaseField(generatedId = true)
@@ -80,5 +82,16 @@ public class CampGround {
             if (v.isCompatibleWithCampEquipment(allowedEquipments))
                 list.add(v);
         return list;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Emplacement #" + getId();
+    }
+
+    @Override
+    public String getSearchString() {
+        return String.join(";", getDescription(), getAllowedEquipments().getName(),
+                getProvidedServices().getName(), "#" + getId());
     }
 }

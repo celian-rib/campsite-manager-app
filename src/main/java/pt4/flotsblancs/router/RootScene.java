@@ -81,7 +81,7 @@ public class RootScene extends StackPane implements BreakPointListener {
      * Méthode pour charger les resources CSS.
      */
     private void loadStyleSheets() {
-        String baseUrl = "file:src/main/java/pt4/flotsblancs/stylesheets/";
+        String baseUrl = "file:src/main/java/pt4/flotsblancs/scenes/stylesheets/";
         getStylesheets().add(baseUrl + "mfx.css");
         getStylesheets().add(baseUrl + "index.css");
         getStylesheets().add(baseUrl + "navBar.css");

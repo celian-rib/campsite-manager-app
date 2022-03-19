@@ -5,12 +5,10 @@ import java.util.List;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.beans.value.ChangeListener;
-import javafx.geometry.Insets;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
@@ -23,7 +21,7 @@ import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.components.ComboBoxes.CampGroundComboBox;
 import pt4.flotsblancs.scenes.components.ComboBoxes.ClientComboBox;
 import pt4.flotsblancs.scenes.components.ComboBoxes.ReservationComboBox;
-import pt4.flotsblancs.scenes.items.ItemScene;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ProblemsAddScene extends Region implements IScene
@@ -131,12 +129,11 @@ public class ProblemsAddScene extends Region implements IScene
 	          } else {
 				  // TODO -> faire le create dans un constructeur de Problem
 		          Database.getInstance().getProblemDao().createOrUpdate(this.problem);
-		       	  Router.goToScreen(Routes.PROBLEMES);
+		       	  Router.goToScreen(Routes.PROBLEMS);
 		          Router.showToast(ToastType.SUCCESS, "Problème ajouté");
 	          }
-	        } catch(Exception ex) {
-				// TODO catch
-	        	ex.printStackTrace();
+	        } catch(SQLException ex) {
+				ExceptionHandler.loadIssue(ex);
 	        }
         });
         

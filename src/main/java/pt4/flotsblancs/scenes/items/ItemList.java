@@ -221,6 +221,8 @@ public class ItemList<I extends Item> extends StackPane {
     }
 
     private HBox createAddButton() {
+        if(itemScene.addButtonText() == null)
+            return null;
         var container = new HBox();
         var btn = new MFXButton(itemScene.addButtonText());
         btn.getStyleClass().add("action-button");

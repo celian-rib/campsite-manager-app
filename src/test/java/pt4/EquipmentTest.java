@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import pt4.flotsblancs.database.model.types.Equipment;
 
-public class EquipmentTest extends DatabaseTest {
+public class EquipmentTest extends DatabaseTestWrapper {
     @Test
     public void testIsCompatible() {
         // <EQUIPMENT> est compatible avec un emplacement de type <EQUIPMENT>

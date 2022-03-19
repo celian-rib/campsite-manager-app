@@ -5,7 +5,6 @@ import pt4.flotsblancs.database.model.ConstraintException;
 import java.sql.SQLException;
 import java.util.Date;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -19,8 +18,14 @@ import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.database.model.types.Service;
 import pt4.flotsblancs.utils.DateUtils;
 
+/**
+ * Cette classe ne contient pas de test mais est un wrapper pour les classes de tests
+ * 
+ * Etendre cette classe permet d'avoir à disposition des objets de test qui sont créés au début des
+ * tests puis supprimés à la fin.
+ */
 @TestInstance(Lifecycle.PER_CLASS)
-public abstract class DatabaseTest {
+public abstract class DatabaseTestWrapper {
 
     protected User user;
     protected CampGround campground;
@@ -49,18 +54,18 @@ public abstract class DatabaseTest {
     private void createTestUser() throws SQLException {
         log("Création utilisateur de test");
         user = new User();
-		user.setName("TestName");
-		user.setFirstName("TestFirstName");
-		user.setAdmin(true);
-		user.setLogin("test_user_123456789");
-		user.setPassword(User.sha256("test_password"));
+        user.setName("TestName");
+        user.setFirstName("TestFirstName");
+        user.setAdmin(true);
+        user.setLogin("test_user_123456789");
+        user.setPassword(User.sha256("test_password"));
         var existing = Database.getInstance().getUsersDao().queryForMatching(user);
-		if (existing.size() > 0) {
+        if (existing.size() > 0) {
             log(" -- Recyclage utilisateur");
-			user = existing.get(0);
-		} else {
-			Database.getInstance().getUsersDao().create(user);
-		}
+            user = existing.get(0);
+        } else {
+            Database.getInstance().getUsersDao().create(user);
+        }
     }
 
     private void createTestCampground() throws SQLException {
@@ -116,14 +121,15 @@ public abstract class DatabaseTest {
 
             log(" -- Recyclage reservation par violation des contraintes");
             System.out.println(e.getMessage());
-            var existing =
-                    Database.getInstance().getReservationDao().queryForEq("client_id", client.getId());
+            var existing = Database.getInstance().getReservationDao().queryForEq("client_id",
+                    client.getId());
             reservation = existing.get(0);
             Database.getInstance().getReservationDao().refresh(reservation);
             return;
         }
 
-        var existing = Database.getInstance().getReservationDao().queryForEq("client_id", client.getId());
+        var existing =
+                Database.getInstance().getReservationDao().queryForEq("client_id", client.getId());
         if (existing.size() > 0) {
             log(" -- Recyclage reservation");
             reservation = existing.get(0);
