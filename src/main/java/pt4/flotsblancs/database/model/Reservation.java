@@ -115,12 +115,9 @@ public class Reservation implements Item {
                 .getAvailablesCampgrounds(startDate, endDate, -1);
 
         if (availablesCamps.size() == 0) {
-            // TODO gérer ce cas
+            // TODO gérer ce cas (ps : c'est très relou)
             // (Attention si il y en a plus de dispo décaler date résa)
         }
-
-        // // Refresh pour setup les relations
-        // Database.getInstance().getReservationDao().refresh(this);
 
         this.nbPersons = 1;
         this.cashBack = CashBack.NONE;
@@ -149,17 +146,15 @@ public class Reservation implements Item {
         if (this.startDate == null || this.endDate == null) {
             this.campground = camp;
         } else {
-            if (!Database.getInstance().getCampgroundDao().isAvailable(this, camp, startDate, endDate)) {
+            if (!Database.getInstance().getCampgroundDao().isAvailableForReservation(this, camp, startDate, endDate)) {
                 throw new ConstraintException(
                         "Cet emplacement n'est pas disponibles sur les dates de la réservation",
                         false);
             }
         }
 
-        // TODO mettre display name de campground
-        User.addlog(LogType.MODIFY, "Emplacement de la réservation #" + id + " changé à " + campground); 
-                                                                                                                     
         this.campground = camp;
+        User.addlog(LogType.MODIFY, "Emplacement de la réservation #" + id + " changé à " + campground.getDisplayName()); 
 
         // Gestion des contraintes equipements et services
         // ATTENTION -> changer l'emplacement prend la priorité en terme de contrainte
@@ -286,7 +281,7 @@ public class Reservation implements Item {
         }
 
         var campDao = Database.getInstance().getCampgroundDao();
-        if (!campDao.isAvailable(this, this.campground, newStartDate, endDate)) {
+        if (!campDao.isAvailableForReservation(this, this.campground, newStartDate, endDate)) {
             throw new ConstraintException(
                     "L'emplacement sélectionné n'est pas disponibles avec cette date de début",
                     false);
@@ -314,7 +309,7 @@ public class Reservation implements Item {
         }
 
         var campDao = Database.getInstance().getCampgroundDao();
-        if (!campDao.isAvailable(this, this.campground, startDate, newEndDate)) {
+        if (!campDao.isAvailableForReservation(this, this.campground, startDate, newEndDate)) {
             throw new ConstraintException(
                     "L'emplacement sélectionné n'est pas disponibles avec cette date de fin",
                     false);

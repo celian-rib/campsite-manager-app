@@ -84,16 +84,49 @@ public class ReservationsScene extends ItemScene<Reservation> {
         updateDatabase();
     };
 
-    private void refreshPage() {
-        // TODO check constraintes à l'ouverture (@celian-rib)
-        // if(!reservation.checkEquipmentsConstraints() || !reservation.checkServicesConstraint()) {
-        // updateDatabase();
-        // };
+    @Override
+    public String getName() {
+        return "Réservations";
+    }
 
+    @Override
+    protected String addButtonText() {
+        return null; // Dire explicitement de ne pas afficher le bouton d'ajout de l'ItemList pour
+                     // cette page
+    }
+
+    @Override
+    protected void onAddButtonClicked() {
+        Router.showToast(ToastType.INFO, "Selectionner un client");
+        Router.goToScreen(Routes.CLIENTS);
+    }
+
+    @Override
+    protected Region createContainer(Reservation reservation) {
+        this.reservation = reservation;
+
+        VBox container = new VBox();
+        container.setPadding(new Insets(50));
+
+        topSlot = createTopSlot();
+        bottomSlot = createBottomSlot();
+
+        container.getChildren().add(createHeader());
+        container.getChildren().add(new VBoxSpacer());
+        container.getChildren().add(topSlot);
+        container.getChildren().add(new VBoxSpacer());
+        container.getChildren().add(bottomSlot);
+        container.getChildren().add(new VBoxSpacer());
+        container.getChildren().add(createActionsButtonsSlot());
+
+        refreshPage();
+        return container;
+    }
+
+    private void refreshPage() {
         equipmentsComboBox.refresh();
         campComboBox.refresh();
         serviceComboBox.refresh();
-
 
         // Rafraichit tous les labels de la page ayant une valeur calculé
         String cancelStr = reservation.getCanceled() ? " (Annulée)" : "";
@@ -143,44 +176,6 @@ public class ReservationsScene extends ItemScene<Reservation> {
         } catch (SQLException e) {
             ExceptionHandler.updateIssue(e);
         }
-    }
-
-    @Override
-    public String getName() {
-        return "Réservations";
-    }
-
-    @Override
-    protected String addButtonText() {
-        return "Créer une réservation";
-    }
-
-    @Override
-    protected void onAddButtonClicked() {
-        Router.showToast(ToastType.INFO, "Selectionner un client");
-        Router.goToScreen(Routes.CLIENTS);
-    }
-
-    @Override
-    protected Region createContainer(Reservation reservation) {
-        this.reservation = reservation;
-
-        VBox container = new VBox();
-        container.setPadding(new Insets(50));
-
-        topSlot = createTopSlot();
-        bottomSlot = createBottomSlot();
-
-        container.getChildren().add(createHeader());
-        container.getChildren().add(new VBoxSpacer());
-        container.getChildren().add(topSlot);
-        container.getChildren().add(new VBoxSpacer());
-        container.getChildren().add(bottomSlot);
-        container.getChildren().add(new VBoxSpacer());
-        container.getChildren().add(createActionsButtonsSlot());
-
-        refreshPage();
-        return container;
     }
 
     /**
@@ -480,8 +475,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     @Override
     protected List<Reservation> queryAll() throws SQLException {
-        return Database.getInstance().getReservationDao().queryForAll()
-            .stream().filter(r -> r.getClient() != null).collect(Collectors.toList());
+        return Database.getInstance().getReservationDao().queryForAll().stream()
+                .filter(r -> r.getClient() != null).collect(Collectors.toList());
     }
 
     private boolean isReducedSize(HBreakPoint currentBp) {

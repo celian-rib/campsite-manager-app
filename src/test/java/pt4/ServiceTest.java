@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.database.model.types.Service;
 
-public class ServiceTest extends DatabaseTest {
+public class ServiceTest extends DatabaseTestWrapper {
     @Test
     public void testIsCompatibleWithCampService() {
         // Demander rien est compatible avec un emplacement qui na rien

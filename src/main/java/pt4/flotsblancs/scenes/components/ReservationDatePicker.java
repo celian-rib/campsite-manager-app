@@ -77,8 +77,8 @@ public class ReservationDatePicker extends MFXDatePicker {
     }
 
     public void addUserChangedValueListener(ChangeListener<? super LocalDate> listener) {
-        var wrapper = new ChangeListener<>() {
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+        var wrapper = new ChangeListener<LocalDate>() {
+            public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue, LocalDate newValue) {
                 if (oldValue == null || newValue == null || oldValue == newValue)
                     return;
                 if (skipNextListener) {

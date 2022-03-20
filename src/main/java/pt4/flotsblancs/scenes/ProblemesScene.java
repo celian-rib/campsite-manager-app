@@ -25,6 +25,7 @@ import pt4.flotsblancs.scenes.components.ComboBoxes.ProblemStatusComboBox;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.utils.DateUtils;
 
 public class ProblemesScene extends ItemScene<Problem> {
 
@@ -50,7 +51,7 @@ public class ProblemesScene extends ItemScene<Problem> {
         refreshPage();
         refreshDatabase();
     };
-    
+
     @Override
     public void onAddButtonClicked() {
         Router.goToScreen(Routes.PROBLEMS_ADD);
@@ -87,10 +88,9 @@ public class ProblemesScene extends ItemScene<Problem> {
     }
 
     private void refreshPage() {
-        // TODO bien formatter les dates
-        startDate.setText("Date de début : " + problem.getStartDate().toString());
-        endDate.setText("Date de fin : "
-                + (problem.getEndDate() == null ? "" : problem.getEndDate().toString()));
+        startDate.setText("Date de début : " + DateUtils.toFormattedString(problem.getStartDate()));
+        endDate.setText("Date de fin : " + (problem.getEndDate() == null ? ""
+                : DateUtils.toFormattedString(problem.getEndDate())));
         lastUpdateDate.setText("Dernière mise à jour : " + problem.getLastUpdateDate().toString());
     }
 
@@ -100,7 +100,7 @@ public class ProblemesScene extends ItemScene<Problem> {
 
         description = new TextArea(problem.getDescription());
         description.textProperty().addListener((obs, oldVal, newVal) -> {
-            if(oldVal != null && oldVal != newVal)
+            if (oldVal != null && oldVal != newVal)
                 this.descriptionModified = true;
         });
 
@@ -211,10 +211,10 @@ public class ProblemesScene extends ItemScene<Problem> {
     public void onUnfocus() {
         onContainerUnfocus();
     }
-    
+
     @Override
     public void onContainerUnfocus() {
-        if(this.descriptionModified)
+        if (this.descriptionModified)
             refreshDatabase();
     }
 }

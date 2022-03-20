@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import pt4.flotsblancs.database.model.User;
 
-public class UserTest extends DatabaseTest {
+public class UserTest extends DatabaseTestWrapper {
 
 	@Test
 	public void testLogin() {

@@ -46,8 +46,7 @@ public class NavBar extends BorderPane implements BreakPointListener {
     }
 
     private void addNavButton(Routes route, String icon, int gap) {
-        // TODO hardcode width des boutons
-        MFXButton btn = new MFXButton(route.getRouteName(), 200, 40);
+        MFXButton btn = new MFXButton(Router.routes.get(route).getName(), 200, 40);
         btn.setButtonType(ButtonType.FLAT);
         btn.setAlignment(Pos.CENTER_LEFT);
         btn.setPadding(new Insets(20, 10, 20, 30));
@@ -70,7 +69,7 @@ public class NavBar extends BorderPane implements BreakPointListener {
         addNavButton(Routes.RESERVATIONS, "far-calendar-alt:19", 15);
         addNavButton(Routes.STOCKS, "fas-box:16", 15);
         addNavButton(Routes.CAMPGROUNDS, "fas-caravan:16", 11);
-        addNavButton(Routes.PROBLEMES, "fas-exclamation-triangle:16", 11);
+        addNavButton(Routes.PROBLEMS, "fas-exclamation-triangle:16", 11);
         addNavButton(Routes.ADMIN, "fas-user-cog:16", 11);
         addNavButton(Routes.LOGS, "far-list-alt", 15);
 
@@ -130,7 +129,7 @@ public class NavBar extends BorderPane implements BreakPointListener {
         } else {
             navButtons.forEach((r, btn) -> {
                 setTop(largeLogo);
-                btn.setText(r.getRouteName());
+                btn.setText(Router.routes.get(r).getName());
                 btn.setMaxWidth(200);
                 logoutBtn.setMaxWidth(200);
             });

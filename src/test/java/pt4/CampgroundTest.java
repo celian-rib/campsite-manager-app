@@ -7,11 +7,10 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
-
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.utils.DateUtils;
 
-public class CampgroundTest extends DatabaseTest {
+public class CampgroundTest extends DatabaseTestWrapper {
 
     @Test
     public void testIsAvailable() throws SQLException {
@@ -22,7 +21,7 @@ public class CampgroundTest extends DatabaseTest {
 
         // L'emplacement est dispo si on exclu sa réservation
         var available = Database.getInstance().getCampgroundDao()
-                .isAvailable(reservation, campground, start, end);
+                .isAvailableForReservation(reservation, campground, start, end);
         assertTrue(available);
         
         // Si on exclu pas sa réservation alors il n'est pas considéré comme disponible

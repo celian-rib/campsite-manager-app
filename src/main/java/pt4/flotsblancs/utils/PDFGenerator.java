@@ -44,7 +44,7 @@ public class PDFGenerator {
 
         System.out.println("Exportation PDF : " + reservation);
 
-        var fileName = "facture_" + reservation.getClient().getName() + "_" + reservation.getId();
+        var fileName = "facture_" + reservation.getClient().getName() + "_" + reservation.getId() + ".pdf";
         var home = FileSystemView.getFileSystemView().getDefaultDirectory();
 
         File outputFile = new File(home.getPath() + "/" + fileName);

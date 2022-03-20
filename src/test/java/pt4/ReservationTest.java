@@ -6,12 +6,11 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.utils.DateUtils;
 
-public class ReservationTest extends DatabaseTest {
+public class ReservationTest extends DatabaseTestWrapper {
 
     @Override
     @BeforeAll
