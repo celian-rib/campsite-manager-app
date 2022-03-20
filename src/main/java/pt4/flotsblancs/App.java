@@ -43,7 +43,7 @@ public class App extends Application {
 		new WindowManager(primaryStage, 20);
 
 		primaryStage.setMinWidth(950);
-		primaryStage.setMinHeight(650);
+		primaryStage.setMinHeight(700);
 
 
 		// Affichage de la fenêtre

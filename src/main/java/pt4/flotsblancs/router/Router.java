@@ -5,9 +5,7 @@ import java.util.HashMap;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pt4.flotsblancs.scenes.AdminScene;
 import pt4.flotsblancs.scenes.CampgroundsScene;
 import pt4.flotsblancs.scenes.ClientsScene;
 import pt4.flotsblancs.scenes.ConnectionFallbackScene;
@@ -17,6 +15,7 @@ import pt4.flotsblancs.scenes.LogsScene;
 import pt4.flotsblancs.scenes.ProblemesScene;
 import pt4.flotsblancs.scenes.ProblemsAddScene;
 import pt4.flotsblancs.scenes.ReservationsScene;
+import pt4.flotsblancs.scenes.UserScene;
 import pt4.flotsblancs.scenes.StocksScene;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.items.ItemScene;
@@ -24,9 +23,8 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
 
-    @AllArgsConstructor
     public enum Routes {
-        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, ADMIN, PROBLEMS, PROBLEMS_ADD, LOGS;
+        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, PROBLEMS, PROBLEMS_ADD, LOGS, USERS;
     }
 
     /**
@@ -41,10 +39,10 @@ public class Router {
             put(Routes.CLIENTS, new ClientsScene());
             put(Routes.STOCKS, new StocksScene());
             put(Routes.CAMPGROUNDS, new CampgroundsScene());
-            put(Routes.ADMIN, new AdminScene());
             put(Routes.PROBLEMS, new ProblemesScene());
             put(Routes.PROBLEMS_ADD, new ProblemsAddScene());
             put(Routes.LOGS, new LogsScene());
+            put(Routes.USERS, new UserScene());
         }
     };
 
