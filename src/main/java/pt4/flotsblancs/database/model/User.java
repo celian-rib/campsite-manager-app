@@ -4,6 +4,7 @@ import lombok.*;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
+import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -19,7 +20,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @DatabaseTable(tableName = "users")
-public class User {
+public class User implements Item {
 
     @Getter
     @DatabaseField(generatedId = true)
@@ -39,21 +40,23 @@ public class User {
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = false, columnName = "is_admin")
     private boolean isAdmin;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(uniqueCombo = true, canBeNull = false)
+    @DatabaseField(canBeNull = false)
     private String name;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "first_name")
+    @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
+
+    @Getter
+    @Setter
+    @DatabaseField(canBeNull = false, columnName = "weekly_hours", defaultValue = "35")
+    private Integer weeklyHours;
 
     @Getter
     private static User connected;
@@ -147,5 +150,15 @@ public class User {
         } catch (SQLException e) {
             ExceptionHandler.loadIssue(e);
         }
+    }
+
+    @Override
+    public String getDisplayName() {
+        return getFirstName() + " " + getName();
+    }
+
+    @Override
+    public String getSearchString() {
+        return String.join(";", getFirstName(), getName(), getLogin(), "#"+getId());
     }
 }
