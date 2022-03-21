@@ -15,7 +15,7 @@ import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.utils.PTPalette;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -136,6 +136,13 @@ public class Problem implements Item {
 
     @Override
     public Color getStatusColor() {
-        return PTPalette.RED;
+        switch(status) {
+            case OPEN:
+                return StatusColors.ORANGE;
+            case OPEN_URGENT:
+                return StatusColors.RED;
+            default:
+                return StatusColors.GREEN;
+        }
     }
 }

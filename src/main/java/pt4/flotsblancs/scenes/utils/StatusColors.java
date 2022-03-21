@@ -2,7 +2,7 @@ package pt4.flotsblancs.scenes.utils;
 
 import javafx.scene.paint.Color;
 
-public abstract class PTPalette {
+public abstract class StatusColors {
     public final static Color GREEN = Color.web("#448964");
     public final static Color BLUE = Color.web("#41948A");
     public final static Color YELLOW = Color.web("#F6BF5F");

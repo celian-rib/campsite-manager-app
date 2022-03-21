@@ -12,7 +12,7 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.utils.PTPalette;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -125,7 +125,8 @@ public class Client implements Item {
 
     @Override
     public Color getStatusColor() {
-        return problems.size() > 0 ? PTPalette.RED : PTPalette.BLUE;
+        // TODO -> rouge que si les problèmes sont ouverts
+        return problems.size() > 0 ? StatusColors.RED : StatusColors.BLUE;
     }
 
 }

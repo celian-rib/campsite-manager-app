@@ -6,7 +6,7 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
-import pt4.flotsblancs.scenes.utils.PTPalette;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -168,6 +168,6 @@ public class User implements Item {
 
     @Override
     public Color getStatusColor() {
-        return this.isAdmin ? PTPalette.DARK_RED : PTPalette.BLUE;
+        return this.isAdmin ? StatusColors.DARK_RED : StatusColors.BLUE;
     }
 }

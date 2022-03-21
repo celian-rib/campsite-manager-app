@@ -9,7 +9,7 @@ import java.util.List;
 
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.utils.PTPalette;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 import com.j256.ormlite.field.DatabaseField;
 
@@ -99,6 +99,6 @@ public class CampGround implements Item {
 
     @Override
     public Color getStatusColor() {
-        return PTPalette.GREEN;
+        return StatusColors.GREEN;
     }
 }
