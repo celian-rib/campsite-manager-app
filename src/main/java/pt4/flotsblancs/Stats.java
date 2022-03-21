@@ -5,38 +5,19 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 
 public class Stats 
 {
-	
-
 
 	enum Period {
-		WEEKLY, MONTHLY, ANNUALY;
-	}
-	
-	public static void main(String[] args) throws SQLException
-	{
-//		 Dao<?, String> campDao = Database.getInstance().getCampgroundDao();
-//		 Dao<?, String> problemDao = Database.getInstance().getProblemDao();
-//		 Dao<?, String> resaDao = Database.getInstance().getReservationDao();
-		 
-		 int affluence = affluence(Period.ANNUALY);
-	}
-	
-	public static List<CampGround> mostChoosen()
-	{
-		return null;
-	}
-	
-	public static List<CampGround> mostProblems()
-	{
-		return null;
+		WEEKLY, MONTHLY, ANNUALY, TWO_YEAR, THREE_YEAR;
 	}
 	
 	public static int nbClientToday(boolean isLeaving) throws SQLException
@@ -56,6 +37,127 @@ public class Stats
                 .prepare()));
 		
 		return reservations.size();
+	}
+	
+	public static HashMap<CampGround,Integer> mostProblematicCampground(Period period) throws SQLException
+	{
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Calendar c = Calendar.getInstance();
+		
+		Date endDate = c.getTime();
+		
+		switch(period)
+		{
+			case WEEKLY:
+				c.add(Calendar.DATE, -7);
+				break;
+			case MONTHLY:
+				c.add(Calendar.DATE, -30);
+				break;
+			case ANNUALY:
+				c.add(Calendar.DATE, -365);
+				break;
+			case TWO_YEAR:
+				c.add(Calendar.DATE, -365*2);
+				break;
+			case THREE_YEAR:
+				c.add(Calendar.DATE, -365*3);
+				break;
+		}
+		
+		Date startDate = c.getTime();
+		
+		String endDateString = dateFormat.format(endDate);
+		String startDateString = dateFormat.format(startDate);
+		
+		var dbr = Database.getInstance().getProblemDao();
+		
+        List<Problem> problems = dbr.query((dbr.queryBuilder().where()
+                .raw("('" + startDateString + "' < DATE(start_date) AND '" + endDateString + "'"
+                        + " > DATE(start_date)) OR ('" + startDateString + "'" + " < DATE(end_date) AND '"
+                        + endDateString + "'" + " > DATE(start_date))")
+                .prepare()));
+        
+        HashMap<CampGround,Integer> worstCamps = new HashMap<CampGround,Integer>();
+        
+        for(Problem problem : problems)
+        {
+        	CampGround camp = problem.getCampground();
+        	
+        	if(camp != null)
+        	{
+        		if(worstCamps.containsKey(camp))
+        		{
+        			worstCamps.put(camp, worstCamps.get(camp)+1);
+        		} else {
+        			worstCamps.put(camp, 1);
+        		}
+        	}
+        }	
+        
+		return worstCamps;
+	}
+	
+	public static HashMap<CampGround,Integer> mostRentedCampground(Period period) throws SQLException
+	{
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Calendar c = Calendar.getInstance();
+		
+		Date endDate = c.getTime();
+		
+		switch(period)
+		{
+			case WEEKLY:
+				c.add(Calendar.DATE, -7);
+				break;
+			case MONTHLY:
+				c.add(Calendar.DATE, -30);
+				break;
+			case ANNUALY:
+				c.add(Calendar.DATE, -365);
+				break;
+			case TWO_YEAR:
+				c.add(Calendar.DATE, -365*2);
+				break;
+			case THREE_YEAR:
+				c.add(Calendar.DATE, -365*3);
+				break;
+		}
+		
+		
+		Date startDate = c.getTime();
+		
+		String endDateString = dateFormat.format(endDate);
+		String startDateString = dateFormat.format(startDate);
+		
+		var dbr = Database.getInstance().getReservationDao();
+		
+        List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
+                .raw("('" + startDateString + "' < DATE(start_date) AND '" + endDateString + "'"
+                        + " > DATE(start_date)) OR ('" + startDateString + "'" + " < DATE(end_date) AND '"
+                        + endDateString + "'" + " > DATE(start_date))")
+                .prepare()));
+        
+        HashMap<CampGround,Integer> camps = new HashMap<CampGround,Integer>();
+        
+        for(Reservation r : reservations)
+        {
+        	CampGround camp = r.getCampground();
+ 
+        	if(camp != null) {
+	        	if(camps.containsKey(camp))
+	        	{
+	        		camps.put(camp, camps.get(camp)+1);
+	        	} else {
+	        		camps.put(camp,1);
+	        	}
+        	}
+        }	
+		return camps;
 	}
 
 	public static int affluence(Period period) throws SQLException
@@ -77,6 +179,12 @@ public class Stats
 				break;
 			case ANNUALY:
 				c.add(Calendar.DATE, 365);
+				break;
+			case TWO_YEAR:
+				c.add(Calendar.DATE, 365*2);
+				break;
+			case THREE_YEAR:
+				c.add(Calendar.DATE, 365*3);
 				break;
 		}
 		
