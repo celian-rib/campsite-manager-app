@@ -1,8 +1,7 @@
 image: maven:3.8.4-jdk-11
 
-# workflow:
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+include:
+  - template: Code-Quality.gitlab-ci.yml
 
 cache:
   paths:
@@ -16,6 +15,7 @@ variables:
 
 stages:
   - tests
+  - quality
 
 tests:
   stage: tests
@@ -25,4 +25,10 @@ tests:
     - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
     - mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar -DskipTests
     - mvn test
+
+code_quality:
+  stage: quality
+  artifacts:
+    expose_as: 'Code Quality Report'
+    paths: [gl-code-quality-report.json]
 
