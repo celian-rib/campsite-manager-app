@@ -54,7 +54,11 @@ public abstract class ItemScene<I extends Item> extends BorderPane
      * Appelée au moment ou le bouton ajouter
      */
     protected void onAddButtonClicked() {
-        System.out.println("Add button not implemented for page " + getName());
+        System.out.println("Bouton d'ajout pas implémenté sur la page " + getName());
+    };
+
+    protected void onContainerUnfocus() {
+        // Peut être implémentée par les enfants
     };
 
     /**
@@ -99,10 +103,6 @@ public abstract class ItemScene<I extends Item> extends BorderPane
 
         new Thread(updateListTask).start();
     }
-
-    protected void onContainerUnfocus() {
-
-    };
 
     /**
      * Met à jour le conteneur droit de la page, affichant les informations de l'item sélectionné

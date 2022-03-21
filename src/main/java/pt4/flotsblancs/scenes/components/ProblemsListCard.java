@@ -15,6 +15,7 @@ import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
+// TODO afficher le status du problème en plus (circle)
 public class ProblemsListCard extends StackPane {
 
     private final MFXListView<Problem> problemsList;
