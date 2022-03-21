@@ -72,6 +72,10 @@ public abstract class ItemScene<I extends Item> extends BorderPane
 
     @Override
     public void onFocus() {
+        updateItemList();
+    }
+
+    void updateItemList() {
         itemList.setIsLoading(true);
         final Task<List<I>> updateListTask = new Task<List<I>>() {
             protected java.util.List<I> call() {
@@ -130,6 +134,11 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         stack.getChildren().addAll(shadowPane, container);
 
         setCenter((Parent) stack);
+    }
+
+    protected void onItemDelete(Item i) {
+        updateContainer(null);
+        updateItemList();
     }
 
     @Override

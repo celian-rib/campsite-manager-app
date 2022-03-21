@@ -15,6 +15,8 @@ import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -23,6 +25,7 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.components.ConfirmButton;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
@@ -36,6 +39,10 @@ public class UserScene extends ItemScene<User> {
     private MFXTextField usernameTxtFld;
     private Spinner<Integer> heures;
     private MFXCheckbox isAdmin;
+    private MFXButton resetBtn;
+    private HBox resetLayout;
+    private VBox credentialsBox;
+    private MFXTextField newPwdTxtField;
 
     @Override
     public String getName() {
@@ -98,14 +105,47 @@ public class UserScene extends ItemScene<User> {
 
         var credentialsLabel = new Label("Identifiants");
         usernameTxtFld = new MFXTextField(stagiaire.getLogin());
-        MFXButton resetBtn = new MFXButton("Réinitialiser le mot de passe.");
+        resetBtn = new MFXButton("Réinitialiser le mot de passe.");
         resetBtn.getStyleClass().add("action-button-outlined");
-        VBox credentials = new VBox(4, credentialsLabel, usernameTxtFld, resetBtn);
-        credentials.setAlignment(Pos.CENTER_RIGHT);
+        resetBtn.setOnAction(e -> {
+            showResetPwdLayout();
+        });
+        credentialsBox = new VBox(4, credentialsLabel, usernameTxtFld, resetBtn);
+        credentialsBox.setAlignment(Pos.CENTER_RIGHT);
 
         container.setLeft(identity);
-        container.setRight(credentials);
+        container.setRight(credentialsBox);
         return container;
+    }
+
+    private void showResetPwdLayout() {
+        newPwdTxtField = new MFXTextField();
+        MFXButton validateBtn = new MFXButton("Valider");
+        MFXButton cancelBtn = new MFXButton("Annuler");
+        validateBtn.setOnAction(e -> handleReset(true));
+        cancelBtn.setOnAction(e -> handleReset(false));
+        validateBtn.getStyleClass().add("action-button");
+        cancelBtn.getStyleClass().add("action-button-outlined");
+        resetLayout = new HBox(5, newPwdTxtField, validateBtn, cancelBtn);
+        credentialsBox.getChildren().remove(resetBtn);
+        credentialsBox.getChildren().add(resetLayout);
+    }
+
+    private void handleReset(Boolean confirmed) {
+        String newPwd = newPwdTxtField.getText().trim();
+        var shown = credentialsBox.getChildren();
+        shown.remove(resetLayout);
+        shown.add(resetBtn);
+        System.out.println(newPwd);
+        if (confirmed && !newPwd.isEmpty()) {
+            stagiaire.setPassword(User.sha256(newPwd));
+            try {
+                Database.getInstance().getUsersDao().update(stagiaire);
+            } catch (SQLException e) {
+                // TODO logging correct
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -126,6 +166,7 @@ public class UserScene extends ItemScene<User> {
 
         isAdmin = new MFXCheckbox();
         isAdmin.setSelected(stagiaire.isAdmin());
+        isAdmin.setDisable(User.getConnected().equals(stagiaire));
 
 
 
@@ -135,6 +176,29 @@ public class UserScene extends ItemScene<User> {
         container.setCenter(middle);
         container.setLeft(heuresLabel);
         container.setRight(heures);
+        return container;
+    }
+
+
+    /**
+     * @return Footer de la page (Bouton suppression)
+     */
+    private BorderPane createFooter() {
+        BorderPane container = new BorderPane();
+
+
+        ConfirmButton deleteUserBtn = new ConfirmButton("Supprimer");
+        deleteUserBtn.setDisable(User.getConnected().equals(stagiaire));
+        deleteUserBtn.setOnConfirmedAction((e) -> {
+            try {
+                Database.getInstance().getUsersDao().delete(stagiaire);
+                super.onItemDelete(stagiaire);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+        
+        container.setRight(deleteUserBtn);
         return container;
     }
 
@@ -149,7 +213,7 @@ public class UserScene extends ItemScene<User> {
 
 
 
-        container.getChildren().addAll(createHeader(), createTopSlot(), createMiddleSlot());
+        container.getChildren().addAll(createHeader(), createTopSlot(), createMiddleSlot(), createFooter());
         return container;
     }
 

@@ -71,7 +71,7 @@ public class Generator {
             u.setPassword(User.sha256(pwds[i]));
             u.setLogin(logins[i]);
             u.setWeeklyHours(new Random().nextInt(20) + 15);
-            var existing = Database.getInstance().getUsersDao().queryForMatching(u).size() != 0;
+            var existing = Database.getInstance().getUsersDao().queryBuilder().where().eq("login",logins[i]).query().size() > 0;
             if (!existing) {
                 Database.getInstance().getUsersDao().create(u);
             }
