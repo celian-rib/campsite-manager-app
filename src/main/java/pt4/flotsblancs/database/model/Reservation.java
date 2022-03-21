@@ -10,7 +10,7 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.utils.PTPalette;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 import pt4.flotsblancs.utils.DateUtils;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -430,14 +430,12 @@ public class Reservation implements Item {
 
     @Override
     public Color getStatusColor() {
-        if (canceled) return PTPalette.BLACK;
-        if (isInPast()) return PTPalette.DARK_RED;
-        System.out.println(problems.size());
-        if (problems.size() > 0) return PTPalette.ORANGE;
-        if (depositDate != null) {
-            return paymentDate != null ? PTPalette.GREEN : PTPalette.YELLOW;
-        }
-        return PTPalette.RED;
-
+        if (canceled) 
+            return StatusColors.BLACK;
+        if (depositDate != null)
+            return paymentDate != null ? StatusColors.GREEN : StatusColors.BLUE;
+        if (isInPast())
+            return StatusColors.RED;
+        return StatusColors.YELLOW;
     }
 }
