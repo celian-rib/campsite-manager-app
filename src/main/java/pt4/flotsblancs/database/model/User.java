@@ -161,4 +161,9 @@ public class User implements Item {
     public String getSearchString() {
         return String.join(";", getFirstName(), getName(), getLogin(), "#"+getId());
     }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
 }

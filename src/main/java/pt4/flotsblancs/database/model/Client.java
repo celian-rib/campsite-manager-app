@@ -121,4 +121,9 @@ public class Client implements Item {
                 .toString().trim().toLowerCase();
     }
 
+    @Override
+    public boolean isForeignCorrect() {
+        return reservations != null && problems != null;
+    }
+
 }

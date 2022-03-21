@@ -131,4 +131,9 @@ public class Problem implements Item {
             b.append(this.reservation.getId()).append(';');
         return b.toString().trim().toLowerCase();
     }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
 }

@@ -425,4 +425,9 @@ public class Reservation implements Item {
         User.addlog(LogType.ADD, "Génération de la facture de la réservation #" + id);
         this.bill = fileData;
     }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return client != null && campground != null && problems != null;
+    }
 }

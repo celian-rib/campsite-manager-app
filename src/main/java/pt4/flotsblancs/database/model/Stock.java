@@ -71,4 +71,9 @@ public class Stock implements Item {
                 .append(this.storageLocation).append(';')
                 .toString().trim().toLowerCase();
     }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
 }

@@ -94,4 +94,9 @@ public class CampGround implements Item {
         return String.join(";", getDescription(), getAllowedEquipments().getName(),
                 getProvidedServices().getName(), "#" + getId());
     }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
 }
