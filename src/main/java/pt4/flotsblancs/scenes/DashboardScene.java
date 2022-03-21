@@ -1,20 +1,13 @@
 package pt4.flotsblancs.scenes;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXCheckbox;
-import io.github.palexdev.materialfx.controls.MFXDatePicker;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
-import io.github.palexdev.materialfx.controls.MFXSlider;
-import io.github.palexdev.materialfx.controls.MFXToggleButton;
-import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import pt4.flotsblancs.router.IScene;
-import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.scenes.utils.ToastType;
 
-public class DashboardScene extends VBox implements IScene {
+public class DashboardScene extends BorderPane implements IScene {
 
     @Override
     public String getName() {
@@ -37,26 +30,23 @@ public class DashboardScene extends VBox implements IScene {
     }
 
     @Override
-    public void start() {
-        setAlignment(Pos.CENTER);
-        setSpacing(40);
+    public void start() 
+    {
+    	
+    	BorderPane stats = new BorderPane();
+    	
+    	VBox left = new VBox();
+    	VBox right = new VBox();
+    	
+    	Node title = new Label("bonjour");
+    	 
+    	
+    	left.getChildren().add(title);
+    	
+    	stats.setLeft(left);
+    	stats.setRight(right);
 
-        Label label = new Label("Demo material FX");
-        label.setFont(new Font("Arial", 25));
-
-        MFXProgressSpinner spinner = new MFXProgressSpinner();
-        MFXSlider slider = new MFXSlider();
-
-        MFXDatePicker datePicker = new MFXDatePicker();
-        datePicker.setPromptText("Sélectionner une date");
-
-        MFXCheckbox checkBox = new MFXCheckbox("Bonsoir");
-        MFXToggleButton toggle = new MFXToggleButton("Bonsoir");
-        
-        MFXButton testToast = new MFXButton("test Toast");
-        testToast.setOnAction(e -> { Router.showToast(ToastType.ERROR,"test test test test"); });
-        
-
-        getChildren().addAll(label, slider, datePicker, checkBox, toggle, spinner, testToast);
+        this.setTop(null);
+        this.setBottom(stats);
     }
 }

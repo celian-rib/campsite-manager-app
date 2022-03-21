@@ -20,6 +20,11 @@ public class Stats
 		WEEKLY, MONTHLY, ANNUALY, TWO_YEAR, THREE_YEAR;
 	}
 	
+	public static void main(String[] args) throws SQLException
+	{
+		System.out.println(averageProblemTime(Period.ANNUALY));
+	}
+	
 	public static int nbClientToday(boolean isLeaving) throws SQLException
 	{
 		Calendar c = Calendar.getInstance();
@@ -36,7 +41,74 @@ public class Stats
                 .raw("'"+nowDateString+"' = DATE("+value+")")
                 .prepare()));
 		
+		
+		
 		return reservations.size();
+	}
+	
+	public static float averageProblemTime(Period period) throws SQLException
+	{
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Calendar c = Calendar.getInstance();
+		
+		Date endDate = c.getTime();
+		
+		switch(period)
+		{
+			case WEEKLY:
+				c.add(Calendar.DATE, -7);
+				break;
+			case MONTHLY:
+				c.add(Calendar.DATE, -30);
+				break;
+			case ANNUALY:
+				c.add(Calendar.DATE, -365);
+				break;
+			case TWO_YEAR:
+				c.add(Calendar.DATE, -365*2);
+				break;
+			case THREE_YEAR:
+				c.add(Calendar.DATE, -365*3);
+				break;
+		}
+		
+		Date startDate = c.getTime();
+		
+		String endDateString = dateFormat.format(endDate);
+		String startDateString = dateFormat.format(startDate);
+		
+		var dbr = Database.getInstance().getProblemDao();
+		
+        List<Problem> problems = dbr.query((dbr.queryBuilder().where()
+                .raw("('" + startDateString + "' < DATE(start_date) AND '" + endDateString + "'"
+                        + " > DATE(start_date)) OR ('" + startDateString + "'" + " < DATE(end_date) AND '"
+                        + endDateString + "'" + " > DATE(start_date))")
+                .prepare()));
+        
+        float duration = 0f;
+        int pbNb = 0;
+        
+        for(Problem p : problems)
+        {
+        	Date start = p.getStartDate();
+        	Date end = p.getEndDate();
+        	if(start != null & end != null)
+        	{
+
+        		Long startSeconds = start.getTime()/1000;
+        		Long endSeconds   = end  .getTime()/1000; //Nombre de secondes
+        		
+        		Long between = startSeconds - endSeconds; //Distance en seconde entre les deux dates
+        		
+        		duration += between/3600/24; //On divise 3600 -> heures -> 24 -> jours, moyenne en jours
+        		pbNb++;
+        	}
+        }
+        
+        return duration/pbNb;
+        
 	}
 	
 	public static HashMap<CampGround,Integer> mostProblematicCampground(Period period) throws SQLException
