@@ -2,10 +2,11 @@ package pt4.flotsblancs.database.model.types;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import pt4.flotsblancs.scenes.utils.PriceUtils;
 
 @AllArgsConstructor
 public enum Service {
-    NONE("Aucun", 0),
+    NONE("Aucun", 000),
     WATER_ONLY("Eau", 200),
     ELECTRICITY_ONLY("Electricité", 200),
     WATER_AND_ELECTRICITY("Eau et électricité", 400);
@@ -36,10 +37,6 @@ public enum Service {
 
     @Override
     public String toString() {
-        String ppdRaw = pricePerDay+"";
-        String cents = ppdRaw.substring(ppdRaw.length() - 2);
-        String euros = ppdRaw.substring(0, ppdRaw.length() - 2);
-        String ppdFormat = euros + ","+ cents;
-        return name + " " + ppdFormat + "€/j";
+        return name + " " + PriceUtils.priceToString(pricePerDay)+ "€/j";
     }
 }
