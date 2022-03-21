@@ -246,6 +246,7 @@ public class ItemList<I extends Item> extends StackPane {
 
         Circle statusDot = new Circle(3);
         statusDot.setFill(item.getStatusColor());
+        BorderPane.setMargin(statusDot, new Insets(0,5,0,0));
         
         Text display = new Text(item.getDisplayName());
         display.setFill(Color.rgb(50, 60, 100));
@@ -258,6 +259,7 @@ public class ItemList<I extends Item> extends StackPane {
         button.setLeft(statusDot);
         BorderPane.setAlignment(statusDot, Pos.CENTER_LEFT);
         button.setCenter(display);
+        BorderPane.setAlignment(display, Pos.CENTER_LEFT);
         button.setRight(id);
         button.setMaxWidth(CONTENT_WIDTH - 15);
         return button;
