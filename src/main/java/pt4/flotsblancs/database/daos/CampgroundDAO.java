@@ -55,7 +55,8 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
             }
         }
 
-        // On check dans la table des campground qu'il n'y a pas un id incompatible et on l'ajoute
+        // On check dans la table des campground qu'il n'y a pas un id incompatible et
+        // on l'ajoute
         List<CampGround> campgrounds =
                 query((queryBuilder().where().raw("id NOT IN " + getIds(ids)).prepare()));
 
@@ -73,13 +74,35 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
         return s;
     }
 
-    public boolean isAvailable(Reservation reservation, CampGround camp, Date start, Date end)
+    /**
+     * Permet de savor si un emplacement est disponible pour une réservation entre 2 dates en donnant une réservation à
+     * exclure (La réservation donnée n'est pas prise en compte comme rendant indisponible
+     * l'emplacement).
+     * 
+     * @param reservation reservation de l'emplacement
+     * @param camp emplacement a vérifier
+     * @param start date de début
+     * @param end date de fin
+     * @return vrai si l'emplacement est disponible pour la réservation donnée entre les 2 dates
+     * @throws SQLException
+     */
+    public boolean isAvailableForReservation(Reservation reservation, CampGround camp, Date start, Date end)
             throws SQLException {
-        // TODO faire une vrai requete plus opti ??
-        // TODO TU
-
-        // On a besoin de la réservation pour ne pas que l'emplacement soit marqué comme prit par sa
+        // On a besoin de la réservation pour ne pas que l'emplacement soit marqué comme
+        // prit par sa
         // réservation initiale
         return getAvailablesCampgrounds(start, end, reservation.getId()).contains(camp);
+    }
+
+    /**
+     * Permet de savoir si un emplacement est disponible entre 2 dates
+     * @param camp emplacement à vérifier
+     * @param start date de début (inclue)
+     * @param end date de fin (inclue)
+     * @return vrai si l'emplacement est disponible dans les dates données
+     * @throws SQLException
+     */
+    public boolean isAvailable(CampGround camp, Date start, Date end) throws SQLException {
+        return getAvailablesCampgrounds(start, end, -1).contains(camp);
     }
 }

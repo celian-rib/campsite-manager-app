@@ -1,7 +1,6 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
 import java.util.List;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -17,21 +16,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.control.Label;
-import pt4.flotsblancs.components.HBoxSpacer;
-import pt4.flotsblancs.components.ProblemsListCard;
-import pt4.flotsblancs.components.ReservationCard;
-import pt4.flotsblancs.components.VBoxSpacer;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
-import pt4.flotsblancs.database.model.User;
-import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
+import pt4.flotsblancs.scenes.components.HBoxSpacer;
+import pt4.flotsblancs.scenes.components.ProblemsListCard;
+import pt4.flotsblancs.scenes.components.ReservationCard;
+import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.items.ItemScene;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class ClientsScene extends ItemScene<Client> {
@@ -66,6 +64,15 @@ public class ClientsScene extends ItemScene<Client> {
     @Override
     protected String addButtonText() {
         return "Ajouter un client";
+    }
+
+    @Override
+    protected void onAddButtonClicked() {
+        try {
+            Router.goToScreen(Routes.CLIENTS, new Client("Jean"));
+        } catch (SQLException e) {
+            ExceptionHandler.loadIssue(e);
+        }
     }
 
     @Override
@@ -214,15 +221,13 @@ public class ClientsScene extends ItemScene<Client> {
             try {
                 Router.goToScreen(Routes.RESERVATIONS, new Reservation(client));
                 Router.showToast(ToastType.SUCCESS, "Réservation ajoutée");
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-                Router.showToast(ToastType.ERROR, "Erreur durant l'ajout de la réservation");
-                Router.goToScreen(Routes.CONN_FALLBACK);
             } catch (ConstraintException e1) {
                 // Si il y a eu un soucis sur les contraintes de la réservation, on l'indique à
                 // l'utilisateur
                 Router.showToast(ToastType.WARNING, e1.getMessage());
                 e1.printStackTrace();
+            } catch (SQLException e1) {
+                ExceptionHandler.loadIssue(e1);
             }
         });
 
@@ -248,14 +253,8 @@ public class ClientsScene extends ItemScene<Client> {
 
             Database.getInstance().getClientsDao().update(client);
             Router.showToast(ToastType.SUCCESS, "Client mis à jour");
-        } catch (SQLRecoverableException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-            Router.goToScreen(Routes.HOME);
+            ExceptionHandler.loadIssue(e);
         }
     }
 

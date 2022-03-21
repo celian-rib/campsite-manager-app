@@ -1,4 +1,4 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.scenes.components;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.DateUtils;
 
@@ -54,8 +55,7 @@ public class ReservationDatePicker extends MFXDatePicker {
                 this.skipNextListener = true;
                 setValue(oldDate);
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                ExceptionHandler.updateIssue(e);
             }
         });
     }
@@ -71,15 +71,14 @@ public class ReservationDatePicker extends MFXDatePicker {
                 this.skipNextListener = true;
                 setValue(oldDate);
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                ExceptionHandler.updateIssue(e);
             }
         });
     }
 
     public void addUserChangedValueListener(ChangeListener<? super LocalDate> listener) {
-        var wrapper = new ChangeListener<>() {
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+        var wrapper = new ChangeListener<LocalDate>() {
+            public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue, LocalDate newValue) {
                 if (oldValue == null || newValue == null || oldValue == newValue)
                     return;
                 if (skipNextListener) {

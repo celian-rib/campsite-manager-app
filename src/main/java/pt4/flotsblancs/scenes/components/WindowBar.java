@@ -1,4 +1,4 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.scenes.components;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;

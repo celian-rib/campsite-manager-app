@@ -11,14 +11,14 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import pt4.flotsblancs.components.DateHourHeader;
-import pt4.flotsblancs.components.HBoxSpacer;
-import pt4.flotsblancs.components.NavBar;
-import pt4.flotsblancs.components.ToastBasket;
-import pt4.flotsblancs.components.WindowBar;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.breakpoints.VBreakPoint;
+import pt4.flotsblancs.scenes.components.DateHourHeader;
+import pt4.flotsblancs.scenes.components.HBoxSpacer;
+import pt4.flotsblancs.scenes.components.NavBar;
+import pt4.flotsblancs.scenes.components.ToastBasket;
+import pt4.flotsblancs.scenes.components.WindowBar;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.scenes.utils.Toaster;
 import pt4.flotsblancs.scenes.utils.TransitionBuilder;
@@ -81,7 +81,7 @@ public class RootScene extends StackPane implements BreakPointListener {
      * Méthode pour charger les resources CSS.
      */
     private void loadStyleSheets() {
-        String baseUrl = "file:src/main/java/pt4/flotsblancs/stylesheets/";
+        String baseUrl = "file:src/main/java/pt4/flotsblancs/scenes/stylesheets/";
         getStylesheets().add(baseUrl + "mfx.css");
         getStylesheets().add(baseUrl + "index.css");
         getStylesheets().add(baseUrl + "navBar.css");
@@ -135,7 +135,7 @@ public class RootScene extends StackPane implements BreakPointListener {
      * 
      * @param baseScene , La nouvelle scène à afficher
      */
-    public void changeCurrentScene(IScene baseScene) {
+    void changeCurrentScene(IScene baseScene) {
         // Si la nouvelle page n'a pas besoin de la barre de navigation
 
         // Savoir si dans la transition on inclut la barre de navigation ou pas
@@ -157,6 +157,28 @@ public class RootScene extends StackPane implements BreakPointListener {
         }
         navBar.update();
         transition(baseScene, isShowbarUpdate, removeNavBar, setNavBar);
+    }
+
+    /**
+     * Permet de changer la scène courante, sans transition, 
+     * sans déclenchement des événement d'unfocus sur la scène précédemment affichée
+     * 
+     * @param baseScene , La nouvelle scène à afficher
+     */
+    void changeCurrentSceneDirty(IScene baseScene) {
+        currentScene = baseScene;
+        sceneContainer.setCenter((Parent) currentScene);
+        windowBar.update();
+        header.updateCurrentPage(currentScene.getName());
+        navBar.update();
+
+        if (baseScene.showNavBar() && !navBarIsActive) {
+            rootPane.setLeft(navBar);
+            this.navBarIsActive = true;
+        } else {
+            this.navBarIsActive = false;
+            rootPane.getChildren().remove(navBar);
+        }
     }
 
     /**

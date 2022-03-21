@@ -1,14 +1,11 @@
 package pt4.flotsblancs.router;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pt4.flotsblancs.scenes.AdminScene;
 import pt4.flotsblancs.scenes.CampgroundsScene;
 import pt4.flotsblancs.scenes.ClientsScene;
 import pt4.flotsblancs.scenes.ConnectionFallbackScene;
@@ -16,29 +13,18 @@ import pt4.flotsblancs.scenes.DashboardScene;
 import pt4.flotsblancs.scenes.LoginScene;
 import pt4.flotsblancs.scenes.LogsScene;
 import pt4.flotsblancs.scenes.ProblemesScene;
+import pt4.flotsblancs.scenes.ProblemsAddScene;
 import pt4.flotsblancs.scenes.ReservationsScene;
+import pt4.flotsblancs.scenes.UserScene;
 import pt4.flotsblancs.scenes.StocksScene;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
-	
-    @AllArgsConstructor
-    public enum Routes {
-        CONN_FALLBACK("Erreur de connexion"), 
-        CLIENTS("Clients"), 
-        RESERVATIONS("Réservations"), 
-        LOGIN("Connexion"), 
-        HOME("Accueil"), 
-        STOCKS("Stocks"), 
-        CAMPGROUNDS("Emplacements"), 
-        ADMIN("Administration"), // TODO remove méthode getName de IScene et utiliser valeur de l'enum
-    	PROBLEMES("Problèmes"), // TODO renommer en PROBLEMS
-        LOGS("Logs");
 
-        @Getter
-        private String routeName; // TODO remove ça
+    public enum Routes {
+        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, PROBLEMS, PROBLEMS_ADD, LOGS, USERS;
     }
 
     /**
@@ -53,16 +39,10 @@ public class Router {
             put(Routes.CLIENTS, new ClientsScene());
             put(Routes.STOCKS, new StocksScene());
             put(Routes.CAMPGROUNDS, new CampgroundsScene());
-            put(Routes.ADMIN, new AdminScene());
-            put(Routes.PROBLEMES, new ProblemesScene());
+            put(Routes.PROBLEMS, new ProblemesScene());
+            put(Routes.PROBLEMS_ADD, new ProblemsAddScene());
             put(Routes.LOGS, new LogsScene());
-        }
-    };
-
-    public static final HashSet<Routes> parameterizedRoutes = new HashSet<>() {
-        {
-            add(Routes.RESERVATIONS);
-            add(Routes.CLIENTS);
+            put(Routes.USERS, new UserScene());
         }
     };
 
@@ -124,7 +104,7 @@ public class Router {
      */
     public static void showToast(ToastType type, String message, int durationMillis,
             int fadeinoutMillis) {
-        if(rootScene == null)
+        if (rootScene == null)
             return;
         rootScene.showToast(type, message, durationMillis, fadeinoutMillis);
     }
@@ -136,7 +116,7 @@ public class Router {
      * @param message
      */
     public static void showToast(ToastType type, String message) {
-        if(rootScene == null)
+        if (rootScene == null)
             return;
         rootScene.showToast(type, message);
     }
@@ -147,7 +127,7 @@ public class Router {
      * @param newRoute
      */
     public static void goToScreen(Routes newRoute) {
-        if(rootScene == null)
+        if (rootScene == null)
             return;
         if (!routes.containsKey(newRoute)) {
             log("Route not implemented");
@@ -173,18 +153,41 @@ public class Router {
     }
 
     /**
-     * Permet de change la scène actuelle (La page courante)
+     * Permet de changer la scène courante, sans transition, sans déclenchement des événement
+     * d'unfocus sur la scène précédemment affichée
+     * 
+     * @param newRoute route de la nouvelle scène
+     */
+    public static void goToScreenDirty(Routes newRoute) {
+        if (rootScene == null)
+            return;
+        if (!routes.containsKey(newRoute)) {
+            log("Route not implemented");
+            return;
+        }
+        currentRoute = newRoute;
+        rootScene.changeCurrentSceneDirty(routes.get(currentRoute));
+        primaryStage.setTitle(routes.get(currentRoute).getName());
+        routes.get(currentRoute).onFocus();
+        log("Switch scene (Dirty) -> " + newRoute);
+    }
+
+    /**
+     * Permet de change la scène actuelle (La page courante) en donnant un item sélectionné /!\ Cela
+     * implique que l'item donnée corresponde avec la route
      * 
      * @param newRoute
      */
-    public static <I extends Item> void goToScreen(Routes newRoute,I item) {
-        if(rootScene == null)
+    public static <I extends Item> void goToScreen(Routes newRoute, I item) {
+        if (rootScene == null)
             return;
-        if (parameterizedRoutes.contains(newRoute)) {
-            ItemScene<I> nextScene = (ItemScene<I>)routes.get(newRoute);
+        if (routes.get(newRoute) instanceof ItemScene<?>) {
+            @SuppressWarnings("unchecked")
+            ItemScene<I> nextScene = (ItemScene<I>) routes.get(newRoute);
             nextScene.selectItem(item);
-            log("[Router] Selecting " + item.getDisplayName() + " on " + newRoute.name());
         }
+        log("[Router] Selecting " + item.getDisplayName() + " on "
+                + routes.get(newRoute).getName());
         goToScreen(newRoute);
     }
 

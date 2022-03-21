@@ -4,9 +4,8 @@ import lombok.*;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
-import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.router.Router.Routes;
-import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.security.*;
@@ -21,7 +20,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @DatabaseTable(tableName = "users")
-public class User {
+public class User implements Item {
 
     @Getter
     @DatabaseField(generatedId = true)
@@ -41,21 +40,23 @@ public class User {
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
     @DatabaseField(canBeNull = false, columnName = "is_admin")
     private boolean isAdmin;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(uniqueCombo = true, canBeNull = false)
+    @DatabaseField(canBeNull = false)
     private String name;
 
     @Getter
     @Setter
-    @EqualsAndHashCode.Include
-    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "first_name")
+    @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
+
+    @Getter
+    @Setter
+    @DatabaseField(canBeNull = false, columnName = "weekly_hours", defaultValue = "35")
+    private Integer weeklyHours;
 
     @Getter
     private static User connected;
@@ -125,10 +126,16 @@ public class User {
      * @param message : Message de débug
      */
     private static void log(String message) {
-        // TODO vrai système de logging
         System.out.println("[UserStore] " + message);
     }
 
+    /**
+     * Permet d'ajout un log d'action faite par l'utilisateur actuellement connecté (Rien ne se
+     * passe si aucun utilisateur n'esta atuellment connecté)
+     * 
+     * @param type type d'action faite par l'utilisateur
+     * @param message message décrivant l'action
+     */
     public static void addlog(LogType type, String message) {
         if (User.getConnected() == null)
             return;
@@ -141,11 +148,17 @@ public class User {
             log.setUser(User.getConnected());
             Database.getInstance().getLogDao().create(log);
         } catch (SQLException e) {
-            System.err.println(e);
-            e.printStackTrace();
-            System.out.println(log);
-            Router.showToast(ToastType.ERROR, "Erreur interne (Logging)");
-            Router.goToScreen(Routes.CONN_FALLBACK);
+            ExceptionHandler.loadIssue(e);
         }
+    }
+
+    @Override
+    public String getDisplayName() {
+        return getFirstName() + " " + getName();
+    }
+
+    @Override
+    public String getSearchString() {
+        return String.join(";", getFirstName(), getName(), getLogin(), "#"+getId());
     }
 }

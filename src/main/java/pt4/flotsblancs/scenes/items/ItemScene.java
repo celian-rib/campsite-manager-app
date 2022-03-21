@@ -17,17 +17,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import pt4.flotsblancs.components.EmptyItemContainer;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
+import pt4.flotsblancs.scenes.components.EmptyItemContainer;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 
 public abstract class ItemScene<I extends Item> extends BorderPane
         implements IScene, BreakPointListener {
 
     private ItemList<I> itemList;
-    private I item;
 
     /**
      * Permet de créer le conteneur affichant l'item actuellement sélectionné
@@ -74,18 +74,16 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     public void onFocus() {
         itemList.setIsLoading(true);
         final Task<List<I>> updateListTask = new Task<List<I>>() {
-            protected java.util.List<I> call() throws Exception {
-                var allItems = queryAll();
-                Platform.runLater(() -> {
-                    try {
-                        // Mise à jour de la liste
-                        itemList.updateItems(allItems);
-                    } catch (Exception e) {
-                        // TODO gestion erreur
-                        e.printStackTrace();
-                    }
-                });
-                return allItems;
+            protected java.util.List<I> call() {
+                List<I> allItems;
+                try {
+                    allItems = queryAll();
+                    Platform.runLater(() -> itemList.updateItems(allItems));
+                    return allItems;
+                } catch (SQLException e) {
+                    ExceptionHandler.loadIssue(e);
+                }
+                return null;
             };
 
             protected void succeeded() {
@@ -98,7 +96,9 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         new Thread(updateListTask).start();
     }
 
-    public abstract void onContainerUnfocus();
+    protected void onContainerUnfocus() {
+
+    };
 
     /**
      * Met à jour le conteneur droit de la page, affichant les informations de l'item sélectionné
@@ -128,7 +128,6 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         container.setBackground(background);
 
         stack.getChildren().addAll(shadowPane, container);
-        this.item = item;
 
         setCenter((Parent) stack);
     }
@@ -144,7 +143,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         }
     }
 
-    public void selectItem(Item item) {
-        itemList.selectItem((I) item);
+    public void selectItem(I item) {
+        itemList.selectItem(item);
     }
 }

@@ -117,6 +117,8 @@ public class ItemList<I extends Item> extends StackPane {
     }
 
     private void updateItems(List<I> items, boolean filtered) {
+        if(items.size() == 0)
+            return;
         if (!filtered) {
             boolean isReservation = items.get(0) instanceof Reservation;
             items.sort((i1, i2) -> {
@@ -221,6 +223,8 @@ public class ItemList<I extends Item> extends StackPane {
     }
 
     private HBox createAddButton() {
+        if(itemScene.addButtonText() == null)
+            return null;
         var container = new HBox();
         var btn = new MFXButton(itemScene.addButtonText());
         btn.getStyleClass().add("action-button");

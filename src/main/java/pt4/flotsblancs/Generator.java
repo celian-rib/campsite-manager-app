@@ -1,7 +1,5 @@
 package pt4.flotsblancs;
 
-import java.util.Date; //ne pas supprimer, cette ligne EST utilisé
-//si vous supprimez vous êtes un Billy Débilus esclave de Virilus
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
@@ -30,6 +28,7 @@ public class Generator {
         var f = new Faker();
 
         generateAdmin();
+        generateUsers();
         
         generateStocks(f, 100);
         generateClients(f, 50);
@@ -48,13 +47,34 @@ public class Generator {
     private static void generateAdmin() throws SQLException {
         var u = new User();
         u.setAdmin(true);
-        u.setFirstName("polp");
-        u.setName("ogba");
+        u.setFirstName("Polp");
+        u.setName("Ogba");
         u.setPassword(User.sha256("test"));
         u.setLogin("test");
         var existing = Database.getInstance().getUsersDao().queryForMatching(u);
         if (existing.size() == 0) {
             Database.getInstance().getUsersDao().create(u);
+        }
+    }
+
+    private static void generateUsers() throws SQLException {
+        String[] firstNames = {"Anna", "Paul", "Jérémy"};
+        String[] lastNames = {"Dupont", "Martin", "Delamama"};
+        String[] pwds = {"Pilou33", "123456789", "motdepass"};
+        String[] logins = {"ADupont", "PMartin", "JDelamama"};
+        User u;
+        for (int i = 0; i < logins.length; i++) {
+            u = new User();
+            u.setAdmin(false);
+            u.setFirstName(firstNames[i]);
+            u.setName(lastNames[i]);
+            u.setPassword(User.sha256(pwds[i]));
+            u.setLogin(logins[i]);
+            u.setWeeklyHours(new Random().nextInt(20) + 15);
+            var existing = Database.getInstance().getUsersDao().queryForMatching(u).size() != 0;
+            if (!existing) {
+                Database.getInstance().getUsersDao().create(u);
+            }
         }
     }
 
@@ -70,18 +90,20 @@ public class Generator {
 
             var cashbacks = CashBack.values();
             resa.setCashBack(cashbacks[rdmNbrBtwn(0, cashbacks.length)]);
-
-            resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
-            resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
-            resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
-
+            
             var equipments = resa.getCampground().getCompatiblesEquipments();
             resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
             
             var services = resa.getCampground().getCompatiblesServices();
             resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
+            
 
+            resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
+            resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
+            resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+            
             Database.getInstance().getReservationDao().create(resa);
+            Database.getInstance().getReservationDao().refresh(resa);
             System.out.println(resa);
         }
     }
@@ -114,6 +136,7 @@ public class Generator {
             String hp = f.harryPotter().spell();
             c.setName((hp.split(" ").length > 1) ? hp.split(" ")[1] : hp.split(" ")[0]);
             c.setFirstName(f.dragonBall().character().split(" ")[0]);
+            c.setEmail(f.internet().emailAddress());
             try {
                 Database.getInstance().getClientsDao().create(c);
             } catch (Exception e) {
@@ -143,7 +166,6 @@ public class Generator {
             p.setCampground(p.getReservation().getCampground());
             p.setClient(p.getReservation().getClient());
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().between(p.getReservation().getStartDate(), p.getReservation().getEndDate()));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);
@@ -157,7 +179,6 @@ public class Generator {
             var p = new Problem();
             p.setClient(ClientsList.get(rdmNbrBtwn(0, ClientsList.size())));
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().past(30, TimeUnit.DAYS));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);
@@ -172,7 +193,6 @@ public class Generator {
             var p = new Problem();
             p.setCampground(CGlist.get(rdmNbrBtwn(0, CGlist.size())));
             p.setDescription(f.lorem().sentence().toString());
-            p.setStartDate(f.date().past(30, TimeUnit.DAYS));
             p.setStatus(ProblemStatus.values()[rdmNbrBtwn(0, ProblemStatus.values().length)]);
 
             Database.getInstance().getProblemDao().create(p);
