@@ -1,5 +1,7 @@
 package pt4.flotsblancs.scenes.items;
 
+import javafx.scene.paint.Color;
+
 public interface Item {
 	/**
 	 * 
@@ -27,4 +29,10 @@ public interface Item {
 	 *         l'ORM
 	 */
 	public boolean isForeignCorrect();
+
+	/*
+	 * 
+	 * @return Une Paint javafx qui définit l'état de l'item
+	 */
+	public Color getStatusColor();
 }

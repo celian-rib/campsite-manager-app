@@ -10,7 +10,9 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.*;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -124,6 +126,12 @@ public class Client implements Item {
     @Override
     public boolean isForeignCorrect() {
         return reservations != null && problems != null;
+    }
+    
+    @Override
+    public Color getStatusColor() {
+        // TODO -> rouge que si les problèmes sont ouverts
+        return problems.size() > 0 ? StatusColors.RED : StatusColors.BLUE;
     }
 
 }

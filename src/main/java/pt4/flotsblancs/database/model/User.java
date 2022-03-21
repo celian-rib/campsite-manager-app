@@ -6,7 +6,11 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
+import pt4.flotsblancs.scenes.utils.StatusColors;
+
 import com.j256.ormlite.table.DatabaseTable;
+
+import javafx.scene.paint.Color;
 
 import java.security.*;
 import java.sql.SQLException;
@@ -165,5 +169,10 @@ public class User implements Item {
     @Override
     public boolean isForeignCorrect() {
         return true;
+    }
+
+    @Override
+    public Color getStatusColor() {
+        return this.isAdmin ? StatusColors.RED : StatusColors.BLUE;
     }
 }
