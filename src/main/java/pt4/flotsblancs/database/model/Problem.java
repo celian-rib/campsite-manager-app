@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.PTPalette;
 
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -130,5 +132,10 @@ public class Problem implements Item {
         if (this.reservation != null)
             b.append(this.reservation.getId()).append(';');
         return b.toString().trim().toLowerCase();
+    }
+
+    @Override
+    public Color getStatusColor() {
+        return PTPalette.RED;
     }
 }

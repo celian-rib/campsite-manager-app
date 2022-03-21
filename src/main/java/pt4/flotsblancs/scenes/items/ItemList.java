@@ -14,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BlurType;
@@ -21,6 +22,7 @@ import javafx.scene.effect.Shadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import pt4.flotsblancs.database.model.Reservation;
 
@@ -242,15 +244,20 @@ public class ItemList<I extends Item> extends StackPane {
         button.setPadding(new Insets(6, 0, 0, 0));
         button.setPrefHeight(30);
 
+        Circle statusDot = new Circle(3);
+        statusDot.setFill(item.getStatusColor());
+        
         Text display = new Text(item.getDisplayName());
         display.setFill(Color.rgb(50, 60, 100));
         display.setStyle("-fx-font-weight: bold");
-
+        
         Text id = new Text("#" + item.getId());
         id.setFill(Color.rgb(50, 50, 80));
         id.setStyle("-fx-font-weight: bold");
-
-        button.setLeft(display);
+        
+        button.setLeft(statusDot);
+        BorderPane.setAlignment(statusDot, Pos.CENTER_LEFT);
+        button.setCenter(display);
         button.setRight(id);
         button.setMaxWidth(CONTENT_WIDTH - 15);
         return button;

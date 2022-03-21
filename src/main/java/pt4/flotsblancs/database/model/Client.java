@@ -10,7 +10,9 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.*;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.PTPalette;
 
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -119,6 +121,11 @@ public class Client implements Item {
                 .append(this.addresse).append(';')
                 .append(this.phone).append(';')
                 .toString().trim().toLowerCase();
+    }
+
+    @Override
+    public Color getStatusColor() {
+        return problems.size() > 0 ? PTPalette.RED : PTPalette.BLUE;
     }
 
 }
