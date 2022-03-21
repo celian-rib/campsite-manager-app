@@ -124,6 +124,11 @@ public class Client implements Item {
     }
 
     @Override
+    public boolean isForeignCorrect() {
+        return reservations != null && problems != null;
+    }
+    
+    @Override
     public Color getStatusColor() {
         // TODO -> rouge que si les problèmes sont ouverts
         return problems.size() > 0 ? StatusColors.RED : StatusColors.BLUE;

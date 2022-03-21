@@ -98,6 +98,11 @@ public class CampGround implements Item {
     }
 
     @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+
+    @Override
     public Color getStatusColor() {
         return StatusColors.GREEN;
     }

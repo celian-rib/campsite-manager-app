@@ -429,6 +429,11 @@ public class Reservation implements Item {
     }
 
     @Override
+    public boolean isForeignCorrect() {
+        return client != null && campground != null && problems != null;
+    }
+
+    @Override
     public Color getStatusColor() {
         if (canceled) 
             return StatusColors.BLACK;

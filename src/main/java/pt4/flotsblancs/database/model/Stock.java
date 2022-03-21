@@ -75,6 +75,11 @@ public class Stock implements Item {
     }
 
     @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+    
+    @Override
     public Color getStatusColor() {
         return this.quantity < this.quantityAlertThreshold ? StatusColors.RED : StatusColors.GREEN;
     }
