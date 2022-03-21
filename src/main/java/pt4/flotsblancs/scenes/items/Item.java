@@ -30,9 +30,8 @@ public interface Item {
 	 */
 	public boolean isForeignCorrect();
 
-	/*
-	 * 
-	 * @return Une Paint javafx qui définit l'état de l'item
+	/**
+	 * @return Couleur qui définit l'état de l'item
 	 */
 	public Color getStatusColor();
 }
