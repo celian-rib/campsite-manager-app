@@ -102,7 +102,8 @@ public class NavBar extends BorderPane implements BreakPointListener {
      * 
      * - Rafraichit l'affichage de l'utilisateur actuellement connecté
      * 
-     * - Met à jour le boutons sélectionné dans la navbar (En fonction de la route actuellement
+     * - Met à jour le boutons sélectionné dans la navbar (En fonction de la route
+     * actuellement
      * chargée)
      */
     public void update() {

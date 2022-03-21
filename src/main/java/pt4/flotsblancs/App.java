@@ -37,14 +37,13 @@ public class App extends Application {
 			defaultRoute = Routes.CONN_FALLBACK;
 		}
 
-		Router.initialize(defaultRoute, primaryStage, 1200, 700);
+		Router.initialize(defaultRoute, primaryStage, 1300, 750);
 
         BreakPointManager.init(primaryStage);
 		new WindowManager(primaryStage, 20);
 
 		primaryStage.setMinWidth(950);
 		primaryStage.setMinHeight(650);
-
 
 		// Affichage de la fenêtre
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
