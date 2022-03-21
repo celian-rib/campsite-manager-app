@@ -6,9 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Service {
     NONE("Aucun", 0),
-    WATER_ONLY("Eau", 2),
-    ELECTRICITY_ONLY("Electricité", 2),
-    WATER_AND_ELECTRICITY("Eau et électricité", 4);
+    WATER_ONLY("Eau", 200),
+    ELECTRICITY_ONLY("Electricité", 200),
+    WATER_AND_ELECTRICITY("Eau et électricité", 400);
 
     @Getter
     private String name;
@@ -36,6 +36,10 @@ public enum Service {
 
     @Override
     public String toString() {
-        return name + " " + pricePerDay + "€/j";
+        String ppdRaw = pricePerDay+"";
+        String cents = ppdRaw.substring(ppdRaw.length() - 2);
+        String euros = ppdRaw.substring(0, ppdRaw.length() - 2);
+        String ppdFormat = euros + ","+ cents;
+        return name + " " + ppdFormat + "€/j";
     }
 }

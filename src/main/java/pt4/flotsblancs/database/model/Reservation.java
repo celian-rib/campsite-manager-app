@@ -87,9 +87,9 @@ public class Reservation implements Item {
     @Getter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Problem> problems;
-    
+
     @Getter
-    @DatabaseField(dataType=DataType.SERIALIZABLE)
+    @DatabaseField(dataType = DataType.SERIALIZABLE)
     private byte[] bill;
 
     public Reservation() {
@@ -158,7 +158,8 @@ public class Reservation implements Item {
         }
 
         this.campground = camp;
-        User.addlog(LogType.MODIFY, "Emplacement de la réservation #" + id + " changé à " + campground.getDisplayName()); 
+        User.addlog(LogType.MODIFY,
+                "Emplacement de la réservation #" + id + " changé à " + campground.getDisplayName());
 
         // Gestion des contraintes equipements et services
         // ATTENTION -> changer l'emplacement prend la priorité en terme de contrainte
@@ -339,26 +340,21 @@ public class Reservation implements Item {
     /**
      * @return Prix total de la réservation
      */
-    public float getTotalPrice() {
-
+    public int getTotalPrice() {
         var dayCount = getDayCount();
-        var rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
+        int rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
+
         var withService = rawPrice + selectedServices.getPricePerDay() * dayCount;
 
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.CEILING);
-        return Float.parseFloat(df.format(withService * cashBack.getReduction()));
+        return (int) Math.floor(withService * cashBack.getReduction());
         
     }
 
     /**
      * @return Prix d'acompte de la réservation
      */
-    public float getDepositPrice() {
-
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.CEILING);
-        return Float.parseFloat(df.format((getTotalPrice() * 0.3f) * cashBack.getReduction()));// Acompte de 30%
+    public int getDepositPrice() {
+        return (int) Math.floor((getTotalPrice() * 0.3f) * cashBack.getReduction());// Acompte de 30%
     }
 
     /**
@@ -381,9 +377,9 @@ public class Reservation implements Item {
 
     @Override
     public String getDisplayName() {
-        if(startDate == null || endDate == null || client == null)
-        return "Reservation " + getId();
-        
+        if (startDate == null || endDate == null || client == null)
+            return "Reservation " + getId();
+
         SimpleDateFormat format = new SimpleDateFormat("dd/MM");
         var prefix = canceled ? "[Annulée] " : "";
         return prefix + format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
@@ -396,12 +392,12 @@ public class Reservation implements Item {
     }
 
     public void setPaymentDate(Date date) {
-        if (date == null){
+        if (date == null) {
             User.addlog(LogType.DELETE,
-            "Paiement annulé pour la réservation #" + id);
+                    "Paiement annulé pour la réservation #" + id);
         } else {
             User.addlog(LogType.ADD,
-            "Paiement effectué pour la réservation #" + id);
+                    "Paiement effectué pour la réservation #" + id);
         }
         this.paymentDate = date;
     }
@@ -413,12 +409,12 @@ public class Reservation implements Item {
     }
 
     public void setDepositDate(Date date) {
-        if (date == null){
+        if (date == null) {
             User.addlog(LogType.DELETE,
-            "Accompte annulé pour la réservation #" + id);
+                    "Accompte annulé pour la réservation #" + id);
         } else {
             User.addlog(LogType.ADD,
-            "Accompte versé pour la réservation #" + id);
+                    "Accompte versé pour la réservation #" + id);
         }
         this.depositDate = date;
     }
@@ -432,7 +428,7 @@ public class Reservation implements Item {
         User.addlog(LogType.DELETE, "Réservation #" + id + " annulée");
         this.canceled = canceled;
     }
-    
+
     public void setBill(byte[] fileData) {
         User.addlog(LogType.ADD, "Génération de la facture de la réservation #" + id);
         this.bill = fileData;
