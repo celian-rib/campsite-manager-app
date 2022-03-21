@@ -167,6 +167,11 @@ public class User implements Item {
     }
 
     @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+
+    @Override
     public Color getStatusColor() {
         return this.isAdmin ? StatusColors.RED : StatusColors.BLUE;
     }

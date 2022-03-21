@@ -135,6 +135,11 @@ public class Problem implements Item {
     }
 
     @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+
+    @Override
     public Color getStatusColor() {
         switch(status) {
             case OPEN:
