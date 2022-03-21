@@ -2,7 +2,6 @@ package pt4.flotsblancs.scenes.items;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javafx.application.Platform;
@@ -49,7 +48,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
      * @return Permet d'indiquer le texte du bouton d'ajout
      */
     protected String addButtonText() {
-        return "Ajouter";
+        return "Ajouter"; // Valeur par défaut
     }
 
     /**
@@ -60,8 +59,21 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     };
 
     protected void onContainerUnfocus() {
-        // Peut être implémentée par les enfants
+        // Doit être implémentée par les classes héritantes
+        // Méthode non abstraite car implémentation pas obligatoire
     };
+
+    protected String getHeaderH1() {
+        return null;
+    }
+    
+    protected String getHeaderH2() {
+        return null;
+    }
+   
+    protected String getHeaderH3() {
+        return null;
+    }
 
     /**
      * Met en place le BorderPane contenant à gauche la liste des items et à droite

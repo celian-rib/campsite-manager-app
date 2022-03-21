@@ -91,14 +91,30 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
     @Override
     protected String addButtonText() {
-        return null; // Dire explicitement de ne pas afficher le bouton d'ajout de l'ItemList pour
-                     // cette page
+        // Permet de fire explicitement de ne pas afficher le bouton d'ajout de l'ItemList pour
+        // cette page
+        return null;
     }
 
     @Override
     protected void onAddButtonClicked() {
         Router.showToast(ToastType.INFO, "Selectionner un client");
         Router.goToScreen(Routes.CLIENTS);
+    }
+
+    @Override
+    protected String getHeaderH1() {
+        return "Réservation #" + this.reservation.getId();
+    }
+
+    @Override
+    protected String getHeaderH2() {
+        return "oui";
+    }
+
+    @Override
+    protected String getHeaderH3() {
+        return "bonsoir";
     }
 
     @Override
@@ -111,7 +127,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         topSlot = createTopSlot();
         bottomSlot = createBottomSlot();
 
-        container.getChildren().add(createHeader());
+        // container.getChildren().add(createHeader());
         container.getChildren().add(new VBoxSpacer());
         container.getChildren().add(topSlot);
         container.getChildren().add(new VBoxSpacer());
