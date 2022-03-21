@@ -5,11 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.database.model.types.Service;
 
-public class ServiceTest {
+public class ServiceTest extends DatabaseTestWrapper {
     @Test
     public void testIsCompatibleWithCampService() {
         // Demander rien est compatible avec un emplacement qui na rien
@@ -46,35 +45,34 @@ public class ServiceTest {
 
     @Test
     public void getCompatiblesServices() {
-        CampGround camp = new CampGround();
-        camp.setAllowedEquipments(Equipment.MOBILHOME);
-        camp.setProvidedServices(Service.WATER_AND_ELECTRICITY);
-        assertEquals(1, camp.getCompatiblesServices().size());
-        assertTrue(camp.getCompatiblesServices().contains(Service.WATER_AND_ELECTRICITY));
+        campground.setAllowedEquipments(Equipment.MOBILHOME);
+        campground.setProvidedServices(Service.WATER_AND_ELECTRICITY);
+        assertEquals(1, campground.getCompatiblesServices().size());
+        assertTrue(campground.getCompatiblesServices().contains(Service.WATER_AND_ELECTRICITY));
         
-        camp.setAllowedEquipments(Equipment.TENT);
-        camp.setProvidedServices(Service.WATER_AND_ELECTRICITY);
-        assertEquals(4, camp.getCompatiblesServices().size());
-        assertTrue(camp.getCompatiblesServices().contains(Service.WATER_AND_ELECTRICITY));
-        assertTrue(camp.getCompatiblesServices().contains(Service.WATER_ONLY));
-        assertTrue(camp.getCompatiblesServices().contains(Service.ELECTRICITY_ONLY));
-        assertTrue(camp.getCompatiblesServices().contains(Service.NONE));
+        campground.setAllowedEquipments(Equipment.TENT);
+        campground.setProvidedServices(Service.WATER_AND_ELECTRICITY);
+        assertEquals(4, campground.getCompatiblesServices().size());
+        assertTrue(campground.getCompatiblesServices().contains(Service.WATER_AND_ELECTRICITY));
+        assertTrue(campground.getCompatiblesServices().contains(Service.WATER_ONLY));
+        assertTrue(campground.getCompatiblesServices().contains(Service.ELECTRICITY_ONLY));
+        assertTrue(campground.getCompatiblesServices().contains(Service.NONE));
         
-        camp.setAllowedEquipments(Equipment.TENT);
-        camp.setProvidedServices(Service.WATER_ONLY);
-        assertEquals(2, camp.getCompatiblesServices().size());
-        assertTrue(camp.getCompatiblesServices().contains(Service.WATER_ONLY));
-        assertTrue(camp.getCompatiblesServices().contains(Service.NONE));
+        campground.setAllowedEquipments(Equipment.TENT);
+        campground.setProvidedServices(Service.WATER_ONLY);
+        assertEquals(2, campground.getCompatiblesServices().size());
+        assertTrue(campground.getCompatiblesServices().contains(Service.WATER_ONLY));
+        assertTrue(campground.getCompatiblesServices().contains(Service.NONE));
        
-        camp.setAllowedEquipments(Equipment.TENT);
-        camp.setProvidedServices(Service.ELECTRICITY_ONLY);
-        assertEquals(2, camp.getCompatiblesServices().size());
-        assertTrue(camp.getCompatiblesServices().contains(Service.ELECTRICITY_ONLY));
-        assertTrue(camp.getCompatiblesServices().contains(Service.NONE));
+        campground.setAllowedEquipments(Equipment.TENT);
+        campground.setProvidedServices(Service.ELECTRICITY_ONLY);
+        assertEquals(2, campground.getCompatiblesServices().size());
+        assertTrue(campground.getCompatiblesServices().contains(Service.ELECTRICITY_ONLY));
+        assertTrue(campground.getCompatiblesServices().contains(Service.NONE));
         
-        camp.setAllowedEquipments(Equipment.TENT);
-        camp.setProvidedServices(Service.NONE);
-        assertEquals(1, camp.getCompatiblesServices().size());
-        assertTrue(camp.getCompatiblesServices().contains(Service.NONE));
+        campground.setAllowedEquipments(Equipment.TENT);
+        campground.setProvidedServices(Service.NONE);
+        assertEquals(1, campground.getCompatiblesServices().size());
+        assertTrue(campground.getCompatiblesServices().contains(Service.NONE));
     }
 }

@@ -1,7 +1,6 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
@@ -13,18 +12,20 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-
-import pt4.flotsblancs.components.*;
-import pt4.flotsblancs.components.ComboBoxes.ProblemStatusComboBox;
-
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Problem;
-
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
-
+import pt4.flotsblancs.scenes.components.CampgroundCard;
+import pt4.flotsblancs.scenes.components.ClientCard;
+import pt4.flotsblancs.scenes.components.HBoxSpacer;
+import pt4.flotsblancs.scenes.components.ReservationCard;
+import pt4.flotsblancs.scenes.components.VBoxSpacer;
+import pt4.flotsblancs.scenes.components.ComboBoxes.ProblemStatusComboBox;
 import pt4.flotsblancs.scenes.items.ItemScene;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.utils.DateUtils;
 
 public class ProblemesScene extends ItemScene<Problem> {
 
@@ -45,12 +46,16 @@ public class ProblemesScene extends ItemScene<Problem> {
     private boolean descriptionModified;
 
     private ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
-        // Check si on a vraiment besoin de refresh la page et la bd
         if (oldValue == newValue || oldValue == null)
             return;
         refreshPage();
         refreshDatabase();
     };
+
+    @Override
+    public void onAddButtonClicked() {
+        Router.goToScreen(Routes.PROBLEMS_ADD);
+    }
 
     @Override
     public String getName() {
@@ -83,12 +88,9 @@ public class ProblemesScene extends ItemScene<Problem> {
     }
 
     private void refreshPage() {
-        // Mise à jour des labels
-
-        // TODO bien formatter les dates
-        startDate.setText("Date de début : " + problem.getStartDate().toString());
-        endDate.setText("Date de fin : "
-                + (problem.getEndDate() == null ? "" : problem.getEndDate().toString()));
+        startDate.setText("Date de début : " + DateUtils.toFormattedString(problem.getStartDate()));
+        endDate.setText("Date de fin : " + (problem.getEndDate() == null ? ""
+                : DateUtils.toFormattedString(problem.getEndDate())));
         lastUpdateDate.setText("Dernière mise à jour : " + problem.getLastUpdateDate().toString());
     }
 
@@ -98,7 +100,7 @@ public class ProblemesScene extends ItemScene<Problem> {
 
         description = new TextArea(problem.getDescription());
         description.textProperty().addListener((obs, oldVal, newVal) -> {
-            if(oldVal != null && oldVal != newVal)
+            if (oldVal != null && oldVal != newVal)
                 this.descriptionModified = true;
         });
 
@@ -195,15 +197,8 @@ public class ProblemesScene extends ItemScene<Problem> {
         try {
             Database.getInstance().getProblemDao().update(problem);
             Router.showToast(ToastType.SUCCESS, "Problème mis à jour");
-        } catch (SQLRecoverableException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de connexion");
-            Router.goToScreen(Routes.CONN_FALLBACK);
         } catch (SQLException e) {
-            e.printStackTrace();
-            Router.showToast(ToastType.ERROR, "Erreur de chargement des données");
-            Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-            Router.goToScreen(Routes.HOME);
+            ExceptionHandler.updateIssue(e);
         }
     }
 
@@ -216,10 +211,10 @@ public class ProblemesScene extends ItemScene<Problem> {
     public void onUnfocus() {
         onContainerUnfocus();
     }
-    
+
     @Override
     public void onContainerUnfocus() {
-        if(this.descriptionModified)
+        if (this.descriptionModified)
             refreshDatabase();
     }
 }

@@ -1,5 +1,6 @@
 package pt4.flotsblancs.database.model;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -9,6 +10,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.scenes.items.Item;
 
@@ -53,35 +56,45 @@ public class Problem implements Item {
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Reservation reservation;
 
+    public Problem(ProblemStatus status) throws SQLException {
+        this.status = status;
+        this.startDate = new Date();
+        this.lastUpdateDate = new Date();
+        User.addlog(LogType.MODIFY, "Ajout du nouveau problème #" + id);
+        Database.getInstance().getProblemDao().create(this);
+        Database.getInstance().getProblemDao().refresh(this);
+    }
+
     public void setDescription(String description) {
         this.description = description;
         this.lastUpdateDate = new Date();
+        User.addlog(LogType.MODIFY, "Modification de la description du problème " + getDisplayName());
     }
 
     public void setClient(Client client) {
         this.client = client;
         this.lastUpdateDate = new Date();
+        User.addlog(LogType.MODIFY, "Modification du client du problème " + getDisplayName());
     }
 
     public void setCampground(CampGround campGround) {
         this.campground = campGround;
         this.lastUpdateDate = new Date();
+        User.addlog(LogType.MODIFY, "Modification de l'emplacement du problème " + getDisplayName());
     }
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
         this.lastUpdateDate = new Date();
+        User.addlog(LogType.MODIFY, "Modification de la réservation du problème " + getDisplayName());
     }
 
     public void setStatus(ProblemStatus newStatus) {
         this.status = newStatus;
         this.endDate = newStatus == ProblemStatus.SOLVED ? new Date() : null;
         this.lastUpdateDate = new Date();
-    }
-
-    public void setStartDate(Date date) {
-        this.startDate = date;
-        this.lastUpdateDate = new Date();
+        User.addlog(LogType.MODIFY,
+                "Modification du status à " + newStatus.displayName + " pour le problème " + getDisplayName());
     }
 
     @Override
@@ -105,16 +118,16 @@ public class Problem implements Item {
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         var b = new StringBuilder()
-            .append(this.id).append(';')
-            .append(formatter.format(this.startDate)).append(';');
-        if(this.endDate != null)
+                .append(this.id).append(';')
+                .append(formatter.format(this.startDate)).append(';');
+        if (this.endDate != null)
             b.append(formatter.format(this.endDate)).append(';');
-        if(this.client != null)
+        if (this.client != null)
             b.append(this.client.getFirstName()).append(';')
-            .append(this.client.getName()).append(';');
-        if(this.campground != null)
+                    .append(this.client.getName()).append(';');
+        if (this.campground != null)
             b.append(this.campground.getId()).append(';');
-        if(this.reservation != null)
+        if (this.reservation != null)
             b.append(this.reservation.getId()).append(';');
         return b.toString().trim().toLowerCase();
     }

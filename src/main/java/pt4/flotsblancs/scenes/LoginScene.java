@@ -14,11 +14,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import pt4.flotsblancs.components.FlotsBlancsLogo;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.components.FlotsBlancsLogo;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class LoginScene extends BorderPane implements IScene {

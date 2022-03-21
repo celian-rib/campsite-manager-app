@@ -1,5 +1,6 @@
 package pt4.flotsblancs.database.model;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -7,10 +8,12 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.*;
+import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.scenes.items.Item;
 
-@NoArgsConstructor
 @EqualsAndHashCode
+@NoArgsConstructor
 @DatabaseTable(tableName = "clients")
 public class Client implements Item {
 
@@ -19,42 +22,77 @@ public class Client implements Item {
     private int id;
 
     @Getter
-    @Setter
-    @DatabaseField(uniqueCombo = true, canBeNull = false)
+    @DatabaseField(canBeNull = false)
     private String name;
 
     @Getter
-    @Setter
-    @DatabaseField(uniqueCombo = true, canBeNull = false, columnName = "first_name")
+    @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
 
     @Getter
-    @Setter
     @DatabaseField
     private String preferences;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false)
     private String addresse;
 
     @Getter
-    @Setter
     @DatabaseField(canBeNull = false)
     private String phone;
+    
+    @Getter
+    @DatabaseField(canBeNull = false)
+    private String email;
 
     @Getter
     @ForeignCollectionField(eager = false)
     private Collection<Problem> problems;
 
     @Getter
-    @Setter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Reservation> reservations;
 
-    public Client(String name, String firstName) {
-        this.name = name;
+
+    public Client(String name) throws SQLException {
+        this.firstName = "Jean";
+        this.name = "Dupond";
+        this.addresse = "Adresse";
+        this.phone = "00 00 00 00 00";
+        this.preferences = null;
+        Database.getInstance().getClientsDao().create(this);
+        Database.getInstance().getClientsDao().refresh(this);
+        User.addlog(LogType.ADD, "Ajout d'un nouveau client");
+    }
+
+    public void setPhone(String phone) {
+        User.addlog(LogType.MODIFY, "Téléphone du client " + getDisplayName() + " changé pour " + phone);
+        this.phone = phone;
+    }
+
+    public void setAddresse(String addresse) {
+        User.addlog(LogType.MODIFY, "Addresse du client " + getDisplayName() + " changé pour " + addresse);
+        this.addresse = addresse;
+    }
+
+    public void setPreferences(String preferences) {
+        User.addlog(LogType.MODIFY, "Préférences du client " + getDisplayName() + " changé pour " + preferences);
+        this.preferences = preferences;
+    }
+
+    public void setFirstName(String firstName) {
+        User.addlog(LogType.MODIFY, "Prénom du client " + getDisplayName() + " changé pour " + firstName);
         this.firstName = firstName;
+    }
+
+    public void setName(String name) {
+        User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
+        this.name = name;
+    }
+    
+    public void setEmail(String email) {
+        User.addlog(LogType.MODIFY, "Email du client " + getDisplayName() + " changé pour " + email);
+        this.email = email;
     }
 
     public Reservation getOpenReservation() {

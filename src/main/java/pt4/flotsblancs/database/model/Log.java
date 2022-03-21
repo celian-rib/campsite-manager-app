@@ -30,7 +30,7 @@ public class Log {
     @Getter
     @Setter
     @DatabaseField(canBeNull = false)
-    private Date time;
+    private Date date;
 
     @Getter
     @Setter
@@ -39,6 +39,6 @@ public class Log {
 
     @Override
     public String toString() {
-        return "PB #" + id;
+        return user +" "+message+" "+date+" "+type;
     }
 }

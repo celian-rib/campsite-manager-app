@@ -1,27 +1,27 @@
-package pt4.flotsblancs.components;
+package pt4.flotsblancs.scenes.components;
 
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 
-public class ClientCard extends BorderPane {
+public class CampgroundCard extends BorderPane {
 
-    private Client client;
+    private CampGround camp;
 
     private MFXButton createOpenButton() {
         MFXButton openBtn = new MFXButton("");
-        var tooltip = new Tooltip("Voir la fiche du client");
+        var tooltip = new Tooltip("Voir la fiche de l'emplacement");
         tooltip.setShowDelay(new Duration(0));
         openBtn.setTooltip(tooltip);
 
@@ -30,20 +30,22 @@ public class ClientCard extends BorderPane {
         openBtn.setGraphic(openIcon);
         openBtn.setGraphicTextGap(10);
 
-        openBtn.setOnAction(e -> Router.goToScreen(Routes.CLIENTS, client));
+        openBtn.setOnAction(e -> Router.goToScreen(Routes.CAMPGROUNDS, camp));
+
         return openBtn;
     }
 
-    private HBox createClientInfos() {
+    private HBox createCampgroundInfos() {
         HBox container = new HBox(10);
 
-        FontIcon icon = new FontIcon("far-user-circle:30");
+        FontIcon icon = new FontIcon("fas-campground:25");
         icon.setIconColor(Color.rgb(51, 59, 97));
 
         VBox clientInfos = new VBox(2);
-        Label name = new Label(client.getFirstName() + " " + client.getName());
+        Label name = new Label("Emplacement #" + camp.getId());
         name.setFont(new Font(15));
-        Label id = new Label("#" + client.getId() + " - " + client.getPhone());
+
+        Label id = new Label("Prix / Jours : " + camp.getPricePerDays() + "€");
         id.setFont(new Font(11));
         id.setTextFill(Color.GRAY);
         clientInfos.getChildren().addAll(name, id);
@@ -53,10 +55,14 @@ public class ClientCard extends BorderPane {
         return container;
     }
 
-    public ClientCard(Client client, int width) {
-        this.client = client;
-        setLeft(createClientInfos());
-        setRight(createOpenButton());
+    public CampgroundCard(CampGround camp, int width) {
         setMaxWidth(width);
+        refresh(camp);
+    }
+
+    public void refresh(CampGround camp) {
+        this.camp = camp;
+        setLeft(createCampgroundInfos());
+        setRight(createOpenButton());
     }
 }
