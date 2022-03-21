@@ -8,7 +8,9 @@ import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.PTPalette;
 import pt4.flotsblancs.utils.DateUtils;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -424,5 +426,18 @@ public class Reservation implements Item {
     public void setBill(byte[] fileData) {
         User.addlog(LogType.ADD, "Génération de la facture de la réservation #" + id);
         this.bill = fileData;
+    }
+
+    @Override
+    public Color getStatusColor() {
+        if (canceled) return PTPalette.BLACK;
+        if (isInPast()) return PTPalette.DARK_RED;
+        System.out.println(problems.size());
+        if (problems.size() > 0) return PTPalette.ORANGE;
+        if (depositDate != null) {
+            return paymentDate != null ? PTPalette.GREEN : PTPalette.YELLOW;
+        }
+        return PTPalette.RED;
+
     }
 }

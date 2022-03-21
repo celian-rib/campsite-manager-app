@@ -1,5 +1,7 @@
 package pt4.flotsblancs.scenes.items;
 
+import javafx.scene.paint.Color;
+
 public interface Item {
 	/**
 	 * 
@@ -20,4 +22,10 @@ public interface Item {
 	 * parmis les données de l'item
 	 */
 	public String getSearchString();
+
+	/**
+	 * 
+	 * @return Une Paint javafx qui définit l'état de l'item
+	 */
+	public Color getStatusColor();
 }

@@ -6,7 +6,11 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
+import pt4.flotsblancs.scenes.utils.PTPalette;
+
 import com.j256.ormlite.table.DatabaseTable;
+
+import javafx.scene.paint.Color;
 
 import java.security.*;
 import java.sql.SQLException;
@@ -160,5 +164,10 @@ public class User implements Item {
     @Override
     public String getSearchString() {
         return String.join(";", getFirstName(), getName(), getLogin(), "#"+getId());
+    }
+
+    @Override
+    public Color getStatusColor() {
+        return this.isAdmin ? PTPalette.DARK_RED : PTPalette.BLUE;
     }
 }
