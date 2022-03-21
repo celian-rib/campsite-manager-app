@@ -168,6 +168,6 @@ public class User implements Item {
 
     @Override
     public Color getStatusColor() {
-        return this.isAdmin ? StatusColors.DARK_RED : StatusColors.BLUE;
+        return this.isAdmin ? StatusColors.RED : StatusColors.BLUE;
     }
 }

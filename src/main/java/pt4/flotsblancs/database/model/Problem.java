@@ -138,7 +138,7 @@ public class Problem implements Item {
     public Color getStatusColor() {
         switch(status) {
             case OPEN:
-                return StatusColors.ORANGE;
+                return StatusColors.BLUE;
             case OPEN_URGENT:
                 return StatusColors.RED;
             default:

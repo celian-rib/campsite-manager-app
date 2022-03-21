@@ -430,12 +430,12 @@ public class Reservation implements Item {
 
     @Override
     public Color getStatusColor() {
-        if (canceled) return StatusColors.BLACK;
-        if (isInPast()) return StatusColors.DARK_RED;
-        if (problems.size() > 0) return StatusColors.ORANGE;
-        if (depositDate != null) {
-            return paymentDate != null ? StatusColors.GREEN : StatusColors.YELLOW;
-        }
-        return StatusColors.RED;
+        if (canceled) 
+            return StatusColors.BLACK;
+        if (depositDate != null)
+            return paymentDate != null ? StatusColors.GREEN : StatusColors.BLUE;
+        if (isInPast())
+            return StatusColors.RED;
+        return StatusColors.YELLOW;
     }
 }
