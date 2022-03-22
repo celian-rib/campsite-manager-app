@@ -17,6 +17,8 @@ variables:
   DB_USER: "$DB_USER"
   DB_PASSWORD: "$DB_PASSWORD"
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS: "-s ci_settings.xml --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
 
 stages:
 - maven-tests
@@ -39,5 +41,4 @@ sast:
 
 
 include:
-- local: /Maven.gitlab-ci.yml
 - template: Security/SAST.gitlab-ci.yml
