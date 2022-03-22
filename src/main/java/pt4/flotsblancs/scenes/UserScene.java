@@ -23,6 +23,7 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.components.ConfirmButton;
+import pt4.flotsblancs.scenes.components.HBoxSpacer;
 import pt4.flotsblancs.scenes.components.PromptedTextField;
 import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.items.ItemScene;
@@ -34,15 +35,20 @@ public class UserScene extends ItemScene<User> {
     private Label title;
     private Label roleLabel;
     private User stagiaire;
+
+    private Spinner<Integer> hoursSpinner;
+    private MFXCheckbox isAdmin;
+
     private MFXTextField firstName;
     private MFXTextField lastName;
     private MFXTextField login;
-    private Spinner<Integer> heures;
-    private MFXCheckbox isAdmin;
-    private MFXButton resetBtn;
-    private HBox resetLayout;
-    private VBox credentialsBox;
+
     private MFXTextField newPwdTxtField;
+
+    private MFXButton cancelResetBtn;
+    private MFXButton validateResetBtn;
+
+    private MFXButton resetBtn;
     private MFXButton saveButton;
 
     private ChangeListener<? super Object> changeListener = (obs, oldVal, newVal) -> {
@@ -77,8 +83,6 @@ public class UserScene extends ItemScene<User> {
 
         container.getChildren().add(createHeader());
         container.getChildren().add(new VBoxSpacer());
-        container.getChildren().add(createTopSlot());
-        container.getChildren().add(new VBoxSpacer());
         container.getChildren().add(createMiddleSlot());
         container.getChildren().add(new VBoxSpacer());
         container.getChildren().add(createFooter());
@@ -86,15 +90,14 @@ public class UserScene extends ItemScene<User> {
         return container;
     }
 
-    /**
-     * @return Header de la page (Numéro de réservations + Label avec dates)
-     */
     private BorderPane createHeader() {
         BorderPane container = new BorderPane();
 
+        String role = stagiaire.isAdmin() ? "Administrateur" : "Personnel";
+
         VBox nameAndRole = new VBox();
 
-        roleLabel = new Label(stagiaire.isAdmin() ? "Administrateur" : "Personnel");
+        roleLabel = new Label(role);
 
         title = new Label(stagiaire.getDisplayName());
         title.setFont(new Font(24));
@@ -102,19 +105,38 @@ public class UserScene extends ItemScene<User> {
 
         nameAndRole.getChildren().addAll(title, roleLabel);
 
-        var stagiaireId = new Label("#" + stagiaire.getId());
-        stagiaireId.setFont(new Font(13));
-        stagiaireId.setTextFill(Color.DARKGREY);
+        var stagiaireId = new Label("Personnel #" + stagiaire.getId());
+        stagiaireId.setFont(new Font(17));
+        stagiaireId.setTextFill(Color.GREY);
 
         container.setLeft(nameAndRole);
         container.setRight(stagiaireId);
         return container;
     }
 
-    /**
-     * @return Header de la page (Numéro de réservations + Label avec dates)
-     */
-    private VBox createTopSlot() {
+    private HBox passwordResetButtons() {
+        HBox container = new HBox(8);
+
+        cancelResetBtn = new MFXButton("Annuler");
+        cancelResetBtn.getStyleClass().add("action-button-outlined");
+        cancelResetBtn.setVisible(false);
+        cancelResetBtn.setOnAction(e -> {
+            newPwdTxtField.setVisible(false);
+            resetBtn.setVisible(true);
+            cancelResetBtn.setVisible(false);
+            validateResetBtn.setVisible(false);
+        });
+
+        validateResetBtn = new MFXButton("Valider");
+        validateResetBtn.getStyleClass().add("action-button");
+        validateResetBtn.setVisible(false);
+        validateResetBtn.setOnAction(e -> handlePasswordReset());
+
+        container.getChildren().addAll(cancelResetBtn, new HBoxSpacer(), validateResetBtn);
+        return container;
+    }
+
+    private VBox createPersonnalInfosContainer() {
         VBox container = new VBox(8);
         container.setAlignment(Pos.CENTER_LEFT);
 
@@ -128,77 +150,71 @@ public class UserScene extends ItemScene<User> {
         login.textProperty().addListener(changeListener);
 
         container.getChildren().addAll(firstName, lastName, login);
+
+        newPwdTxtField = new PromptedTextField("", "Nouveau mot de passe");
+        newPwdTxtField.setVisible(false);
+
+        container.getChildren().addAll(newPwdTxtField, passwordResetButtons());
+
         return container;
     }
 
-    private void showResetPwdLayout() {
-        newPwdTxtField = new MFXTextField();
-        MFXButton validateBtn = new MFXButton("Valider");
-        MFXButton cancelBtn = new MFXButton("Annuler");
-        validateBtn.setOnAction(e -> handleReset(true));
-        cancelBtn.setOnAction(e -> handleReset(false));
-        validateBtn.getStyleClass().add("action-button");
-        cancelBtn.getStyleClass().add("action-button-outlined");
-        resetLayout = new HBox(5, newPwdTxtField, validateBtn, cancelBtn);
-        credentialsBox.getChildren().remove(resetBtn);
-        credentialsBox.getChildren().add(resetLayout);
-    }
-
-    private void handleReset(Boolean confirmed) {
-        String newPwd = newPwdTxtField.getText().trim();
-        var shown = credentialsBox.getChildren();
-        shown.remove(resetLayout);
-        shown.add(resetBtn);
-        System.out.println(newPwd);
-        if (confirmed && !newPwd.isEmpty()) {
-            stagiaire.setPassword(User.sha256(newPwd));
-            try {
-                Database.getInstance().getUsersDao().update(stagiaire);
-            } catch (SQLException e) {
-                // TODO logging correct
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * @return Header de la page (Numéro de réservations + Label avec dates)
-     */
-    private BorderPane createMiddleSlot() {
-        BorderPane container = new BorderPane();
-
+    private VBox createHoursContainer() {
+        var container = new VBox(8);
         var heuresLabel = new Label("Heures hebdomadaires");
         SpinnerValueFactory<Integer> vFact = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,
                 7 * 24, stagiaire.getWeeklyHours());
-        heures = new Spinner<Integer>();
-        heures.setEditable(true);
-        heures.setValueFactory(vFact);
+        hoursSpinner = new Spinner<Integer>();
+        hoursSpinner.setEditable(true);
+        hoursSpinner.setValueFactory(vFact);
+        hoursSpinner.valueProperty().addListener(changeListener);
 
-        var adminLabel = new Label("Admin ?");
+        container.getChildren().addAll(heuresLabel, hoursSpinner);
+        return container;
+    }
+
+    private HBox createAdminSelectionContainer() {
+        var container = new HBox(8);
+        container.setAlignment(Pos.CENTER_LEFT);
+        var adminLabel = new Label("Administrateur");
 
         isAdmin = new MFXCheckbox();
         isAdmin.setSelected(stagiaire.isAdmin());
         isAdmin.setDisable(User.getConnected().equals(stagiaire));
+        isAdmin.selectedProperty().addListener(changeListener);
 
-        VBox middle = new VBox(adminLabel, isAdmin);
-
-        container.setCenter(middle);
-        container.setLeft(heuresLabel);
-        container.setRight(heures);
+        container.getChildren().addAll(isAdmin, adminLabel);
         return container;
     }
 
-    /**
-     * @return Footer de la page (Bouton suppression)
-     */
+    private HBox createMiddleSlot() {
+        HBox container = new HBox();
+
+        var rightContainer = new VBox(30);
+
+        rightContainer.getChildren().add(createHoursContainer());
+        rightContainer.getChildren().add(createAdminSelectionContainer());
+
+        container.getChildren().add(new HBoxSpacer());
+        container.getChildren().add(createPersonnalInfosContainer());
+        container.getChildren().add(new HBoxSpacer());
+        container.getChildren().add(rightContainer);
+        container.getChildren().add(new HBoxSpacer());
+        return container;
+    }
+
     private HBox createFooter() {
         HBox container = new HBox(8);
         container.setAlignment(Pos.CENTER_RIGHT);
 
-        resetBtn = new MFXButton("Réinitialiser le mot de passe.");
+        resetBtn = new MFXButton("Réinitialiser le mot de passe");
         resetBtn.getStyleClass().add("action-button-outlined");
         resetBtn.setOnAction(e -> {
-            showResetPwdLayout();
+            newPwdTxtField.setVisible(true);
+            newPwdTxtField.setText("");
+            resetBtn.setVisible(false);
+            validateResetBtn.setVisible(true);
+            cancelResetBtn.setVisible(true);
         });
 
         ConfirmButton deleteUserBtn = new ConfirmButton("Supprimer");
@@ -225,6 +241,23 @@ public class UserScene extends ItemScene<User> {
         return container;
     }
 
+    private void handlePasswordReset() {
+        String newPwd = newPwdTxtField.getText().trim();
+        if (newPwd.isEmpty())
+            return;
+        newPwdTxtField.setVisible(false);
+        resetBtn.setVisible(true);
+        cancelResetBtn.setVisible(false);
+        validateResetBtn.setVisible(false);
+        try {
+            stagiaire.setPassword(User.sha256(newPwd));
+            Database.getInstance().getUsersDao().update(stagiaire);
+            Router.showToast(ToastType.SUCCESS, "Mot de passe mis à jour");
+        } catch (SQLException e) {
+            ExceptionHandler.updateIssue(e);
+        }
+    }
+
     private void updateDatabase(User stagiaire) {
         if (stagiaire == null)
             return;
@@ -235,8 +268,8 @@ public class UserScene extends ItemScene<User> {
                 stagiaire.setName(lastName.getText().trim());
             if (!stagiaire.getLogin().equals(login.getText().trim()))
                 stagiaire.setLogin(login.getText().trim());
-            if (!stagiaire.getWeeklyHours().equals(heures.getValue()))
-                stagiaire.setWeeklyHours(heures.getValue());
+            if (!stagiaire.getWeeklyHours().equals(hoursSpinner.getValue()))
+                stagiaire.setWeeklyHours(hoursSpinner.getValue());
             if (!stagiaire.isAdmin() == isAdmin.selectedProperty().get())
                 stagiaire.setAdmin(isAdmin.selectedProperty().get());
             Database.getInstance().getUsersDao().update(stagiaire);
@@ -250,5 +283,4 @@ public class UserScene extends ItemScene<User> {
     protected List<User> queryAll() throws SQLException {
         return Database.getInstance().getUsersDao().queryForAll();
     }
-
 }
