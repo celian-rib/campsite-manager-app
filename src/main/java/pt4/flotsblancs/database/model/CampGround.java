@@ -36,7 +36,7 @@ public class CampGround implements Item {
     @Getter
     @Setter
     @DatabaseField(canBeNull = false, columnName = "price_per_day")
-    private float pricePerDays;
+    private int pricePerDays;
 
     @Getter
     @Setter
