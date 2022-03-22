@@ -2,6 +2,8 @@ package pt4.flotsblancs.scenes.items;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -54,11 +56,16 @@ public abstract class ItemScene<I extends Item> extends BorderPane
      * Appelée au moment ou le bouton ajouter
      */
     protected void onAddButtonClicked() {
-        System.out.println("Add button not implemented for page " + getName());
+        System.out.println("Bouton d'ajout pas implémenté sur la page " + getName());
+    };
+
+    protected void onContainerUnfocus() {
+        // Peut être implémentée par les enfants
     };
 
     /**
-     * Met en place le BorderPane contenant à gauche la liste des items et à droite l'item
+     * Met en place le BorderPane contenant à gauche la liste des items et à droite
+     * l'item
      * selectionné
      */
     @Override
@@ -72,12 +79,16 @@ public abstract class ItemScene<I extends Item> extends BorderPane
 
     @Override
     public void onFocus() {
+        updateItemList();
+    }
+
+    void updateItemList() {
         itemList.setIsLoading(true);
         final Task<List<I>> updateListTask = new Task<List<I>>() {
             protected java.util.List<I> call() {
                 List<I> allItems;
                 try {
-                    allItems = queryAll();
+                    allItems = queryAll().stream().filter(i -> i.isForeignCorrect()).collect(Collectors.toList());
                     Platform.runLater(() -> itemList.updateItems(allItems));
                     return allItems;
                 } catch (SQLException e) {
@@ -90,18 +101,17 @@ public abstract class ItemScene<I extends Item> extends BorderPane
                 itemList.setIsLoading(false);
             };
 
-            protected void failed() {};
+            protected void failed() {
+                ExceptionHandler.loadIssue(new SQLException());
+            };
         };
 
         new Thread(updateListTask).start();
     }
 
-    protected void onContainerUnfocus() {
-
-    };
-
     /**
-     * Met à jour le conteneur droit de la page, affichant les informations de l'item sélectionné
+     * Met à jour le conteneur droit de la page, affichant les informations de
+     * l'item sélectionné
      * 
      * @param item item selectionné qui doit être affiché
      */
@@ -130,6 +140,11 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         stack.getChildren().addAll(shadowPane, container);
 
         setCenter((Parent) stack);
+    }
+
+    protected void onItemDelete(Item i) {
+        updateContainer(null);
+        updateItemList();
     }
 
     @Override

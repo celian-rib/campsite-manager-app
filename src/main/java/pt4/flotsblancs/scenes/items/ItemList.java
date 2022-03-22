@@ -21,7 +21,6 @@ import javafx.scene.effect.Shadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import pt4.flotsblancs.database.model.Reservation;
 
 public class ItemList<I extends Item> extends StackPane {
@@ -110,9 +109,8 @@ public class ItemList<I extends Item> extends StackPane {
 
     private ArrayList<ItemPane<I>> createListButtons(List<I> items) {
         ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
-
         for (I i : items)
-            listButtons.add(createListButton(i));
+            listButtons.add(new ItemPane<I>(i, CONTENT_WIDTH - 15));
         return listButtons;
     }
 
@@ -123,6 +121,7 @@ public class ItemList<I extends Item> extends StackPane {
             boolean isReservation = items.get(0) instanceof Reservation;
             items.sort((i1, i2) -> {
                 if (isReservation) {
+                    // TODO bouger ça en dehors, la comparaison ici doit rester abstraite
                     var r1 = (Reservation) i1;
                     var r2 = (Reservation) i2;
 
@@ -198,7 +197,7 @@ public class ItemList<I extends Item> extends StackPane {
      * @param item
      */
     public void selectItem(I item) {
-        listView.getSelectionModel().select(new ItemPane<I>(item));
+        listView.getSelectionModel().select(new ItemPane<I>(item, CONTENT_WIDTH - 15));
         itemScene.updateContainer(item);
     }
 
@@ -234,46 +233,5 @@ public class ItemList<I extends Item> extends StackPane {
         container.getChildren().add(btn);
         btn.setMinWidth(CONTENT_WIDTH);
         return container;
-    }
-
-    private ItemPane<I> createListButton(I item) {
-        ItemPane<I> button = new ItemPane<I>(item);
-        // On aligne verticalement car c'est moche sinon
-        button.setPadding(new Insets(6, 0, 0, 0));
-        button.setPrefHeight(30);
-
-        Text display = new Text(item.getDisplayName());
-        display.setFill(Color.rgb(50, 60, 100));
-        display.setStyle("-fx-font-weight: bold");
-
-        Text id = new Text("#" + item.getId());
-        id.setFill(Color.rgb(50, 50, 80));
-        id.setStyle("-fx-font-weight: bold");
-
-        button.setLeft(display);
-        button.setRight(id);
-        button.setMaxWidth(CONTENT_WIDTH - 15);
-        return button;
-    }
-
-    private class ItemPane<T extends Item> extends BorderPane {
-        private T item;
-
-        public ItemPane(T item) {
-            super();
-            this.item = item;
-        }
-
-        public T getItem() {
-            return this.item;
-        }
-
-        @Override
-        public boolean equals(Object anObject) {
-            if (this == anObject) {
-                return true;
-            }
-            return anObject instanceof Item && this.getItem().equals(anObject);
-        }
     }
 }

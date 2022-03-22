@@ -2,7 +2,9 @@ package pt4.flotsblancs.database.model;
 
 import lombok.*;
 import pt4.flotsblancs.database.model.types.LogType;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -70,5 +72,15 @@ public class Stock implements Item {
                 .append(this.item).append(';')
                 .append(this.storageLocation).append(';')
                 .toString().trim().toLowerCase();
+    }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+    
+    @Override
+    public Color getStatusColor() {
+        return this.quantity < this.quantityAlertThreshold ? StatusColors.RED : StatusColors.GREEN;
     }
 }

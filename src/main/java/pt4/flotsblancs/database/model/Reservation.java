@@ -8,7 +8,9 @@ import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 import pt4.flotsblancs.utils.DateUtils;
 
 import java.math.RoundingMode;
@@ -432,5 +434,21 @@ public class Reservation implements Item {
     public void setBill(byte[] fileData) {
         User.addlog(LogType.ADD, "Génération de la facture de la réservation #" + id);
         this.bill = fileData;
+    }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return client != null && campground != null && problems != null;
+    }
+
+    @Override
+    public Color getStatusColor() {
+        if (canceled) 
+            return StatusColors.BLACK;
+        if (depositDate != null)
+            return paymentDate != null ? StatusColors.GREEN : StatusColors.BLUE;
+        if (isInPast())
+            return StatusColors.RED;
+        return StatusColors.YELLOW;
     }
 }

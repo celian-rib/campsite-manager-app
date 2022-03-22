@@ -7,7 +7,9 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 import com.j256.ormlite.field.DatabaseField;
 
@@ -93,5 +95,15 @@ public class CampGround implements Item {
     public String getSearchString() {
         return String.join(";", getDescription(), getAllowedEquipments().getName(),
                 getProvidedServices().getName(), "#" + getId());
+    }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+
+    @Override
+    public Color getStatusColor() {
+        return StatusColors.GREEN;
     }
 }
