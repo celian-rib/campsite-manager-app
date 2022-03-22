@@ -39,4 +39,5 @@ sast:
 
 
 include:
+- local: /Maven.gitlab-ci.yml
 - template: Security/SAST.gitlab-ci.yml
