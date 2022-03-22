@@ -49,16 +49,16 @@ code_quality:
    after_script:
      - cat gl-code-quality-report.json
 
-spotbugs-sast:
-  dependencies:
-    - spotbug
-  script:
-    - /analyzer run -compile=false
-  variables:
-    MAVEN_REPO_PATH: ./.m2/repository
-  artifacts:
-    reports:
-      sast: gl-sast-report.json
+# spotbugs-sast:
+#   dependencies:
+#     - spotbug
+#   script:
+#     - /analyzer run -compile=false
+#   variables:
+#     MAVEN_REPO_PATH: ./.m2/repository
+#   artifacts:
+#     reports:
+#       sast: gl-sast-report.json
 
 codecoverage:
     image: maven:3.8-jdk-11-alpine
