@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,6 +25,7 @@ import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
 import pt4.flotsblancs.scenes.components.HBoxSpacer;
 import pt4.flotsblancs.scenes.components.ProblemsListCard;
+import pt4.flotsblancs.scenes.components.PromptedTextField;
 import pt4.flotsblancs.scenes.components.ReservationCard;
 import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.items.ItemScene;
@@ -140,15 +140,6 @@ public class ClientsScene extends ItemScene<Client> {
         return container;
     }
 
-    private MFXTextField createTextField(String text, String prompt) {
-        var textField = new MFXTextField();
-        textField.setText(text);
-        textField.setFloatingText(prompt);
-        textField.setFloatMode(FloatMode.INLINE);
-        textField.setMinWidth(180);
-        return textField;
-    }
-
     private VBox createCardsContainer() {
         VBox container = new VBox(CONTENT_SPACING);
         container.setAlignment(Pos.TOP_LEFT);
@@ -170,9 +161,9 @@ public class ClientsScene extends ItemScene<Client> {
         VBox container = new VBox(CONTENT_SPACING);
         container.setAlignment(Pos.CENTER);
 
-        name = createTextField(client.getName(), "Nom");
+        name = new PromptedTextField(client.getName(), "Nom");
         name.textProperty().addListener(changeListener);
-        firstName = createTextField(client.getFirstName(), "Prénom");
+        firstName = new PromptedTextField(client.getFirstName(), "Prénom");
         firstName.textProperty().addListener(changeListener);
 
         container.getChildren().addAll(name, firstName);
@@ -185,16 +176,16 @@ public class ClientsScene extends ItemScene<Client> {
 
         boolean isReduced = isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint());
         
-        phone = createTextField(client.getPhone(), "Téléphone");
+        phone = new PromptedTextField(client.getPhone(), "Téléphone");
         phone.setMinWidth(isReduced ? 180 : 350);
         phone.textProperty().addListener(changeListener);
 
 
-        adresse = createTextField(client.getAddresse(), "Adresse");
+        adresse = new PromptedTextField(client.getAddresse(), "Adresse");
         adresse.setMinWidth(isReduced ? 180 : 350);
         adresse.textProperty().addListener(changeListener);
 
-        preferences = createTextField(client.getPreferences(), "Préférences");
+        preferences = new PromptedTextField(client.getPreferences(), "Préférences");
         preferences.setMinWidth(isReduced ? 180 : 350);
         preferences.textProperty().addListener(changeListener);
 
