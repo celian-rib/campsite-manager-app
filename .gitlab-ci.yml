@@ -34,10 +34,10 @@ maven-tests:
     -Dversion=19.3 -Dpackaging=jar -DskipTests
   - mvn test
 
-sast:
-  stage: test
-  variables:
-    SAST_JAVA_VERSION: 11
+# sast:
+#   stage: test
+#   variables:
+#     SAST_JAVA_VERSION: 11
 
 
 include:
