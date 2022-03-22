@@ -9,6 +9,7 @@ import java.util.List;
 
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.PriceUtils;
 import pt4.flotsblancs.scenes.utils.StatusColors;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -55,7 +56,7 @@ public class CampGround implements Item {
 
     @Override
     public String toString() {
-        return "#" + id + "   " + pricePerDays + "€/j  " + allowedEquipments.getChar();
+        return "#" + id + "   " + PriceUtils.priceToString(pricePerDays) + "€/j  " + allowedEquipments.getChar();
     }
 
     /**

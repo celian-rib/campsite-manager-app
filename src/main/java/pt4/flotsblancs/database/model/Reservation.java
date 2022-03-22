@@ -8,9 +8,11 @@ import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
+import pt4.flotsblancs.router.Router;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
+import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.DateUtils;
 
 import java.math.RoundingMode;
@@ -348,7 +350,8 @@ public class Reservation implements Item {
 
         var withService = rawPrice + selectedServices.getPricePerDay() * dayCount;
 
-        return (int) Math.floor(withService * cashBack.getReduction());
+        var i = (int) Math.floor(withService * cashBack.getReduction());
+        return i;
         
     }
 
@@ -356,7 +359,8 @@ public class Reservation implements Item {
      * @return Prix d'acompte de la réservation
      */
     public int getDepositPrice() {
-        return (int) Math.floor((getTotalPrice() * 0.3f) * cashBack.getReduction());// Acompte de 30%
+        var i = (int) Math.floor((getTotalPrice() * 0.3f) * cashBack.getReduction());// Acompte de 30%
+        return i;
     }
 
     /**
