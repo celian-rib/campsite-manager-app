@@ -1,45 +1,69 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
-
-image: maven:3.8.4-jdk-11
-
-cache:
-  paths:
-  - ".m2/repository"
+image: docker:latest
+services:
+  - docker:dind
 
 variables:
-  DB_URL: "$DB_URL"
-  DB_USER: "$DB_USER"
-  DB_PASSWORD: "$DB_PASSWORD"
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  MAVEN_CLI_OPTS: "-s ci_settings.xml --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
-  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  DOCKER_DRIVER: overlay
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache: 
+    paths:
+    - .m2/repository/
+    - target/
 
 stages:
-- maven-tests
-- test
-
-maven-tests:
-  stage: maven-tests
-  script:
-  - echo "DB_URL=$DB_URL" >> .env
-  - echo "DB_USER=$DB_USER" >> .env
-  - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-  - mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8
-    -Dversion=19.3 -Dpackaging=jar -DskipTests
-  - mvn test
-
-# sast:
-#   stage: test
-#   variables:
-#     SAST_JAVA_VERSION: 11
-
+  - install
+  - test
+  - codecoverage
+  - codeQuality
 
 include:
-# - template: Security/SAST.gitlab-ci.yml
-- template: Security/SAST-IaC.latest.gitlab-ci.yml
+   - template: SAST.gitlab-ci.yml
+   - template: Code-Quality.gitlab-ci.yml
+
+install:
+    image: maven:3.8-jdk-11-alpine
+    stage: install 
+    script:
+        - mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar -DskipTests
+        - mvn install
+
+unittests:
+    image: maven:3.8-jdk-11-alpine
+    stage: test 
+    script: 
+        - mvn $MAVEN_CLI_OPTS test 
+    artifacts:
+        reports:
+            junit:
+                - target/surefire-reports/TEST-*.xml
+
+code_quality:
+   stage: codeQuality
+   artifacts:
+     reports:
+       codequality: gl-code-quality-report.json
+   after_script:
+     - cat gl-code-quality-report.json
+
+spotbugs-sast:
+  dependencies:
+    - build
+  script:
+    - /analyzer run -compile=false
+  variables:
+    MAVEN_REPO_PATH: ./.m2/repository
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
+
+codecoverage:
+    image: maven:3.8-jdk-11-alpine
+    stage: codecoverage
+    script:
+        - mvn clean verify
+    artifacts:
+        paths:
+            - target/site/jacoco/index.html
