@@ -1,7 +1,7 @@
 image: maven:3.8.4-jdk-11
 
-include:
-  - template: Code-Quality.gitlab-ci.yml
+# include:
+#   - template: Code-Quality.gitlab-ci.yml
 
 cache:
   paths:
