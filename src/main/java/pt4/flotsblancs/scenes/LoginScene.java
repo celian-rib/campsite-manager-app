@@ -82,17 +82,21 @@ public class LoginScene extends BorderPane implements IScene {
 
         MFXButton bValider = new MFXButton("Valider", 150, 30);
         bValider.setButtonType(ButtonType.RAISED);
-        bValider.setOnAction(e -> {
-            if (User.logIn(tFId.getText(), pFMdp.getText())) {
-                Router.goToScreen(Routes.HOME);
-                Router.showToast(ToastType.SUCCESS,
-                        "Connecté.e en tant que " + User.getConnected().toString());
-            } else {
-                Router.showToast(ToastType.ERROR, "Identifiant ou mot de passe incorrect.");
-            }
-        });
+        
+        bValider.setOnAction(e -> handleLoginAction());
+        setOnKeyPressed(e -> handleLoginAction());
 
         loginForm.getChildren().addAll(label, tFId, pFMdp, bValider);
         return loginForm;
+    }
+
+    private void handleLoginAction() {
+        if (User.logIn(tFId.getText(), pFMdp.getText())) {
+            Router.goToScreen(Routes.HOME);
+            Router.showToast(ToastType.SUCCESS,
+                    "Connecté.e en tant que " + User.getConnected().toString());
+        } else {
+            Router.showToast(ToastType.ERROR, "Identifiant ou mot de passe incorrect.");
+        }
     }
 }

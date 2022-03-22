@@ -33,6 +33,7 @@ import pt4.flotsblancs.scenes.components.*;
 import pt4.flotsblancs.scenes.components.ComboBoxes.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
+import pt4.flotsblancs.scenes.utils.PriceUtils;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.PDFGenerator;
 
@@ -133,8 +134,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
         title.setText("Réservation  #" + reservation.getId() + cancelStr);
 
         dayCount.setText(reservation.getDayCount() + " jours");
-        depositPrice.setText("Prix acompte : " + reservation.getDepositPrice() + "€");
-        totalPrice.setText("Prix total : " + reservation.getTotalPrice() + "€");
+        depositPrice.setText("Prix acompte : " + PriceUtils.priceToString(reservation.getDepositPrice()) + "€");
+        totalPrice.setText("Prix total : " + PriceUtils.priceToString(reservation.getTotalPrice()) + "€");
         sendBillBtn.setText(reservation.getBill() != null ? "Regénérer et envoyer facture"
                 : "Générer et envoyer facture");
         campCard.refresh(reservation.getCampground());
