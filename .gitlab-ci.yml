@@ -17,7 +17,6 @@ variables:
   DB_USER: "$DB_USER"
   DB_PASSWORD: "$DB_PASSWORD"
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  SAST_JAVA_VERSION: 11
 
 stages:
 - maven-tests
@@ -35,6 +34,9 @@ maven-tests:
 
 sast:
   stage: test
+  variables:
+    SAST_JAVA_VERSION: 11
+
 
 include:
 - template: Security/SAST.gitlab-ci.yml
