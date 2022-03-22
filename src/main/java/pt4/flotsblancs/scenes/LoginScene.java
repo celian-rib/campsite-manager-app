@@ -2,15 +2,12 @@ package pt4.flotsblancs.scenes;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -67,8 +64,6 @@ public class LoginScene extends BorderPane implements IScene {
         ///// TO REMOVE ////////
     }
 
-    
-
     public VBox loginForm() {
         VBox loginForm = new VBox();
 
@@ -87,33 +82,21 @@ public class LoginScene extends BorderPane implements IScene {
 
         MFXButton bValider = new MFXButton("Valider", 150, 30);
         bValider.setButtonType(ButtonType.RAISED);
-        bValider.setOnAction(e -> {
-            if (User.logIn(tFId.getText(), pFMdp.getText())) {
-                Router.goToScreen(Routes.HOME);
-                Router.showToast(ToastType.SUCCESS,
-                        "Connecté.e en tant que " + User.getConnected().toString());
-            } else {
-                Router.showToast(ToastType.ERROR, "Identifiant ou mot de passe incorrect.");
-            }
-        });
-
-        setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent ke) {
-                if (ke.getCode().equals(KeyCode.ENTER)) {
-                    if (User.logIn(tFId.getText(), pFMdp.getText())) {
-                        Router.goToScreen(Routes.HOME);
-                        Router.showToast(ToastType.SUCCESS,
-                                "Connecté.e en tant que " + User.getConnected().toString());
-                    } else {
-                        Router.showToast(ToastType.ERROR, "Identifiant ou mot de passe incorrect.");
-                    }
-                }
-            }
-        });
+        
+        bValider.setOnAction(e -> handleLoginAction());
+        setOnKeyPressed(e -> handleLoginAction());
 
         loginForm.getChildren().addAll(label, tFId, pFMdp, bValider);
         return loginForm;
     }
 
+    private void handleLoginAction() {
+        if (User.logIn(tFId.getText(), pFMdp.getText())) {
+            Router.goToScreen(Routes.HOME);
+            Router.showToast(ToastType.SUCCESS,
+                    "Connecté.e en tant que " + User.getConnected().toString());
+        } else {
+            Router.showToast(ToastType.ERROR, "Identifiant ou mot de passe incorrect.");
+        }
+    }
 }
