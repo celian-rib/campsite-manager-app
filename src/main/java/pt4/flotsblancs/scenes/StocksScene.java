@@ -9,6 +9,7 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
@@ -215,6 +216,8 @@ public class StocksScene extends VBox implements IScene {
                 Router.goToScreen(Routes.HOME);
             }
             updateTable();
+            table.getSelectionModel().selectLast();
+            table.scrollTo(table.getSelectionModel().getSelectedItem()); 
         });
 
         return container;
