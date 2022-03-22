@@ -16,7 +16,7 @@ import pt4.flotsblancs.database.model.Reservation;
 public class Stats 
 {
 
-	enum Period {
+	public enum Period {
 		WEEKLY, MONTHLY, ANNUALY, TWO_YEAR, THREE_YEAR;
 	}
 	
@@ -96,11 +96,11 @@ public class Stats
         	Date end = p.getEndDate();
         	if(start != null & end != null)
         	{
-
+        		
         		Long startSeconds = start.getTime()/1000;
         		Long endSeconds   = end  .getTime()/1000; //Nombre de secondes
         		
-        		Long between = startSeconds - endSeconds; //Distance en seconde entre les deux dates
+        		Long between = endSeconds - startSeconds; //Distance en seconde entre les deux dates
         		
         		duration += between/3600/24; //On divise 3600 -> heures -> 24 -> jours, moyenne en jours
         		pbNb++;
