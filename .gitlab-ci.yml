@@ -25,14 +25,14 @@ include:
    - template: Code-Quality.gitlab-ci.yml
 
 install:
-    image: maven:3.8-jdk-11-alpine
+    image: maven:3.8-jdk-11
     stage: install 
     script:
         - mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar -DskipTests
         - mvn install
 
 unittests:
-    image: maven:3.8-jdk-11-alpine
+    image: maven:3.8-jdk-11
     stage: test 
     script: 
         - mvn $MAVEN_CLI_OPTS test 
@@ -61,7 +61,7 @@ code_quality:
 #       sast: gl-sast-report.json
 
 codecoverage:
-    image: maven:3.8-jdk-11-alpine
+    image: maven:3.8-jdk-11
     stage: codecoverage
     script:
         - mvn clean verify
