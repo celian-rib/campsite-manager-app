@@ -16,6 +16,7 @@ cache:
 stages:
   - install
   - test
+  - spotbug
   - codecoverage
   - codeQuality
 
@@ -50,7 +51,7 @@ code_quality:
 
 spotbugs-sast:
   dependencies:
-    - build
+    - spotbug
   script:
     - /analyzer run -compile=false
   variables:
