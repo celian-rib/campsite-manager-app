@@ -5,20 +5,26 @@
 # Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+
 image: maven:3.8.4-jdk-11
+
 cache:
   paths:
   - ".m2/repository"
+
 variables:
   DB_URL: "$DB_URL"
   DB_USER: "$DB_USER"
   DB_PASSWORD: "$DB_PASSWORD"
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  SAST_JAVA_VERSION: 11
+
 stages:
-- tests
+- maven-tests
 - test
-tests:
-  stage: tests
+
+maven-tests:
+  stage: maven-tests
   script:
   - echo "DB_URL=$DB_URL" >> .env
   - echo "DB_USER=$DB_USER" >> .env
@@ -26,7 +32,9 @@ tests:
   - mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8
     -Dversion=19.3 -Dpackaging=jar -DskipTests
   - mvn test
+
 sast:
   stage: test
+
 include:
 - template: Security/SAST.gitlab-ci.yml
