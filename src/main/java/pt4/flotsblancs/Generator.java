@@ -118,7 +118,7 @@ public class Generator {
         for (int i = 0; i < nbr; i++) {
             var cg = new CampGround();
             cg.setDescription(f.country().name());
-            cg.setPricePerDays(f.number().randomDigitNotZero());
+            cg.setPricePerDays(f.number().randomDigitNotZero()*100);
             cg.setSurface(f.number().randomDigitNotZero());
             cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);
             if (cg.getAllowedEquipments() == Equipment.MOBILHOME)

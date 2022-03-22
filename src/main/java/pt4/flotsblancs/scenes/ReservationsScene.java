@@ -128,6 +128,8 @@ public class ReservationsScene extends ItemScene<Reservation> {
         equipmentsComboBox.refresh();
         campComboBox.refresh();
         serviceComboBox.refresh();
+        cashBackComboBox.selectItem(reservation.getCashBack());
+
 
         // Rafraichit tous les labels de la page ayant une valeur calculé
         String cancelStr = reservation.getCanceled() ? " (Annulée)" : "";
@@ -399,6 +401,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         combo.getItems().addAll("Versé", "En attente");
         combo.setMinWidth(180);
         combo.setAnimated(false);
+
         return combo;
     }
 

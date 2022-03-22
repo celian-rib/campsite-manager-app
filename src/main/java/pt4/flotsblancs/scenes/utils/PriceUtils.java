@@ -1,5 +1,7 @@
 package pt4.flotsblancs.scenes.utils;
 
+import pt4.flotsblancs.router.Router;
+
 public class PriceUtils {
     
     public static String priceToString(int price){
