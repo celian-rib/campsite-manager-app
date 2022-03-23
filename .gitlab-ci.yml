@@ -26,7 +26,7 @@ tests:
   - mvn test
 
 build:
-  dependencies: ["maven-tests"]
+  dependencies: ["tests"]
   stage: build
   script:
   - scripts/buildArtifact.sh
