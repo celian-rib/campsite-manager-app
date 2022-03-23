@@ -2,6 +2,7 @@ package pt4.flotsblancs.database.model;
 
 import java.sql.SQLException;
 import java.util.Collection;
+
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -13,6 +14,7 @@ import pt4.flotsblancs.database.model.types.LogType;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
+import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
 
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -57,9 +59,9 @@ public class Client implements Item {
 
 
     public Client(String name) throws SQLException {
-        this.firstName = "Jean";
-        this.name = "Dupond";
-        this.addresse = "Adresse";
+        this.firstName = "NOUVEAU Prénom";
+        this.name = "NOUVEAU Nom";
+        this.addresse = "NOUVEAU Adresse";
         this.phone = "00 00 00 00 00";
         this.preferences = null;
         this.email = "jean.dupond@mail.com";
@@ -68,14 +70,21 @@ public class Client implements Item {
         User.addlog(LogType.ADD, "Ajout d'un nouveau client");
     }
 
-    public void setPhone(String phone) {
-        User.addlog(LogType.MODIFY, "Téléphone du client " + getDisplayName() + " changé pour " + phone);
-        this.phone = phone;
+    public void setPhone(String phone) throws ConstraintException {
+        if(TxtFieldValidation.phoneValidation(phone)){
+            this.phone = phone;
+            User.addlog(LogType.MODIFY, "Téléphone du client " + getDisplayName() + " changé pour " + phone);
+            return;
+        }
+        throw new ConstraintException("Téléphone invalide, modification annulée", false);
     }
 
-    public void setAddresse(String addresse) {
-        User.addlog(LogType.MODIFY, "Addresse du client " + getDisplayName() + " changé pour " + addresse);
-        this.addresse = addresse;
+    public void setAddresse(String addresse) throws ConstraintException {
+        if(!TxtFieldValidation.phoneValidation(addresse) && !TxtFieldValidation.emailValidation(addresse)){
+            User.addlog(LogType.MODIFY, "Addresse du client " + getDisplayName() + " changé pour " + addresse);
+            this.addresse = addresse;
+        }
+        throw new ConstraintException("Adresse invalide, modification annulée", false);
     }
 
     public void setPreferences(String preferences) {
@@ -93,9 +102,13 @@ public class Client implements Item {
         this.name = name;
     }
     
-    public void setEmail(String email) {
-        User.addlog(LogType.MODIFY, "Email du client " + getDisplayName() + " changé pour " + email);
-        this.email = email;
+    public void setEmail(String email) throws ConstraintException {
+        if(TxtFieldValidation.emailValidation(email)){
+            this.email = email;
+            User.addlog(LogType.MODIFY, "Email du client " + getDisplayName() + " changé pour " + email);
+            return;
+        }
+        throw new ConstraintException("Email invalide, modification annulée", false);
     }
 
     public Reservation getOpenReservation() {
