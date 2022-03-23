@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 class ItemPane<I extends Item> extends BorderPane {
     private I item;
 
-    public ItemPane(I item, int maxWith) {
+    ItemPane(I item, int maxWith) {
         this.item = item;
         // On aligne verticalement car c'est moche sinon
         setPadding(new Insets(0));
@@ -40,7 +40,7 @@ class ItemPane<I extends Item> extends BorderPane {
         setMaxWidth(maxWith);
     }
 
-    public I getItem() {
+    I getItem() {
         return this.item;
     }
 

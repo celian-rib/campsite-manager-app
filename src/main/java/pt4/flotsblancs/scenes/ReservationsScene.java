@@ -215,7 +215,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.BOTTOM_CENTER);
 
-        problemsContainer = new ProblemsListCard(reservation.getProblems());
+        problemsContainer = new ProblemsListCard(reservation);
 
         container.getChildren().add(createPaymentContainer());
         container.getChildren().add(new HBoxSpacer());
