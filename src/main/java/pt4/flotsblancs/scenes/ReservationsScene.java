@@ -363,13 +363,20 @@ public class ReservationsScene extends ItemScene<Reservation> {
             try {
                 var bill = PDFGenerator.generateReservationBillPDF(reservation);
                 reservation.setBill(bill.toByteArray());
-                MailSender.sendMail(reservation);
                 updateDatabase();
                 refreshPage();
             } catch (Exception e1) {
                 e1.printStackTrace();
                 Router.showToast(ToastType.ERROR,
                         "Une erreur est survenue durant la génération de la facture");
+            }
+
+            try {
+                MailSender.sendMail(reservation);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Router.showToast(ToastType.ERROR,
+                        "Une erreur est survenue durant l'envoi de l'email au client");
             }
         });
 
