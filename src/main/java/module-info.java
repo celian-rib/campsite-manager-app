@@ -12,6 +12,9 @@ module pt4.flotsblancs {
 	requires javafaker;
 	requires virtualizedfx;
 	requires itextpdf;
+	requires javax.mail.api;
+	requires java.activation;
+	requires org.apache.commons.text;
 	
 	opens pt4.flotsblancs to javafx.graphics,ormlite.jdbc;
 	opens pt4.flotsblancs.database to javafx.graphics,ormlite.jdbc;
