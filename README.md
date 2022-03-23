@@ -5,18 +5,39 @@
 ## Setup projet
 
 1. Clone le projet `git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
+
 2. Installer ojdbc (Gestionnaire base de donnée pour l'ORM)
     ```
     mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar
     ```
-2. Installer lombok (Gestionnaire base de donnée pour l'ORM)
-    ```
-    mvn install:install-file -Dfile=lombok.jar -DgroupId=org.projectlombok  -DartifactId=lombok -Dversion=1.18.22  -Dpackaging=jar
-    ```
-2. Installer le reste des dépendances `mvn clean package`
-4. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
-5. Lancer un serveur sql en local
+2. Installer le reste des dépendances `mvn install`
+
+4. Ouvrir le projet dans un IDE (VSCode ou Eclipse) :
+
+    - **VSCODE** :
+        1. Télécharger l'extension [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack)
+        2.  Ouvrir les paramètres UI de vscode et chercher "vmargs" :
+        ![](./assets/vscode-setup.png)
+        3. Ajouter ces arguments de lancement pour java
+        ```
+        --module-path "/CHEMIN/VERS/JAVAFX_SDK_A_TELECHARGER/lib" --add-modules javafx.controls,javafx.fxml
+        ```
+
+    - **Eclipse**
+        - TODO
+
+7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) 
+
+    - **VScode** :
+        - il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok) (Recharger VSCode si les erreurs persistent)
+
+    - **Eclipse**
+        - TODO
+
+5. Lancer un serveur sql en local ou se connecter à l'iut via tunnel ssh (expliqué plus bas)
+
 6. Editer le fichier `.env` et mettre les informations de connexion au serveur SQL
+
 ```bash
 DB_URL=<url>
 DB_USER=<user>
@@ -25,7 +46,6 @@ SECOND_SCREEN=1 # Ajouter si l'on veut démarrer l'app sur l'écran secondaire
 FULL_SCREEN=1 # Ajouter si l'on veut démarrer l'app en plein écran
 DEFAULT_ROUTE=<ROUTENAME> # Ajouter pour changer la route par défaut (Permet de gagner du temps en développement)
 ```
-7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) , pour VScode il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok) (Recharger VSCode si les erreurs persistent)
 
 ## Setup tunnel SSH (Se connecter à la BD depuis chez soi)
 > La base est actuellement hébergée sur l'intranet de l'IUT, pour établir une connexion avec une machine n'étant pas sur le réseau de l'IUT il faut setup un tunnel ssh
@@ -76,7 +96,7 @@ mvn test
 
 ## Build le projet
 
-### A faire pour le premier build
+#### A faire pour le premier build
 
 1. Installer le **SDK** de JavaFX depuis https://gluonhq.com/products/javafx/ et le dézipper dans une espace adapté.
 
@@ -96,7 +116,7 @@ java --module-path "path/to/javafx/lib" --add-modules javafx.controls,javafx.fxm
 ```
 Ne pas oublier de faire chmod u+x launcher.sh.
 
-### Les autres builds
+#### Les autres builds
 
 1. Aller à la racine du projet (/pt4), et effectuer la commande : mvn clean package
 
@@ -106,7 +126,7 @@ Ne pas oublier de faire chmod u+x launcher.sh.
 
 4. Pour la lancer, utilisez votre launcher avec la commande sur linux ./launcher.sh, ou sur windows en cliquant sur le .bat
 
-### Résoudre erreur (Type mismatch: cannot convert from Date to Date)
+## Résoudre erreur (Type mismatch: cannot convert from Date to Date)
 
 > C'est une erreur entre vscode et maven, pour le coup le code n'est probablement pas le problème
 
