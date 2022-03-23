@@ -23,7 +23,7 @@ public class DateHourHeader extends BorderPane {
         currentPage.setFont(new Font(24));
         currentPage.setTextFill(Color.rgb(51, 59, 97));
 
-        String pattern = "hh:mm:ss dd MMM, yyyy";
+        String pattern = "HH:mm:ss dd MMM, yyyy";
         SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.FRANCE);
 
         Label hourLabel = new Label(format.format(new Date()));
