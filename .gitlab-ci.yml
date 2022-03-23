@@ -23,6 +23,7 @@ variables:
 stages:
 - maven-tests
 - test
+- build
 
 maven-tests:
   stage: maven-tests
@@ -30,16 +31,13 @@ maven-tests:
   - echo "DB_URL=$DB_URL" >> .env
   - echo "DB_USER=$DB_USER" >> .env
   - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-  - mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8
-    -Dversion=19.3 -Dpackaging=jar -DskipTests
+  - mvn install -DskipTests
   - mvn test
 
-# sast:
-#   stage: test
-#   variables:
-#     SAST_JAVA_VERSION: 11
-
+build:
+  stage: build
+  script:
+  - scripts/buildArtifact.sh
 
 include:
-# - template: Security/SAST.gitlab-ci.yml
 - template: Security/SAST-IaC.latest.gitlab-ci.yml
