@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import lombok.*;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
+import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
 import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
@@ -142,9 +143,37 @@ public class Client implements Item {
         return reservations != null && problems != null;
     }
 
+    public boolean hasOpenProblem() {
+        if (problems.size() == 0) return false;
+        return problems
+        .stream()
+        .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
+    }
+
     @Override
     public Color getStatusColor() {
-        var hasProblem = problems.stream().anyMatch(p -> p.getEndDate() != null);
-        return hasProblem ? StatusColors.RED : StatusColors.BLUE;
+        return hasOpenProblem() ? StatusColors.RED : StatusColors.BLUE;
     }
+
+    private int getSortScore() {
+        int score = 0;
+        score -= this.getOpenReservation() != null ? 100 : 0;
+        //score -= this.hasOpenProblem()  ? 10 : 0;
+        System.out.println(this.toString());
+        return score;
+
+
+    }
+
+    @Override
+    public int compareTo(Item o) {
+        Client other = (Client)o;
+        return name.compareTo(other.getName());
+        // le tri par problème est compliqué à implémenter, l'utilisation de stream ralentit l'UI
+        // Et j'ai pas réussi à implémenter l'async.
+        
+        //int score = getSortScore(), otherScore = other.getSortScore();
+        //return (score - otherScore) + name.compareTo(other.getName());
+    }
+    
 }
