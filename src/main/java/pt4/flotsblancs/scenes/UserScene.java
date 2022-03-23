@@ -22,6 +22,7 @@ import javafx.scene.text.Font;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.components.ConfirmButton;
 import pt4.flotsblancs.scenes.components.HBoxSpacer;
 import pt4.flotsblancs.scenes.components.PromptedTextField;
@@ -72,6 +73,20 @@ public class UserScene extends ItemScene<User> {
         if (this.saveButton != null)
             if (!saveButton.isDisabled())
                 updateDatabase(stagiaire);
+    }
+
+    @Override
+    protected String addButtonText() {
+        return "Ajouter un utilisateur";
+    }
+
+    @Override
+    protected void onAddButtonClicked() {
+        try {
+            Router.goToScreen(Routes.USERS, new User("Jean"));
+        } catch (SQLException e) {
+            ExceptionHandler.loadIssue(e);
+        }
     }
 
     @Override

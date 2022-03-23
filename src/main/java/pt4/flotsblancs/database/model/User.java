@@ -65,6 +65,18 @@ public class User implements Item {
     @Getter
     private static User connected;
 
+    public User(String name) throws SQLException {
+        this.firstName = "NOUVEAU Prénom";
+        this.name = "NOUVEAU Nom";
+        this.isAdmin = false;
+        this.login = "NOUVEAU login";
+        this.password = User.sha256("flots-blancs");
+        this.weeklyHours = 35;
+        Database.getInstance().getUsersDao().create(this);
+        Database.getInstance().getUsersDao().refresh(this);
+        User.addlog(LogType.ADD, "Ajout d'un nouvel utilisateur");
+    }
+
     public static boolean isConnected() {
         return connected != null;
     }
