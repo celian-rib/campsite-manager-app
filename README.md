@@ -9,6 +9,10 @@
     ```
     mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar
     ```
+2. Installer lombok (Gestionnaire base de donnée pour l'ORM)
+    ```
+    mvn install:install-file -Dfile=lombok.jar -DgroupId=org.projectlombok  -DartifactId=lombok -Dversion=1.18.22  -Dpackaging=jar
+    ```
 2. Installer le reste des dépendances `mvn clean package`
 4. Ouvrir le projet dans un IDE (VSCode ou Eclipse)
 5. Lancer un serveur sql en local
