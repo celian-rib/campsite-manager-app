@@ -93,10 +93,10 @@ public class ProblemesScene extends ItemScene<Problem> {
     }
 
     private void refreshPage() {
-        startDate.setText("Date de début : " + DateUtils.toFormattedString(problem.getStartDate()));
-        endDate.setText("Date de fin : " + (problem.getEndDate() == null ? ""
+        startDate.setText("Date de début :   " + DateUtils.toFormattedString(problem.getStartDate()));
+        endDate.setText("Date de résolution :   " + (problem.getEndDate() == null ? "non résolu"
                 : DateUtils.toFormattedString(problem.getEndDate())));
-        lastUpdateDate.setText("Dernière mise à jour : " + problem.getLastUpdateDate().toString());
+        lastUpdateDate.setText("Dernière mise à jour :   " + DateUtils.toFormattedString(problem.getLastUpdateDate()));
     }
 
     private BorderPane createBottomSlot() {
