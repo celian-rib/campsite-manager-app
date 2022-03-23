@@ -274,6 +274,7 @@ public class UserScene extends ItemScene<User> {
                 stagiaire.setAdmin(isAdmin.selectedProperty().get());
             Database.getInstance().getUsersDao().update(stagiaire);
             Router.showToast(ToastType.SUCCESS, "Personnel mis à jour");
+            updateItemList();
         } catch (SQLException e) {
             ExceptionHandler.loadIssue(e);
         }

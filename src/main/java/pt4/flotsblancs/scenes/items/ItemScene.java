@@ -82,7 +82,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         updateItemList();
     }
 
-    void updateItemList() {
+    protected void updateItemList() {
         itemList.setIsLoading(true);
         final Task<List<I>> updateListTask = new Task<List<I>>() {
             protected java.util.List<I> call() {
