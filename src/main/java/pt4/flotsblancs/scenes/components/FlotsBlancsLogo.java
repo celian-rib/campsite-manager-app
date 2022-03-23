@@ -2,6 +2,8 @@ package pt4.flotsblancs.scenes.components;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -23,19 +25,14 @@ public class FlotsBlancsLogo extends VBox {
         setSpacing(10);
         ImageView icon = new ImageView();
 
-        try {
-            FileInputStream stream = new FileInputStream(
-                    "src/main/resources/" + (isDark ? "logo_dark.png" : "logo.png"));
-            Image img = new Image(stream);
-            img.heightProperty();
-            img.widthProperty();
-            icon.setFitHeight(size);
-            icon.setFitWidth(size);
-            icon.setImage(img);
-        } catch (FileNotFoundException e) {
-            System.err.println("Erreur chargement logo");
-            e.printStackTrace();
-        }
+        InputStream stream = getClass().getResourceAsStream(isDark ? "/logo_dark.png" : "/logo.png");
+		
+		Image img = new Image(stream);
+		img.heightProperty();
+		img.widthProperty();
+		icon.setFitHeight(size);
+		icon.setFitWidth(size);
+		icon.setImage(img);
 
         setAlignment(Pos.CENTER);
         setPadding(new Insets(30, 0, 0, 0));

@@ -98,7 +98,9 @@ Ne pas oublier de faire chmod u+x launcher.sh.
 
 2. L'application est build et est mise dans /target
 
-3. Pour la lancer, utilisez votre launcher avec la commande sur linux ./launcher.sh, ou sur windows en cliquant sur le .bat
+3. ajouter un .env à la racine du .jar en suivant les normes !
+
+4. Pour la lancer, utilisez votre launcher avec la commande sur linux ./launcher.sh, ou sur windows en cliquant sur le .bat
 
 ### Résoudre erreur (Type mismatch: cannot convert from Date to Date)
 
