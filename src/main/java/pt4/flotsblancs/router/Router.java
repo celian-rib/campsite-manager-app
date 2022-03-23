@@ -5,20 +5,13 @@ import java.util.HashMap;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 import lombok.Getter;
-import pt4.flotsblancs.scenes.CampgroundsScene;
-import pt4.flotsblancs.scenes.ClientsScene;
-import pt4.flotsblancs.scenes.ConnectionFallbackScene;
-import pt4.flotsblancs.scenes.DashboardScene;
-import pt4.flotsblancs.scenes.LoginScene;
-import pt4.flotsblancs.scenes.LogsScene;
-import pt4.flotsblancs.scenes.ProblemesScene;
-import pt4.flotsblancs.scenes.ProblemsAddScene;
-import pt4.flotsblancs.scenes.ReservationsScene;
-import pt4.flotsblancs.scenes.UserScene;
-import pt4.flotsblancs.scenes.StocksScene;
+
+import pt4.flotsblancs.scenes.*;
+import pt4.flotsblancs.scenes.items.IItemScene;
 import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.items.ItemScene;
+
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
@@ -181,9 +174,9 @@ public class Router {
     public static <I extends Item> void goToScreen(Routes newRoute, I item) {
         if (rootScene == null)
             return;
-        if (routes.get(newRoute) instanceof ItemScene<?>) {
+        if (routes.get(newRoute) instanceof IItemScene<?>) {
             @SuppressWarnings("unchecked")
-            ItemScene<I> nextScene = (ItemScene<I>) routes.get(newRoute);
+            IItemScene<I> nextScene = (IItemScene<I>) routes.get(newRoute);
             nextScene.selectItem(item);
         }
         log("[Router] Selecting " + item.getDisplayName() + " on "
