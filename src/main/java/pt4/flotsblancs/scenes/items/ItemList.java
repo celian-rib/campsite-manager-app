@@ -2,6 +2,7 @@ package pt4.flotsblancs.scenes.items;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -118,34 +119,7 @@ public class ItemList<I extends Item> extends StackPane {
         if(items.size() == 0)
             return;
         if (!filtered) {
-            boolean isReservation = items.get(0) instanceof Reservation;
-            items.sort((i1, i2) -> {
-                if (isReservation) {
-                    // TODO bouger ça en dehors, la comparaison ici doit rester abstraite
-                    var r1 = (Reservation) i1;
-                    var r2 = (Reservation) i2;
-
-                    return r1.getStartDate().compareTo(r2.getStartDate());
-                }
-                return i1.getId() - i2.getId();
-            });
-            if (isReservation) {
-                ArrayList<I> canceledAndPast = new ArrayList<I>();
-                int i = 0;
-                while (i < items.size()) {
-                    I it = items.get(i);
-                    Reservation r = (Reservation) it;
-                    if (r.getCanceled() || r.isInPast()) {
-                        canceledAndPast.add(it);
-                        items.remove(it);
-                        continue;
-                    }
-                    i++;
-                }
-                items.addAll(canceledAndPast);
-            }
-
-
+            Collections.sort(items);
             initialList = items;
         }
         listButtons = createListButtons(items);

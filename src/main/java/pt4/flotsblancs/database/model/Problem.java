@@ -142,4 +142,11 @@ public class Problem implements Item {
                 return StatusColors.GREEN;
         }
     }
+
+    @Override
+    public int compareTo(Item o) {
+        Problem other = (Problem) o;
+        
+        return (status.getCompareScale() + getId()) - (other.status.getCompareScale() + getId());
+    }
 }

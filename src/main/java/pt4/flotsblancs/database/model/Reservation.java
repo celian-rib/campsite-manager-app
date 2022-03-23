@@ -451,10 +451,23 @@ public class Reservation implements Item {
     public Color getStatusColor() {
         if (canceled) 
             return StatusColors.BLACK;
-        if (depositDate != null)
-            return paymentDate != null ? StatusColors.GREEN : StatusColors.BLUE;
         if (isInPast())
             return StatusColors.RED;
+        if (depositDate != null)
+            return paymentDate != null ? StatusColors.GREEN : StatusColors.BLUE;
         return StatusColors.YELLOW;
+    }
+
+    private int getCompareScale() {
+        if (isInPast() || canceled) return -10000; // Reservation passée ou annulée
+        if (depositDate == null && paymentDate == null) return 1000; // Non payé, pas d'accompte
+        if (paymentDate == null) return 100; // accompte payé
+        return 10; // payé
+    }
+
+    @Override
+    public int compareTo(Item o) {
+        Reservation other = (Reservation)o;
+        return (other.getCompareScale() - getCompareScale()) + this.getStartDate().compareTo(other.getStartDate());
     }
 }

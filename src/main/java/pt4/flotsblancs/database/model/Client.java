@@ -152,4 +152,11 @@ public class Client implements Item {
         // TODO -> rouge que si les problèmes sont ouverts
         return problems.size() > 0 ? StatusColors.RED : StatusColors.BLUE;
     }
+
+    @Override
+    public int compareTo(Item o) {
+        Client other = (Client)o;
+        return 0;
+    }
+    
 }
