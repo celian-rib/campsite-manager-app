@@ -35,6 +35,7 @@ import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.PriceUtils;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.utils.MailSender;
 import pt4.flotsblancs.utils.PDFGenerator;
 
 public class ReservationsScene extends ItemScene<Reservation> {
@@ -361,6 +362,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
             try {
                 var bill = PDFGenerator.generateReservationBillPDF(reservation);
                 reservation.setBill(bill.toByteArray());
+                MailSender.sendMail(reservation);
                 updateDatabase();
                 refreshPage();
             } catch (Exception e1) {
@@ -374,6 +376,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
             Router.showToast(ToastType.INFO, "Ouverture du fichier...");
             try {
                 PDFGenerator.openFile(reservation);
+                
             } catch (Exception e1) {
                 e1.printStackTrace();
                 Router.showToast(ToastType.ERROR,
