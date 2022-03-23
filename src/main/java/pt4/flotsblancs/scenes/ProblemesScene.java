@@ -197,6 +197,7 @@ public class ProblemesScene extends ItemScene<Problem> {
         try {
             Database.getInstance().getProblemDao().update(problem);
             Router.showToast(ToastType.SUCCESS, "Problème mis à jour");
+            updateItemList();
         } catch (SQLException e) {
             ExceptionHandler.updateIssue(e);
         }
