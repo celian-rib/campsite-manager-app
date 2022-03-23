@@ -374,11 +374,13 @@ public class Reservation implements Item {
     @Override
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return new StringBuilder().append(this.id).append(';')
-                .append(formatter.format(this.startDate)).append(';')
-                .append(this.client.getFirstName()).append(';').append(this.client.getName())
-                .append(';').append(this.client.getPhone()).append(';').toString().trim()
-                .toLowerCase();
+        return String.join(";",
+        ""+this.id,
+        formatter.format(this.startDate),
+        this.client.getFirstName(),
+        this.client.getName(),
+        this.client.getPhone())
+        .trim().toLowerCase();
     }
 
     @Override
