@@ -69,17 +69,20 @@ public class Client implements Item {
     }
 
     public void setPhone(String phone) throws ConstraintException {
-        if(TxtFieldValidation.phoneValidation(phone)){
+        if (TxtFieldValidation.phoneValidation(phone)) {
             this.phone = phone;
-            User.addlog(LogType.MODIFY, "Téléphone du client " + getDisplayName() + " changé pour " + phone);
+            User.addlog(LogType.MODIFY,
+                    "Téléphone du client " + getDisplayName() + " changé pour " + phone);
             return;
         }
         throw new ConstraintException("Téléphone invalide, modification annulée", false);
     }
 
     public void setAddresse(String addresse) throws ConstraintException {
-        if(!TxtFieldValidation.phoneValidation(addresse) && !TxtFieldValidation.emailValidation(addresse)){
-            User.addlog(LogType.MODIFY, "Addresse du client " + getDisplayName() + " changé pour " + addresse);
+        if (!TxtFieldValidation.phoneValidation(addresse)
+                && !TxtFieldValidation.emailValidation(addresse)) {
+            User.addlog(LogType.MODIFY,
+                    "Addresse du client " + getDisplayName() + " changé pour " + addresse);
             this.addresse = addresse;
             return;
         }
@@ -87,32 +90,26 @@ public class Client implements Item {
     }
 
     public void setPreferences(String preferences) {
-        User.addlog(
-                LogType.MODIFY,
-                "Préférences du client " +
-                        getDisplayName() +
-                        " changé pour " +
-                        preferences);
+        User.addlog(LogType.MODIFY,
+                "Préférences du client " + getDisplayName() + " changé pour " + preferences);
         this.preferences = preferences;
     }
 
     public void setFirstName(String firstName) {
-        User.addlog(
-                LogType.MODIFY,
+        User.addlog(LogType.MODIFY,
                 "Prénom du client " + getDisplayName() + " changé pour " + firstName);
         this.firstName = firstName;
     }
 
     public void setName(String name) {
-        User.addlog(
-                LogType.MODIFY,
-                "Nom du client " + getDisplayName() + " changé pour " + name);
+        User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
         this.name = name;
     }
-    
+
     public void setEmail(String email) throws ConstraintException {
-        if(TxtFieldValidation.emailValidation(email)){
-            User.addlog(LogType.MODIFY, "Email du client " + getDisplayName() + " changé pour " + email);
+        if (TxtFieldValidation.emailValidation(email)) {
+            User.addlog(LogType.MODIFY,
+                    "Email du client " + getDisplayName() + " changé pour " + email);
             this.email = email;
             return;
         }
@@ -120,10 +117,7 @@ public class Client implements Item {
     }
 
     public Reservation getOpenReservation() {
-        return reservations
-                .stream()
-                .filter(r -> r.getPaymentDate() == null)
-                .findFirst()
+        return reservations.stream().filter(r -> r.getPaymentDate() == null).findFirst()
                 .orElse(null);
     }
 
@@ -139,16 +133,8 @@ public class Client implements Item {
 
     @Override
     public String getSearchString() {
-        return String
-                .join(
-                        ";",
-                        "" + this.id,
-                        this.firstName,
-                        this.name,
-                        this.addresse,
-                        this.phone)
-                .trim()
-                .toLowerCase();
+        return String.join(";", "" + this.id, this.firstName, this.name, this.addresse, this.phone)
+                .trim().toLowerCase();
     }
 
     @Override
@@ -158,7 +144,7 @@ public class Client implements Item {
 
     @Override
     public Color getStatusColor() {
-        // TODO -> rouge que si les problèmes sont ouverts
-        return problems.size() > 0 ? StatusColors.RED : StatusColors.BLUE;
+        var hasProblem = problems.stream().anyMatch(p -> p.getEndDate() != null);
+        return hasProblem ? StatusColors.RED : StatusColors.BLUE;
     }
 }
