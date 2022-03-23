@@ -62,6 +62,7 @@ public class Client implements Item {
         this.addresse = "Adresse";
         this.phone = "00 00 00 00 00";
         this.preferences = null;
+        this.email = "jean.dupond@mail.com";
         Database.getInstance().getClientsDao().create(this);
         Database.getInstance().getClientsDao().refresh(this);
         User.addlog(LogType.ADD, "Ajout d'un nouveau client");
