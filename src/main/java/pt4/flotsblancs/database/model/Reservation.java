@@ -8,18 +8,13 @@ import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
-import pt4.flotsblancs.router.Router;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
-import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.DateUtils;
 
-import java.math.RoundingMode;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
