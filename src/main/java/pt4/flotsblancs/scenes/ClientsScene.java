@@ -46,6 +46,7 @@ public class ClientsScene extends ItemScene<Client> {
     private MFXTextField adresse;
     private MFXTextField phone;
     private MFXTextField preferences;
+    private MFXTextField email;
 
     private MFXButton saveButton;
     private MFXButton addReservationButton;
@@ -165,8 +166,10 @@ public class ClientsScene extends ItemScene<Client> {
         name.textProperty().addListener(changeListener);
         firstName = new PromptedTextField(client.getFirstName(), "Prénom");
         firstName.textProperty().addListener(changeListener);
+        email = new PromptedTextField(client.getEmail(), "E-mail");
+        email.textProperty().addListener(changeListener);
 
-        container.getChildren().addAll(name, firstName);
+        container.getChildren().addAll(name, firstName, email);
         return container;
     }
 
@@ -188,6 +191,7 @@ public class ClientsScene extends ItemScene<Client> {
         preferences = new PromptedTextField(client.getPreferences(), "Préférences");
         preferences.setMinWidth(isReduced ? 180 : 350);
         preferences.textProperty().addListener(changeListener);
+
 
         container.getChildren().addAll(phone, adresse, preferences);
         return container;
@@ -231,23 +235,56 @@ public class ClientsScene extends ItemScene<Client> {
     private void updateDatabase(Client client) {
         if (client == null)
             return;
+        boolean update = false;
         try {
-            if (!client.getFirstName().equals(firstName.getText()))
+            if (!client.getFirstName().equals(firstName.getText())){
                 client.setFirstName(firstName.getText());
-            if (!client.getName().equals(name.getText()))
+                update = true;
+            }
+            if (!client.getName().equals(name.getText())){
                 client.setName(name.getText());
-            if (!client.getAddresse().equals(adresse.getText()))
-                client.setAddresse(adresse.getText());
-            if (!client.getPhone().equals(phone.getText()))
-                client.setPhone(phone.getText());
+                update = true;
+            }
+
+            if (!client.getAddresse().equals(adresse.getText())){
+                try {
+                    client.setAddresse(adresse.getText());
+                    update = true;
+                } catch (ConstraintException e) {
+                    adresse.setText(client.getAddresse());
+                    Router.showToast(ToastType.ERROR, e.getMessage());
+                }
+            }
+
+            if (!client.getPhone().equals(phone.getText())){
+                try {
+                    client.setPhone(phone.getText());
+                    update = true;
+                } catch (ConstraintException e) {
+                    phone.setText(client.getPhone());
+                    Router.showToast(ToastType.ERROR, e.getMessage());
+                }
+            }
+
+            if (!client.getEmail().equals(email.getText())){
+                try {
+                    client.setEmail(email.getText());
+                    update = true;
+                } catch (ConstraintException e) {
+                    email.setText(client.getEmail());
+                    Router.showToast(ToastType.ERROR, e.getMessage());
+                }
+            }
 
             if (preferences.getText() != null)
                 if (!preferences.getText().equals(client.getPreferences()))
                     client.setPreferences(preferences.getText());
 
             Database.getInstance().getClientsDao().update(client);
-            Router.showToast(ToastType.SUCCESS, "Client mis à jour");
-            updateItemList();
+            if(update) {
+                Router.showToast(ToastType.SUCCESS, "Client mis à jour");
+                updateItemList();
+            }
         } catch (SQLException e) {
             ExceptionHandler.loadIssue(e);
         }

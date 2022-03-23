@@ -134,7 +134,7 @@ public class Generator {
         }
     }
 
-    private static void generateClients(Faker f, int nbr) throws SQLException {
+    private static void generateClients(Faker f, int nbr) throws SQLException, ConstraintException {
         for (int i = 0; i < nbr; i++) {
             var c = new Client();
             c.setAddresse(f.address().fullAddress());
