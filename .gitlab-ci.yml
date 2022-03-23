@@ -1,11 +1,3 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
-
 image: maven:3.8.4-jdk-11
 
 cache:
@@ -21,12 +13,11 @@ variables:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
 
 stages:
-- maven-tests
-- test
+- tests
 - build
 
-maven-tests:
-  stage: maven-tests
+tests:
+  stage: tests
   script:
   - echo "DB_URL=$DB_URL" >> .env
   - echo "DB_USER=$DB_USER" >> .env
@@ -35,13 +26,10 @@ maven-tests:
   - mvn test
 
 build:
-  needs: ["maven-tests"]
+  dependencies: ["maven-tests"]
   stage: build
   script:
   - scripts/buildArtifact.sh
   artifacts:
     expose_as: 'App Artifact'
     paths: ['flotblancs']
-
-include:
-- template: Security/SAST-IaC.latest.gitlab-ci.yml
