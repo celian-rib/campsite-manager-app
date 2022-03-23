@@ -12,7 +12,7 @@ import io.github.palexdev.materialfx.enums.FloatMode;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+
 import javafx.geometry.Insets;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -23,7 +23,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.database.model.Reservation;
 
-public class ItemList<I extends Item> extends StackPane {
+class ItemList<I extends Item> extends StackPane {
 
     private final static int CONTENT_WIDTH = 250;
     private String query = "";
@@ -46,7 +46,7 @@ public class ItemList<I extends Item> extends StackPane {
      * 
      * @param itemScene
      */
-    public ItemList(ItemScene<I> itemScene) {
+    ItemList(ItemScene<I> itemScene) {
         this.itemScene = itemScene;
 
         BackgroundFill fill = new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY);
@@ -157,13 +157,10 @@ public class ItemList<I extends Item> extends StackPane {
         listView.setFocusTraversable(false);
         listView.setStyle("-fx-background-insets: 0; -fx-background-insets: 0; -fx-padding: 0;");
 
-        listView.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
+        listView.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
                 ItemPane<I> selected = listView.getSelectionModel().getSelectedItem();
                 if (selected != null)
                     itemScene.updateContainer(selected.getItem());
-            }
         });
 
         listView.setItems(itemsListContainer);
@@ -196,7 +193,7 @@ public class ItemList<I extends Item> extends StackPane {
      * 
      * @param item
      */
-    public void selectItem(I item) {
+    void selectItem(I item) {
         listView.getSelectionModel().select(new ItemPane<I>(item, CONTENT_WIDTH - 15));
         itemScene.updateContainer(item);
     }

@@ -281,8 +281,10 @@ public class ClientsScene extends ItemScene<Client> {
                     client.setPreferences(preferences.getText());
 
             Database.getInstance().getClientsDao().update(client);
-            if(update)
+            if(update) {
                 Router.showToast(ToastType.SUCCESS, "Client mis à jour");
+                updateItemList();
+            }
         } catch (SQLException e) {
             ExceptionHandler.loadIssue(e);
         }

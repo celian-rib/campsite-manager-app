@@ -7,15 +7,12 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-
+import javafx.scene.paint.Color;
 import lombok.*;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
-import pt4.flotsblancs.router.Router;
-import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
-import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
 
 @EqualsAndHashCode
@@ -46,7 +43,7 @@ public class Client implements Item {
     @Getter
     @DatabaseField(canBeNull = false)
     private String phone;
-    
+
     @Getter
     @DatabaseField(canBeNull = false)
     private String email;
@@ -58,7 +55,6 @@ public class Client implements Item {
     @Getter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Reservation> reservations;
-
 
     public Client(String name) throws SQLException {
         this.firstName = "NOUVEAU Prénom";
@@ -91,17 +87,26 @@ public class Client implements Item {
     }
 
     public void setPreferences(String preferences) {
-        User.addlog(LogType.MODIFY, "Préférences du client " + getDisplayName() + " changé pour " + preferences);
+        User.addlog(
+                LogType.MODIFY,
+                "Préférences du client " +
+                        getDisplayName() +
+                        " changé pour " +
+                        preferences);
         this.preferences = preferences;
     }
 
     public void setFirstName(String firstName) {
-        User.addlog(LogType.MODIFY, "Prénom du client " + getDisplayName() + " changé pour " + firstName);
+        User.addlog(
+                LogType.MODIFY,
+                "Prénom du client " + getDisplayName() + " changé pour " + firstName);
         this.firstName = firstName;
     }
 
     public void setName(String name) {
-        User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
+        User.addlog(
+                LogType.MODIFY,
+                "Nom du client " + getDisplayName() + " changé pour " + name);
         this.name = name;
     }
     
@@ -115,7 +120,10 @@ public class Client implements Item {
     }
 
     public Reservation getOpenReservation() {
-        return reservations.stream().filter(r -> r.getPaymentDate() == null).findFirst()
+        return reservations
+                .stream()
+                .filter(r -> r.getPaymentDate() == null)
+                .findFirst()
                 .orElse(null);
     }
 
@@ -131,24 +139,26 @@ public class Client implements Item {
 
     @Override
     public String getSearchString() {
-        return new StringBuilder()
-                .append(this.id).append(';')
-                .append(this.firstName).append(';')
-                .append(this.name).append(';')
-                .append(this.addresse).append(';')
-                .append(this.phone).append(';')
-                .toString().trim().toLowerCase();
+        return String
+                .join(
+                        ";",
+                        "" + this.id,
+                        this.firstName,
+                        this.name,
+                        this.addresse,
+                        this.phone)
+                .trim()
+                .toLowerCase();
     }
 
     @Override
     public boolean isForeignCorrect() {
         return reservations != null && problems != null;
     }
-    
+
     @Override
     public Color getStatusColor() {
         // TODO -> rouge que si les problèmes sont ouverts
         return problems.size() > 0 ? StatusColors.RED : StatusColors.BLUE;
     }
-
 }

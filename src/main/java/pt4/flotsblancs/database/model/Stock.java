@@ -67,11 +67,7 @@ public class Stock implements Item {
 
     @Override
     public String getSearchString() {
-        return new StringBuilder()
-                .append(this.id).append(';')
-                .append(this.item).append(';')
-                .append(this.storageLocation).append(';')
-                .toString().trim().toLowerCase();
+        return String.join(";",this.item,this.storageLocation).trim().toLowerCase();
     }
 
     @Override

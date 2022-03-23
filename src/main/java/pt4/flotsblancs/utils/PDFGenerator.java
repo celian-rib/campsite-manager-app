@@ -106,6 +106,7 @@ public class PDFGenerator {
         document.close();
 
         System.out.println("PDF généré");
+        MailSender.createSession();
         return outputStream;
     }
 

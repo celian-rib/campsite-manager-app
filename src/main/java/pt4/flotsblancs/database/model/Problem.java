@@ -119,19 +119,11 @@ public class Problem implements Item {
     @Override
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        var b = new StringBuilder()
-                .append(this.id).append(';')
-                .append(formatter.format(this.startDate)).append(';');
-        if (this.endDate != null)
-            b.append(formatter.format(this.endDate)).append(';');
-        if (this.client != null)
-            b.append(this.client.getFirstName()).append(';')
-                    .append(this.client.getName()).append(';');
-        if (this.campground != null)
-            b.append(this.campground.getId()).append(';');
-        if (this.reservation != null)
-            b.append(this.reservation.getId()).append(';');
-        return b.toString().trim().toLowerCase();
+        return String.join(";", ""+this.id,formatter.format(this.startDate),
+        this.endDate != null ? formatter.format(this.endDate) : "",
+        this.client != null ? this.client.getFirstName() + ";" + this.client.getName() : "",
+        this.campground != null ? ""+this.campground.getId() : "",
+        this.reservation != null ? ""+this.reservation.getId() : "").trim().toLowerCase();
     }
 
     @Override

@@ -8,18 +8,13 @@ import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
-import pt4.flotsblancs.router.Router;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
-import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.DateUtils;
 
-import java.math.RoundingMode;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -374,11 +369,13 @@ public class Reservation implements Item {
     @Override
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return new StringBuilder().append(this.id).append(';')
-                .append(formatter.format(this.startDate)).append(';')
-                .append(this.client.getFirstName()).append(';').append(this.client.getName())
-                .append(';').append(this.client.getPhone()).append(';').toString().trim()
-                .toLowerCase();
+        return String.join(";",
+        ""+this.id,
+        formatter.format(this.startDate),
+        this.client.getFirstName(),
+        this.client.getName(),
+        this.client.getPhone())
+        .trim().toLowerCase();
     }
 
     @Override

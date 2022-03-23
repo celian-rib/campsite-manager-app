@@ -2,7 +2,6 @@ package pt4.flotsblancs.scenes.items;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javafx.application.Platform;
@@ -19,7 +18,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointListener;
 import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
@@ -27,7 +25,7 @@ import pt4.flotsblancs.scenes.components.EmptyItemContainer;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 
 public abstract class ItemScene<I extends Item> extends BorderPane
-        implements IScene, BreakPointListener {
+        implements IItemScene<I>, BreakPointListener {
 
     private ItemList<I> itemList;
 
@@ -82,7 +80,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         updateItemList();
     }
 
-    void updateItemList() {
+    protected void updateItemList() {
         itemList.setIsLoading(true);
         final Task<List<I>> updateListTask = new Task<List<I>>() {
             protected java.util.List<I> call() {
@@ -158,6 +156,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         }
     }
 
+    @Override
     public void selectItem(I item) {
         itemList.selectItem(item);
     }
