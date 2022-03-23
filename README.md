@@ -4,13 +4,11 @@
 
 ## Setup projet
 
-1. Clone le projet `git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
+1. Clone le projet `git clone git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
 
-2. Installer ojdbc (Gestionnaire base de donnée pour l'ORM)
-    ```
-    mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar
-    ```
-2. Installer le reste des dépendances `mvn install`
+2. Télécharger le [SDK JavaFX](https://gluonhq.com/products/javafx/) (En fonction de l'OS de la machine) (Path du dossier installé a retenir pour la suite)
+
+3. Installer les dépendances `mvn install`
 
 4. Ouvrir le projet dans un IDE (VSCode ou Eclipse) :
 
