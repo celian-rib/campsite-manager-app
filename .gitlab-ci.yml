@@ -35,9 +35,13 @@ maven-tests:
   - mvn test
 
 build:
+  needs: ["maven-tests"]
   stage: build
   script:
   - scripts/buildArtifact.sh
+  artifacts:
+    expose_as: 'App Artifact'
+    paths: ['flotblancs']
 
 include:
 - template: Security/SAST-IaC.latest.gitlab-ci.yml
