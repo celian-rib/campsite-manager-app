@@ -293,9 +293,6 @@ public class ClientsScene extends ItemScene<Client> {
     @Override
     public void onUnfocus() {
         onContainerUnfocus();
-        if (this.saveButton != null)
-            if (!saveButton.isDisabled())
-                updateDatabase(client);
     }
 
     @Override
