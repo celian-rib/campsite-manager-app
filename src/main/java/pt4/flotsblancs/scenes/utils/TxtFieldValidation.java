@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 public class TxtFieldValidation {
     
     public static boolean emailValidation(String emailString){
-        Pattern pattern = Pattern.compile("/^\\S+@\\S+.\\S+$/");//source https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
+        Pattern pattern = Pattern.compile("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");//source : https://regexr.com/3e48o
         return pattern.matcher(emailString).matches();
     }
 

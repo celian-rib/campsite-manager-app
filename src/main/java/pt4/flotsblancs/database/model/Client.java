@@ -11,9 +11,11 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.*;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
+import pt4.flotsblancs.router.Router;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
+import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
 
 @EqualsAndHashCode
@@ -83,6 +85,7 @@ public class Client implements Item {
         if(!TxtFieldValidation.phoneValidation(addresse) && !TxtFieldValidation.emailValidation(addresse)){
             User.addlog(LogType.MODIFY, "Addresse du client " + getDisplayName() + " changé pour " + addresse);
             this.addresse = addresse;
+            return;
         }
         throw new ConstraintException("Adresse invalide, modification annulée", false);
     }
@@ -104,8 +107,8 @@ public class Client implements Item {
     
     public void setEmail(String email) throws ConstraintException {
         if(TxtFieldValidation.emailValidation(email)){
-            this.email = email;
             User.addlog(LogType.MODIFY, "Email du client " + getDisplayName() + " changé pour " + email);
+            this.email = email;
             return;
         }
         throw new ConstraintException("Email invalide, modification annulée", false);
