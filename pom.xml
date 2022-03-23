@@ -75,6 +75,24 @@
 			<artifactId>ikonli-swing</artifactId>
 			<version>12.3.0</version>
 		</dependency>
+		
+				<!-- Ikonli -->
+		<dependency>
+			<groupId>org.kordamp.ikonli</groupId>
+			<artifactId>ikonli-javafx</artifactId>
+			<version>12.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kordamp.ikonli</groupId>
+			<artifactId>ikonli-fontawesome5-pack</artifactId>
+			<version>12.3.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.kordamp.ikonli</groupId>
+			<artifactId>ikonli-core</artifactId>
+			<version>12.3.0</version>
+		</dependency>
 
 		<!-- JFX -->
 		<dependency>
@@ -111,23 +129,6 @@
 			<artifactId>junit-jupiter-params</artifactId>
 			<version>${junit}</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- Ikonli -->
-		<dependency>
-			<groupId>org.kordamp.ikonli</groupId>
-			<artifactId>ikonli-core</artifactId>
-			<version>12.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kordamp.ikonli</groupId>
-			<artifactId>ikonli-javafx</artifactId>
-			<version>12.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kordamp.ikonli</groupId>
-			<artifactId>ikonli-fontawesome5-pack</artifactId>
-			<version>12.3.0</version>
 		</dependency>
 
 		<!-- PDF -->
@@ -172,88 +173,59 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
-				<configuration>
-					<source>3.8.0</source>
-					<target>3.8.0</target>
-					<release>10</release>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>1.18.22</version>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
-		        <executions>
-		          <execution>
-		            <configuration>
-		              <transformers>
-		                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-		              </transformers>
-		            </configuration>
-		          </execution>
-		        </executions>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-shade-plugin</artifactId>
+			  <version>2.3</version>
+			  <executions>
+			    <execution>
+			      <phase>package</phase>
+			      <goals>
+			        <goal>shade</goal>
+			      </goals>
+			      <configuration>
+			        <dependencyReducedPomLocation>${project.build.directory}/reduced-pom.xml</dependencyReducedPomLocation>
+			        <transformers>
+			          <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+			            <mainClass>pt4.flotsblancs.App</mainClass>
+			          </transformer>
+			          <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+			            <resource>META-INF/cxf/bus-extensions.txt</resource>
+			          </transformer>
+			        </transformers>
+			        <filters>
+			          <filter>
+			            <artifact>*:*</artifact>
+			            <excludes>
+			              <exclude>META-INF/faces-config.xml</exclude>
+			            </excludes>
+			          </filter>
+			        </filters>
+			      </configuration>
+			    </execution>
+			  </executions>
+			  <dependencies>
+			    <dependency>
+					<groupId>org.projectok</groupId>
+					<artifactId>lombok</artifactId>
+					<version>1.18.22</version>
+			    </dependency>
+			  </dependencies>
 			</plugin>
-
+			
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.1</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>pt4.flotsblancs.App</mainClass>
-						</manifest>
-					</archive>
-					<outputDirectory>${project.build.directory}/release</outputDirectory>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<groupId>org.apache.maven.plugins</groupId>
-				<version>2.4.1</version>
-				<executions>
-					<execution>
-						<id>make-executable-jar-with-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<archive>
-								<manifest>
-									<addClasspath>true</addClasspath>
-									<mainClass>pt4.flotsblancs.App</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.1.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/release</outputDirectory>
-							<includeScope>runtime</includeScope>
-						</configuration>
-					</execution>
-				</executions>
+			  <groupId>org.openjfx</groupId>
+			  <artifactId>javafx-maven-plugin</artifactId>
+			  <version>0.0.5</version>
+			  <configuration>
+			    <compress>2</compress>
+			    <noHeaderFiles>true</noHeaderFiles>
+			    <stripDebug>true</stripDebug>
+			    <noManPages>true</noManPages>
+			    <launcher>flotsblancs</launcher>
+			    <mainClass>pt4.flotsblancs.App</mainClass>
+			    <jlinkImageName>flotsblancs</jlinkImageName>
+			    <jlinkZipName>flotsblancs</jlinkZipName>
+			  </configuration>
 			</plugin>
 
 			<!-- Force maven a utiliser Jupiter pour lancer les tests -->

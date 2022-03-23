@@ -94,6 +94,9 @@ Ne pas oublier de faire chmod u+x launcher.sh.
 
 ### Les autres builds
 
+mvn install:install-file -DgroupId=org.projectok -DartifactId=lombok -Dversion=1.18.22 -Dpackaging=jar -Dfile=lombok.jar
+
+
 1. Aller à la racine du projet (/pt4), et effectuer la commande : mvn clean package
 
 2. L'application est build et est mise dans /target
