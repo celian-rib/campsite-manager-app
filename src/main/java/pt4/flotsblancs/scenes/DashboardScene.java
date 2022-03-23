@@ -41,7 +41,7 @@ public class DashboardScene extends BorderPane implements IScene {
 	    	VBox left = new VBox();
 	    	VBox right = new VBox();
 	    	
-	    	InformationCard c1 = new InformationCard("Résolution des problèmes","Temps moyen, ce mois-ci",Stats.averageProblemTime(Period.MONTHLY)+" jour",Color.rgb(236, 204, 104,0.5f));
+	    	InformationCard c1 = new InformationCard("Résolution des problèmes","Temps moyen, ce mois-ci",Stats.averageProblemTime(Period.MONTHLY)+" jours",Color.rgb(236, 204, 104,0.5f));
 	    	InformationCard c2 = new InformationCard("Occupation","Ce mois-ci",Stats.affluence(Period.MONTHLY)+" emplacements",Color.rgb(164, 176, 190,0.5f));
 	    	InformationCard c3 = new InformationCard("TITRE","Sous-titre","information",Color.rgb(255, 155, 155));
 	    	
