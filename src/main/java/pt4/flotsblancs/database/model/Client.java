@@ -69,7 +69,7 @@ public class Client implements Item {
     }
 
     public void setPhone(String phone) throws ConstraintException {
-        if(TxtFieldValidation.phoneValidation(phone)){
+        if (TxtFieldValidation.phoneValidation(phone)) {
             this.phone = phone;
             User.addlog(LogType.MODIFY, "Téléphone du client " + getDisplayName() + " changé pour " + phone);
             return;
@@ -78,7 +78,7 @@ public class Client implements Item {
     }
 
     public void setAddresse(String addresse) throws ConstraintException {
-        if(!TxtFieldValidation.phoneValidation(addresse) && !TxtFieldValidation.emailValidation(addresse)){
+        if (!TxtFieldValidation.phoneValidation(addresse) && !TxtFieldValidation.emailValidation(addresse)) {
             User.addlog(LogType.MODIFY, "Addresse du client " + getDisplayName() + " changé pour " + addresse);
             this.addresse = addresse;
             return;
@@ -109,9 +109,9 @@ public class Client implements Item {
                 "Nom du client " + getDisplayName() + " changé pour " + name);
         this.name = name;
     }
-    
+
     public void setEmail(String email) throws ConstraintException {
-        if(TxtFieldValidation.emailValidation(email)){
+        if (TxtFieldValidation.emailValidation(email)) {
             User.addlog(LogType.MODIFY, "Email du client " + getDisplayName() + " changé pour " + email);
             this.email = email;
             return;
@@ -158,7 +158,7 @@ public class Client implements Item {
 
     @Override
     public Color getStatusColor() {
-        // TODO -> rouge que si les problèmes sont ouverts
-        return problems.size() > 0 ? StatusColors.RED : StatusColors.BLUE;
+        var hasProblem = problems.stream().anyMatch(p -> p.getEndDate() != null);
+        return hasProblem ? StatusColors.RED : StatusColors.BLUE;
     }
 }
