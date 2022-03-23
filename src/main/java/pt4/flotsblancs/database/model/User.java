@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 
 import java.security.*;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.Date;
 import java.util.List;
 
@@ -186,5 +187,15 @@ public class User implements Item {
     @Override
     public Color getStatusColor() {
         return this.isAdmin ? StatusColors.RED : StatusColors.BLUE;
+    }
+
+    @Override
+    public int compareTo(Item o) {
+
+        Collator c = Collator.getInstance(java.util.Locale.FRANCE);
+        c.setStrength(Collator.PRIMARY);
+        User other = (User)o;
+        int val = c.compare(this.getDisplayName(),other.getDisplayName());
+        return val;
     }
 }

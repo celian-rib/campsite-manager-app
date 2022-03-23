@@ -107,4 +107,10 @@ public class CampGround implements Item {
     public Color getStatusColor() {
         return StatusColors.GREEN;
     }
+
+    @Override
+    public int compareTo(Item o) {
+        var other = (CampGround)o;
+        return (int)(other.surface - this.surface);
+    }
 }

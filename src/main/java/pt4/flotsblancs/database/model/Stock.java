@@ -79,4 +79,15 @@ public class Stock implements Item {
     public Color getStatusColor() {
         return this.quantity < this.quantityAlertThreshold ? StatusColors.RED : StatusColors.GREEN;
     }
+
+    @Override
+    public int compareTo(Item o) {
+        Stock other = (Stock)o;
+        int val = (this.getStatusColor() == StatusColors.GREEN ? 100 : 1000) + this.getId();
+        int otherVal = (other.getStatusColor() == StatusColors.GREEN ? 100 : 1000) + other.getId();
+        return val - otherVal;
+        
+
+    }
+
 }

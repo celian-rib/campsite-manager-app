@@ -2,7 +2,7 @@ package pt4.flotsblancs.scenes.items;
 
 import javafx.scene.paint.Color;
 
-public interface Item {
+public interface Item extends Comparable<Item> {
 	/**
 	 * 
 	 * @return Nom d'affichage condensé complet de l'item (Utilisé pour l'affichage

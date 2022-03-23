@@ -2,14 +2,16 @@ package pt4.flotsblancs.scenes.items;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.enums.FloatMode;
-
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -118,35 +120,15 @@ class ItemList<I extends Item> extends StackPane {
         if(items.size() == 0)
             return;
         if (!filtered) {
-            boolean isReservation = items.get(0) instanceof Reservation;
-            items.sort((i1, i2) -> {
-                if (isReservation) {
-                    // TODO bouger ça en dehors, la comparaison ici doit rester abstraite
-                    var r1 = (Reservation) i1;
-                    var r2 = (Reservation) i2;
-
-                    return r1.getStartDate().compareTo(r2.getStartDate());
-                }
-                return i1.getId() - i2.getId();
-            });
-            if (isReservation) {
-                ArrayList<I> canceledAndPast = new ArrayList<I>();
-                int i = 0;
-                while (i < items.size()) {
-                    I it = items.get(i);
-                    Reservation r = (Reservation) it;
-                    if (r.getCanceled() || r.isInPast()) {
-                        canceledAndPast.add(it);
-                        items.remove(it);
-                        continue;
+            new Thread(() -> {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<I> sorted = new ArrayList<I>(new TreeSet<I>(items));
+                        initialList = sorted;
                     }
-                    i++;
-                }
-                items.addAll(canceledAndPast);
-            }
-
-
-            initialList = items;
+                });
+            }).start();
         }
         listButtons = createListButtons(items);
 
