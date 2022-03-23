@@ -81,7 +81,7 @@ mvn test
 > Windows : 
 
 ```bash
-java --module-path "chemin\vers\javafx\lib" --add-modules javafx.controls,javafx.fxml -jar target/flots-blancs-1.0.0-jar-with-dependencies.jar
+java --module-path "chemin\vers\javafx\lib" --add-modules javafx.controls,javafx.fxml -jar target/flots-blancs-1.0.0.jar
 pause
 ```
 
@@ -93,9 +93,6 @@ java --module-path "path/to/javafx/lib" --add-modules javafx.controls,javafx.fxm
 Ne pas oublier de faire chmod u+x launcher.sh.
 
 ### Les autres builds
-
-mvn install:install-file -DgroupId=org.projectok -DartifactId=lombok -Dversion=1.18.22 -Dpackaging=jar -Dfile=lombok.jar
-
 
 1. Aller à la racine du projet (/pt4), et effectuer la commande : mvn clean package
 
