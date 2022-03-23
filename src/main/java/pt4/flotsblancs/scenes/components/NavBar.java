@@ -27,6 +27,7 @@ public class NavBar extends BorderPane implements BreakPointListener {
     private FlotsBlancsLogo largeLogo;
     private FlotsBlancsLogo smallLogo;
     private MFXButton logoutBtn;
+    private VBox centerButtons;
 
     /**
      * Map avec les boutons de navigation associées à leur route
@@ -59,7 +60,7 @@ public class NavBar extends BorderPane implements BreakPointListener {
     }
 
     private VBox navigationButtons() {
-        VBox centerButtons = new VBox();
+        centerButtons = new VBox();
         centerButtons.setAlignment(Pos.CENTER);
 
         navButtons = new LinkedHashMap<Routes, MFXButton>();
@@ -108,8 +109,13 @@ public class NavBar extends BorderPane implements BreakPointListener {
      */
     public void update() {
         userLabel.setText(User.isConnected() ? User.getConnected().toString() : "");
-
         navButtons.forEach((route, button) -> {
+            if (!centerButtons.getChildren().contains(button))
+                centerButtons.getChildren().add(button);
+        });
+        navButtons.forEach((route, button) -> {
+            if (User.isConnected() && route.isRestrictedToAdmins() && !User.getConnected().isAdmin())
+                centerButtons.getChildren().remove(button);
             if (Router.getCurrentRoute() == route)
                 button.setStyle("-fx-background-color: rgba(255, 255, 255, 0.178);");
             else
