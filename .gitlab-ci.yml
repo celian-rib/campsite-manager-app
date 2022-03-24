@@ -14,7 +14,7 @@ variables:
 
 stages:
 - tests
-- build
+# - build
 
 tests:
   stage: tests
@@ -27,11 +27,11 @@ tests:
   - mvn install -DskipTests
   - mvn test
 
-build:
-  dependencies: ["tests"]
-  stage: build
-  script:
-  - scripts/buildArtifact.sh
-  artifacts:
-    expose_as: 'App jar'
-    paths: ['flotblancs']
+# build:
+#   dependencies: ["tests"]
+#   stage: build
+#   script:
+#   - scripts/buildArtifact.sh
+#   artifacts:
+#     expose_as: 'App jar'
+#     paths: ['flotblancs']
