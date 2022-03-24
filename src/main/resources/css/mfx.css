@@ -1,0 +1,78 @@
+* {
+    -mfx-main: #5965a0;
+    -mfx-purple: -mfx-main;
+
+    -mfx-blue: #2196f3;
+    -mfx-charcoal: #445055;
+    -mfx-green: #4caf50;
+    -mfx-onyx: #353935;
+    -mfx-orange: #ff9800;
+    -mfx-red: #EF6E6B;
+    -mfx-yellow: #FFEA00;
+
+    -mfx-main-color: -mfx-main;
+    -mfx-main-color-hover: #4558b623;
+    -mfx-main-color-pressed: #4558b675;
+    -mfx-disabled-color: rgb(54, 54, 54);
+
+    -mfx-text-disabled: rgba(0, 0, 0, 0.7);
+}
+
+.mfx-date-cell:current {
+    -fx-text-fill: -mfx-main;
+}
+
+.mfx-combo-box-cell {
+    -mfx-hover: -mfx-main-color-hover;
+    -mfx-selected: -mfx-main-color-pressed;
+}
+
+.mfx-date-picker .date-picker-popup .left-arrow:disabled,
+.mfx-date-picker .date-picker-popup .right-arrow:disabled {
+	-fx-opacity: 0.8;
+}
+
+.mfx-date-picker:disabled .icon {
+	-mfx-color: #818181;
+}
+
+.mfx-text-field:disabled {
+	-fx-border-color: rgba(0, 0, 0, 0.1);
+}
+
+.mfx-text-field:disabled .floating-text {
+	-fx-text-fill: rgba(0, 0, 0, 0.7);
+}
+
+.mfx-text-field:disabled .text-field {
+	-fx-text-inner-color: rgb(39, 39, 39);
+}
+
+.mfx-list-view {
+    -fx-background-radius: 5;
+	-fx-border-color: #ebebeb;
+	-fx-border-radius: 10;
+    -fx-padding: 10px;
+}
+
+/* ----------------- CUSTOMS ----------------- */
+
+.action-button {
+    -fx-background-color: #5965a0;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+    -fx-padding: 5px 15px;
+    -mfx-button-type: raised;
+}
+
+.action-button-outlined {
+    -fx-border-color: #5965a0;
+    -fx-border-radius: 5px;
+    -fx-text-fill: #5965a0;
+    -fx-padding: 5px 15px;
+    -mfx-button-type: flat;
+}
+
+.mfx-scroll-pane .scroll-bar:vertical {
+	-fx-pref-width: 8;
+}
