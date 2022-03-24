@@ -1,5 +1,7 @@
 package pt4.flotsblancs.router;
 
+import java.io.InputStream;
+
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -81,12 +83,13 @@ public class RootScene extends StackPane implements BreakPointListener {
      * Méthode pour charger les resources CSS.
      */
     private void loadStyleSheets() {
-        String baseUrl = "file:src/main/java/pt4/flotsblancs/scenes/stylesheets/";
-        getStylesheets().add(baseUrl + "mfx.css");
-        getStylesheets().add(baseUrl + "index.css");
-        getStylesheets().add(baseUrl + "navBar.css");
-        getStylesheets().add(baseUrl + "windowBar.css");
-        getStylesheets().add(baseUrl + "loginPage.css");
+        String baseUrl = "/css/";
+        
+        getStylesheets().add(baseUrl+"mfx.css");
+        getStylesheets().add(baseUrl+"index.css");
+        getStylesheets().add(baseUrl+"navBar.css");
+        getStylesheets().add(baseUrl+"windowBar.css");
+        getStylesheets().add(baseUrl+"loginPage.css");
     }
 
     /**
