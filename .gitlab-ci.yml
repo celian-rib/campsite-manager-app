@@ -32,4 +32,4 @@ build:
   - scripts/buildArtifact.sh
   artifacts:
     expose_as: 'App Artifact'
-    paths: ['flotblancs']
+    paths: ['target/flots-blancs-1.0.0.jar']
