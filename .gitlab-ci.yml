@@ -14,7 +14,7 @@ variables:
 
 stages:
 - tests
-- build
+# - build
 
 tests:
   stage: tests
@@ -22,14 +22,16 @@ tests:
   - echo "DB_URL=$DB_URL" >> .env
   - echo "DB_USER=$DB_USER" >> .env
   - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+  - echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> .env
+  - echo "MAIL_USERNAME=$MAIL_USERNAME" >> .env
   - mvn install -DskipTests
   - mvn test
 
-build:
-  dependencies: ["tests"]
-  stage: build
-  script:
-  - scripts/buildArtifact.sh
-  artifacts:
-    expose_as: 'App Artifact'
-    paths: ['target/flots-blancs-1.0.0.jar']
+# build:
+#   dependencies: ["tests"]
+#   stage: build
+#   script:
+#   - scripts/buildArtifact.sh
+#   artifacts:
+#     expose_as: 'App jar'
+#     paths: ['flotblancs']
