@@ -9,7 +9,7 @@ echo "Starting project build script"
 mkdir flotblancs
 
 echo "Downloading javafx"
-curl https://download2.gluonhq.com/openjfx/18/openjfx-18_linux-x64_bin-sdk.zip > javafx-sdk.zip
+curl https://download2.gluonhq.com/openjfx/18/openjfx-18_linux-x64_bin-sdk.zip > flotblancs/javafx-sdk.zip
 
 echo "Unzipping"
 tar -xf flotblancs/javafx-sdk.zip
