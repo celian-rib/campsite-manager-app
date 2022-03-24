@@ -2,7 +2,9 @@ package pt4.flotsblancs.database.model;
 
 import lombok.*;
 import pt4.flotsblancs.database.model.types.LogType;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -65,10 +67,27 @@ public class Stock implements Item {
 
     @Override
     public String getSearchString() {
-        return new StringBuilder()
-                .append(this.id).append(';')
-                .append(this.item).append(';')
-                .append(this.storageLocation).append(';')
-                .toString().trim().toLowerCase();
+        return String.join(";",this.item,this.storageLocation).trim().toLowerCase();
     }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+    
+    @Override
+    public Color getStatusColor() {
+        return this.quantity < this.quantityAlertThreshold ? StatusColors.RED : StatusColors.GREEN;
+    }
+
+    @Override
+    public int compareTo(Item o) {
+        Stock other = (Stock)o;
+        int val = (this.getStatusColor() == StatusColors.GREEN ? 100 : 1000) + this.getId();
+        int otherVal = (other.getStatusColor() == StatusColors.GREEN ? 100 : 1000) + other.getId();
+        return val - otherVal;
+        
+
+    }
+
 }

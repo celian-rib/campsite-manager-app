@@ -6,10 +6,15 @@ import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
+import pt4.flotsblancs.scenes.utils.StatusColors;
+
 import com.j256.ormlite.table.DatabaseTable;
+
+import javafx.scene.paint.Color;
 
 import java.security.*;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +65,18 @@ public class User implements Item {
 
     @Getter
     private static User connected;
+
+    public User(String name) throws SQLException {
+        this.firstName = "NOUVEAU Prénom";
+        this.name = "NOUVEAU Nom";
+        this.isAdmin = false;
+        this.login = "NOUVEAU login";
+        this.password = User.sha256("flots-blancs");
+        this.weeklyHours = 35;
+        Database.getInstance().getUsersDao().create(this);
+        Database.getInstance().getUsersDao().refresh(this);
+        User.addlog(LogType.ADD, "Ajout d'un nouvel utilisateur");
+    }
 
     public static boolean isConnected() {
         return connected != null;
@@ -160,5 +177,25 @@ public class User implements Item {
     @Override
     public String getSearchString() {
         return String.join(";", getFirstName(), getName(), getLogin(), "#"+getId());
+    }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+
+    @Override
+    public Color getStatusColor() {
+        return this.isAdmin ? StatusColors.RED : StatusColors.BLUE;
+    }
+
+    @Override
+    public int compareTo(Item o) {
+
+        Collator c = Collator.getInstance(java.util.Locale.FRANCE);
+        c.setStrength(Collator.PRIMARY);
+        User other = (User)o;
+        int val = c.compare(this.getDisplayName(),other.getDisplayName());
+        return val;
     }
 }

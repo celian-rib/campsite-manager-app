@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -104,31 +106,46 @@ public class Problem implements Item {
 
     @Override
     public String getDisplayName() {
-        if (client != null) {
-            String returnMsg = "[Pb client] " + client;
-            if (returnMsg.length() > 30)
-                return returnMsg.substring(0, 30) + " [...]";
-            return returnMsg;
-        } else {
-            return "Problème sans client";
-        }
+        if(reservation != null)
+            return "[R]  " + reservation.getDisplayName();
+        if (client != null)
+            return "[C]  " + client.getDisplayName();
+        if (campground != null)
+            return "[E]  " + campground.getDisplayName();
+        return "Problème";
     }
 
     @Override
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        var b = new StringBuilder()
-                .append(this.id).append(';')
-                .append(formatter.format(this.startDate)).append(';');
-        if (this.endDate != null)
-            b.append(formatter.format(this.endDate)).append(';');
-        if (this.client != null)
-            b.append(this.client.getFirstName()).append(';')
-                    .append(this.client.getName()).append(';');
-        if (this.campground != null)
-            b.append(this.campground.getId()).append(';');
-        if (this.reservation != null)
-            b.append(this.reservation.getId()).append(';');
-        return b.toString().trim().toLowerCase();
+        return String.join(";", ""+this.id,formatter.format(this.startDate),
+        this.endDate != null ? formatter.format(this.endDate) : "",
+        this.client != null ? this.client.getFirstName() + ";" + this.client.getName() : "",
+        this.campground != null ? ""+this.campground.getId() : "",
+        this.reservation != null ? ""+this.reservation.getId() : "").trim().toLowerCase();
+    }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return true;
+    }
+
+    @Override
+    public Color getStatusColor() {
+        switch(status) {
+            case OPEN:
+                return StatusColors.BLUE;
+            case OPEN_URGENT:
+                return StatusColors.RED;
+            default:
+                return StatusColors.GREEN;
+        }
+    }
+
+    @Override
+    public int compareTo(Item o) {
+        Problem other = (Problem) o;
+        
+        return (status.getCompareScale() + getId()) - (other.status.getCompareScale() + getId());
     }
 }

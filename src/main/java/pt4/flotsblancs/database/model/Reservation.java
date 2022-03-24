@@ -8,8 +8,11 @@ import lombok.ToString;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.*;
+import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.StatusColors;
 import pt4.flotsblancs.utils.DateUtils;
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -83,9 +86,9 @@ public class Reservation implements Item {
     @Getter
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Problem> problems;
-    
+
     @Getter
-    @DatabaseField(dataType=DataType.SERIALIZABLE)
+    @DatabaseField(dataType = DataType.SERIALIZABLE)
     private byte[] bill;
 
     public Reservation() {
@@ -154,7 +157,8 @@ public class Reservation implements Item {
         }
 
         this.campground = camp;
-        User.addlog(LogType.MODIFY, "Emplacement de la réservation #" + id + " changé à " + campground.getDisplayName()); 
+        User.addlog(LogType.MODIFY,
+                "Emplacement de la réservation #" + id + " changé à " + campground.getDisplayName());
 
         // Gestion des contraintes equipements et services
         // ATTENTION -> changer l'emplacement prend la priorité en terme de contrainte
@@ -335,18 +339,23 @@ public class Reservation implements Item {
     /**
      * @return Prix total de la réservation
      */
-    public float getTotalPrice() {
+    public int getTotalPrice() {
         var dayCount = getDayCount();
-        var rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
+        int rawPrice = campground.getPricePerDays() * nbPersons * dayCount;
+
         var withService = rawPrice + selectedServices.getPricePerDay() * dayCount;
-        return withService * cashBack.getReduction();
+
+        var i = (int) Math.floor(withService * cashBack.getReduction());
+        return i;
+        
     }
 
     /**
      * @return Prix d'acompte de la réservation
      */
-    public float getDepositPrice() {
-        return getTotalPrice() * 0.3f; // Acompte de 30%
+    public int getDepositPrice() {
+        var i = (int) Math.floor((getTotalPrice() * 0.3f) * cashBack.getReduction());// Acompte de 30%
+        return i;
     }
 
     /**
@@ -360,18 +369,20 @@ public class Reservation implements Item {
     @Override
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return new StringBuilder().append(this.id).append(';')
-                .append(formatter.format(this.startDate)).append(';')
-                .append(this.client.getFirstName()).append(';').append(this.client.getName())
-                .append(';').append(this.client.getPhone()).append(';').toString().trim()
-                .toLowerCase();
+        return String.join(";",
+        ""+this.id,
+        formatter.format(this.startDate),
+        this.client.getFirstName(),
+        this.client.getName(),
+        this.client.getPhone())
+        .trim().toLowerCase();
     }
 
     @Override
     public String getDisplayName() {
-        if(startDate == null || endDate == null || client == null)
-        return "Reservation " + getId();
-        
+        if (startDate == null || endDate == null || client == null)
+            return "Reservation " + getId();
+
         SimpleDateFormat format = new SimpleDateFormat("dd/MM");
         var prefix = canceled ? "[Annulée] " : "";
         return prefix + format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
@@ -384,12 +395,12 @@ public class Reservation implements Item {
     }
 
     public void setPaymentDate(Date date) {
-        if (date == null){
+        if (date == null) {
             User.addlog(LogType.DELETE,
-            "Paiement annulé pour la réservation #" + id);
+                    "Paiement annulé pour la réservation #" + id);
         } else {
             User.addlog(LogType.ADD,
-            "Paiement effectué pour la réservation #" + id);
+                    "Paiement effectué pour la réservation #" + id);
         }
         this.paymentDate = date;
     }
@@ -401,12 +412,12 @@ public class Reservation implements Item {
     }
 
     public void setDepositDate(Date date) {
-        if (date == null){
+        if (date == null) {
             User.addlog(LogType.DELETE,
-            "Accompte annulé pour la réservation #" + id);
+                    "Accompte annulé pour la réservation #" + id);
         } else {
             User.addlog(LogType.ADD,
-            "Accompte versé pour la réservation #" + id);
+                    "Accompte versé pour la réservation #" + id);
         }
         this.depositDate = date;
     }
@@ -420,9 +431,38 @@ public class Reservation implements Item {
         User.addlog(LogType.DELETE, "Réservation #" + id + " annulée");
         this.canceled = canceled;
     }
-    
+
     public void setBill(byte[] fileData) {
         User.addlog(LogType.ADD, "Génération de la facture de la réservation #" + id);
         this.bill = fileData;
+    }
+
+    @Override
+    public boolean isForeignCorrect() {
+        return client != null && campground != null && problems != null;
+    }
+
+    @Override
+    public Color getStatusColor() {
+        if (canceled) 
+            return StatusColors.BLACK;
+        if (isInPast())
+            return StatusColors.RED;
+        if (depositDate != null)
+            return paymentDate != null ? StatusColors.GREEN : StatusColors.BLUE;
+        return StatusColors.YELLOW;
+    }
+
+    private int getCompareScale() {
+        if (isInPast() || canceled) return -10000; // Reservation passée ou annulée
+        if (depositDate == null && paymentDate == null) return 1000; // Non payé, pas d'accompte
+        if (paymentDate == null) return 100; // accompte payé
+        return 10; // payé
+    }
+
+    @Override
+    public int compareTo(Item o) {
+        Reservation other = (Reservation)o;
+        return (other.getCompareScale() - getCompareScale()) + this.getStartDate().compareTo(other.getStartDate());
     }
 }

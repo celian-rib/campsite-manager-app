@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,6 +25,7 @@ import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
 import pt4.flotsblancs.scenes.components.HBoxSpacer;
 import pt4.flotsblancs.scenes.components.ProblemsListCard;
+import pt4.flotsblancs.scenes.components.PromptedTextField;
 import pt4.flotsblancs.scenes.components.ReservationCard;
 import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.items.ItemScene;
@@ -46,6 +46,7 @@ public class ClientsScene extends ItemScene<Client> {
     private MFXTextField adresse;
     private MFXTextField phone;
     private MFXTextField preferences;
+    private MFXTextField email;
 
     private MFXButton saveButton;
     private MFXButton addReservationButton;
@@ -140,15 +141,6 @@ public class ClientsScene extends ItemScene<Client> {
         return container;
     }
 
-    private MFXTextField createTextField(String text, String prompt) {
-        var textField = new MFXTextField();
-        textField.setText(text);
-        textField.setFloatingText(prompt);
-        textField.setFloatMode(FloatMode.INLINE);
-        textField.setMinWidth(180);
-        return textField;
-    }
-
     private VBox createCardsContainer() {
         VBox container = new VBox(CONTENT_SPACING);
         container.setAlignment(Pos.TOP_LEFT);
@@ -170,12 +162,14 @@ public class ClientsScene extends ItemScene<Client> {
         VBox container = new VBox(CONTENT_SPACING);
         container.setAlignment(Pos.CENTER);
 
-        name = createTextField(client.getName(), "Nom");
+        name = new PromptedTextField(client.getName(), "Nom");
         name.textProperty().addListener(changeListener);
-        firstName = createTextField(client.getFirstName(), "Prénom");
+        firstName = new PromptedTextField(client.getFirstName(), "Prénom");
         firstName.textProperty().addListener(changeListener);
+        email = new PromptedTextField(client.getEmail(), "E-mail");
+        email.textProperty().addListener(changeListener);
 
-        container.getChildren().addAll(name, firstName);
+        container.getChildren().addAll(name, firstName, email);
         return container;
     }
 
@@ -183,17 +177,21 @@ public class ClientsScene extends ItemScene<Client> {
         VBox container = new VBox(CONTENT_SPACING);
         container.setAlignment(Pos.BASELINE_LEFT);
 
-        phone = createTextField(client.getPhone(), "Téléphone");
-
         boolean isReduced = isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint());
+        
+        phone = new PromptedTextField(client.getPhone(), "Téléphone");
+        phone.setMinWidth(isReduced ? 180 : 350);
+        phone.textProperty().addListener(changeListener);
 
-        adresse = createTextField(client.getAddresse(), "Adresse");
+
+        adresse = new PromptedTextField(client.getAddresse(), "Adresse");
         adresse.setMinWidth(isReduced ? 180 : 350);
         adresse.textProperty().addListener(changeListener);
 
-        preferences = createTextField(client.getPreferences(), "Préférences");
+        preferences = new PromptedTextField(client.getPreferences(), "Préférences");
         preferences.setMinWidth(isReduced ? 180 : 350);
         preferences.textProperty().addListener(changeListener);
+
 
         container.getChildren().addAll(phone, adresse, preferences);
         return container;
@@ -237,22 +235,56 @@ public class ClientsScene extends ItemScene<Client> {
     private void updateDatabase(Client client) {
         if (client == null)
             return;
+        boolean update = false;
         try {
-            if (!client.getFirstName().equals(firstName.getText()))
+            if (!client.getFirstName().equals(firstName.getText())){
                 client.setFirstName(firstName.getText());
-            if (!client.getName().equals(name.getText()))
+                update = true;
+            }
+            if (!client.getName().equals(name.getText())){
                 client.setName(name.getText());
-            if (!client.getAddresse().equals(adresse.getText()))
-                client.setAddresse(adresse.getText());
-            if (!client.getPhone().equals(phone.getText()))
-                client.setPhone(phone.getText());
+                update = true;
+            }
+
+            if (!client.getAddresse().equals(adresse.getText())){
+                try {
+                    client.setAddresse(adresse.getText());
+                    update = true;
+                } catch (ConstraintException e) {
+                    adresse.setText(client.getAddresse());
+                    Router.showToast(ToastType.ERROR, e.getMessage());
+                }
+            }
+
+            if (!client.getPhone().equals(phone.getText())){
+                try {
+                    client.setPhone(phone.getText());
+                    update = true;
+                } catch (ConstraintException e) {
+                    phone.setText(client.getPhone());
+                    Router.showToast(ToastType.ERROR, e.getMessage());
+                }
+            }
+
+            if (!client.getEmail().equals(email.getText())){
+                try {
+                    client.setEmail(email.getText());
+                    update = true;
+                } catch (ConstraintException e) {
+                    email.setText(client.getEmail());
+                    Router.showToast(ToastType.ERROR, e.getMessage());
+                }
+            }
 
             if (preferences.getText() != null)
                 if (!preferences.getText().equals(client.getPreferences()))
                     client.setPreferences(preferences.getText());
 
             Database.getInstance().getClientsDao().update(client);
-            Router.showToast(ToastType.SUCCESS, "Client mis à jour");
+            if(update) {
+                Router.showToast(ToastType.SUCCESS, "Client mis à jour");
+                updateItemList();
+            }
         } catch (SQLException e) {
             ExceptionHandler.loadIssue(e);
         }
@@ -261,9 +293,6 @@ public class ClientsScene extends ItemScene<Client> {
     @Override
     public void onUnfocus() {
         onContainerUnfocus();
-        if (this.saveButton != null)
-            if (!saveButton.isDisabled())
-                updateDatabase(client);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package pt4.flotsblancs;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +30,7 @@ public class Generator {
 
         generateAdmin();
         generateUsers();
-        
+
         generateStocks(f, 100);
         generateClients(f, 50);
         generateCampGrounds(f, 100);
@@ -58,10 +59,10 @@ public class Generator {
     }
 
     private static void generateUsers() throws SQLException {
-        String[] firstNames = {"Anna", "Paul", "Jérémy"};
-        String[] lastNames = {"Dupont", "Martin", "Delamama"};
-        String[] pwds = {"Pilou33", "123456789", "motdepass"};
-        String[] logins = {"ADupont", "PMartin", "JDelamama"};
+        String[] firstNames = { "Anna", "Paul", "Jérémy" };
+        String[] lastNames = { "Dupont", "Martin", "Delamama" };
+        String[] pwds = { "Pilou33", "123456789", "motdepass" };
+        String[] logins = { "ADupont", "PMartin", "JDelamama" };
         User u;
         for (int i = 0; i < logins.length; i++) {
             u = new User();
@@ -71,7 +72,8 @@ public class Generator {
             u.setPassword(User.sha256(pwds[i]));
             u.setLogin(logins[i]);
             u.setWeeklyHours(new Random().nextInt(20) + 15);
-            var existing = Database.getInstance().getUsersDao().queryForMatching(u).size() != 0;
+            var existing = Database.getInstance().getUsersDao().queryBuilder().where().eq("login", logins[i]).query()
+                    .size() > 0;
             if (!existing) {
                 Database.getInstance().getUsersDao().create(u);
             }
@@ -90,18 +92,22 @@ public class Generator {
 
             var cashbacks = CashBack.values();
             resa.setCashBack(cashbacks[rdmNbrBtwn(0, cashbacks.length)]);
-            
+
             var equipments = resa.getCampground().getCompatiblesEquipments();
             resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
-            
+
             var services = resa.getCampground().getCompatiblesServices();
             resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
-            
 
             resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
             resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
             resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
-            
+
+            if (rdmNbrBtwn(0, 10) > 5) {
+                resa.setDepositDate(new Date());
+                if (rdmNbrBtwn(0, 10) > 5)
+                    resa.setPaymentDate(new Date());
+            }
             Database.getInstance().getReservationDao().create(resa);
             Database.getInstance().getReservationDao().refresh(resa);
             System.out.println(resa);
@@ -112,7 +118,7 @@ public class Generator {
         for (int i = 0; i < nbr; i++) {
             var cg = new CampGround();
             cg.setDescription(f.country().name());
-            cg.setPricePerDays(f.number().randomDigitNotZero());
+            cg.setPricePerDays(f.number().randomDigitNotZero()*100);
             cg.setSurface(f.number().randomDigitNotZero());
             cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);
             if (cg.getAllowedEquipments() == Equipment.MOBILHOME)
@@ -128,7 +134,7 @@ public class Generator {
         }
     }
 
-    private static void generateClients(Faker f, int nbr) throws SQLException {
+    private static void generateClients(Faker f, int nbr) throws SQLException, ConstraintException {
         for (int i = 0; i < nbr; i++) {
             var c = new Client();
             c.setAddresse(f.address().fullAddress());

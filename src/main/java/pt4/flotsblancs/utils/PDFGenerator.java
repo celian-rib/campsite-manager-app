@@ -22,6 +22,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.scenes.utils.PriceUtils;
+
 import java.awt.Desktop;
 
 public class PDFGenerator {
@@ -106,6 +108,7 @@ public class PDFGenerator {
         document.close();
 
         System.out.println("PDF généré");
+        MailSender.createSession();
         return outputStream;
     }
 
@@ -171,14 +174,14 @@ public class PDFGenerator {
         table.addCell(createCell(reservation.getDepositPrice() + "€"));
 
         table.addCell(createCell("Prix services (jours) : "));
-        table.addCell(createCell(reservation.getSelectedServices().getPricePerDay() + "€"));
+        table.addCell(createCell(PriceUtils.priceToString(reservation.getSelectedServices().getPricePerDay()) + "€"));
 
         table.addCell(createCell("Prix emplacement (jours) : "));
-        table.addCell(createCell(reservation.getCampground().getPricePerDays() + "€"));
+        table.addCell(createCell(PriceUtils.priceToString(reservation.getCampground().getPricePerDays()) + "€"));
 
         var font = FontFactory.getFont("Arial", 12, Font.BOLD);
         table.addCell(new PdfPCell(new Paragraph("Prix total", font)));
-        table.addCell(new PdfPCell(new Paragraph(reservation.getTotalPrice() + "€", font)));
+        table.addCell(new PdfPCell(new Paragraph(PriceUtils.priceToString(reservation.getTotalPrice()) + "€", font)));
 
         return table;
     }

@@ -215,6 +215,8 @@ public class StocksScene extends VBox implements IScene {
                 Router.goToScreen(Routes.HOME);
             }
             updateTable();
+            table.getSelectionModel().selectLast();
+            table.scrollTo(table.getSelectionModel().getSelectedItem()); 
         });
 
         return container;

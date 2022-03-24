@@ -33,7 +33,9 @@ import pt4.flotsblancs.scenes.components.*;
 import pt4.flotsblancs.scenes.components.ComboBoxes.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
+import pt4.flotsblancs.scenes.utils.PriceUtils;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.utils.MailSender;
 import pt4.flotsblancs.utils.PDFGenerator;
 
 public class ReservationsScene extends ItemScene<Reservation> {
@@ -127,14 +129,16 @@ public class ReservationsScene extends ItemScene<Reservation> {
         equipmentsComboBox.refresh();
         campComboBox.refresh();
         serviceComboBox.refresh();
+        cashBackComboBox.selectItem(reservation.getCashBack());
+
 
         // Rafraichit tous les labels de la page ayant une valeur calculé
         String cancelStr = reservation.getCanceled() ? " (Annulée)" : "";
         title.setText("Réservation  #" + reservation.getId() + cancelStr);
 
         dayCount.setText(reservation.getDayCount() + " jours");
-        depositPrice.setText("Prix acompte : " + reservation.getDepositPrice() + "€");
-        totalPrice.setText("Prix total : " + reservation.getTotalPrice() + "€");
+        depositPrice.setText("Prix acompte : " + PriceUtils.priceToString(reservation.getDepositPrice()) + "€");
+        totalPrice.setText("Prix total : " + PriceUtils.priceToString(reservation.getTotalPrice()) + "€");
         sendBillBtn.setText(reservation.getBill() != null ? "Regénérer et envoyer facture"
                 : "Générer et envoyer facture");
         campCard.refresh(reservation.getCampground());
@@ -173,6 +177,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         try {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
+            updateItemList();
         } catch (SQLException e) {
             ExceptionHandler.updateIssue(e);
         }
@@ -210,7 +215,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.setPadding(new Insets(INNER_PADDING));
         container.setAlignment(Pos.BOTTOM_CENTER);
 
-        problemsContainer = new ProblemsListCard(reservation.getProblems());
+        problemsContainer = new ProblemsListCard(reservation);
 
         container.getChildren().add(createPaymentContainer());
         container.getChildren().add(new HBoxSpacer());
@@ -365,12 +370,21 @@ public class ReservationsScene extends ItemScene<Reservation> {
                 Router.showToast(ToastType.ERROR,
                         "Une erreur est survenue durant la génération de la facture");
             }
+
+            try {
+                MailSender.sendMail(reservation);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Router.showToast(ToastType.ERROR,
+                        "Une erreur est survenue durant l'envoi de l'email au client");
+            }
         });
 
         openBillBtn.setOnAction(e -> {
             Router.showToast(ToastType.INFO, "Ouverture du fichier...");
             try {
                 PDFGenerator.openFile(reservation);
+                
             } catch (Exception e1) {
                 e1.printStackTrace();
                 Router.showToast(ToastType.ERROR,
@@ -398,6 +412,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         combo.getItems().addAll("Versé", "En attente");
         combo.setMinWidth(180);
         combo.setAnimated(false);
+
         return combo;
     }
 

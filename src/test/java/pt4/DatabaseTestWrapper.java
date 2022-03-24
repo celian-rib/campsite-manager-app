@@ -86,13 +86,13 @@ public abstract class DatabaseTestWrapper {
         }
     }
 
-    private void createTestClient() throws SQLException {
+    private void createTestClient() throws SQLException, ConstraintException {
         log("Création client de test");
         client = new Client();
         client.setAddresse("15 rue Naudet, Gradignan, 33170");
         client.setFirstName("test_firstname");
         client.setName("test_name");
-        client.setPhone("+33 07 69 66 65 41");
+        client.setPhone("07 69 66 65 41");
         client.setPreferences("Camping car avec famille");
         client.setEmail("email.tropbien@email.com");
         var existing = Database.getInstance().getClientsDao().queryForMatching(client);

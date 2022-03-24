@@ -5,26 +5,26 @@ import java.util.HashMap;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pt4.flotsblancs.scenes.CampgroundsScene;
-import pt4.flotsblancs.scenes.ClientsScene;
-import pt4.flotsblancs.scenes.ConnectionFallbackScene;
-import pt4.flotsblancs.scenes.DashboardScene;
-import pt4.flotsblancs.scenes.LoginScene;
-import pt4.flotsblancs.scenes.LogsScene;
-import pt4.flotsblancs.scenes.ProblemesScene;
-import pt4.flotsblancs.scenes.ProblemsAddScene;
-import pt4.flotsblancs.scenes.ReservationsScene;
-import pt4.flotsblancs.scenes.UserScene;
-import pt4.flotsblancs.scenes.StocksScene;
+
+import pt4.flotsblancs.database.model.User;
+import pt4.flotsblancs.scenes.*;
+import pt4.flotsblancs.scenes.items.IItemScene;
 import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.items.ItemScene;
+
 import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class Router {
 
+    @AllArgsConstructor
     public enum Routes {
-        CONN_FALLBACK, CLIENTS, RESERVATIONS, LOGIN, HOME, STOCKS, CAMPGROUNDS, PROBLEMS, PROBLEMS_ADD, LOGS, USERS;
+        CONN_FALLBACK(false), CLIENTS(false), RESERVATIONS(false), LOGIN(false), HOME(false), STOCKS(false),
+        CAMPGROUNDS(false), PROBLEMS(false), PROBLEMS_ADD(false), LOGS(true), USERS(true);
+
+        @Getter
+        private boolean isRestrictedToAdmins;
     }
 
     /**
@@ -53,14 +53,16 @@ public class Router {
     private static Routes currentRoute;
 
     /**
-     * Scene contenant la barre de navigation et l'écran a afficher Cette scène ne change jamais et
+     * Scene contenant la barre de navigation et l'écran a afficher Cette scène ne
+     * change jamais et
      * est le réel conteneur de toute l'application (La racine de l'arbre JFX)
      */
     @Getter
     private static RootScene rootScene;
 
     /**
-     * Conteneur au plus haut niveau de l'application (La fenêtre) Le stage contient la rootScene
+     * Conteneur au plus haut niveau de l'application (La fenêtre) Le stage contient
+     * la rootScene
      * qui elle contient la barre de navigation et la scene courante (page)
      */
     @Getter
@@ -76,8 +78,9 @@ public class Router {
     /**
      * Charge le routeur
      * 
-     * @param defaultRoute route chargée au lancement du routeur
-     * @param _primaryStage stage de l'application (La fenêtre dans laquelle lancer le routeur)
+     * @param defaultRoute  route chargée au lancement du routeur
+     * @param _primaryStage stage de l'application (La fenêtre dans laquelle lancer
+     *                      le routeur)
      */
     public static void initialize(Routes defaultRoute, Stage _primaryStage, int width, int height) {
         primaryStage = _primaryStage;
@@ -94,7 +97,8 @@ public class Router {
     }
 
     /**
-     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un toast
+     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un
+     * toast
      * 
      * 
      * @param type
@@ -110,7 +114,8 @@ public class Router {
     }
 
     /**
-     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un toast
+     * Permet d'envoyer un signal à la root scène pour délencher l'affichage d'un
+     * toast
      * 
      * @param type
      * @param message
@@ -129,8 +134,15 @@ public class Router {
     public static void goToScreen(Routes newRoute) {
         if (rootScene == null)
             return;
+
         if (!routes.containsKey(newRoute)) {
             log("Route not implemented");
+            return;
+        }
+
+        if (newRoute.isRestrictedToAdmins() && !User.getConnected().isAdmin()) {
+            showToast(ToastType.ERROR, "Vous n'avez pas accès à cette page...");
+            log("Route bloqued, user not admin");
             return;
         }
 
@@ -140,7 +152,8 @@ public class Router {
 
         currentRoute = newRoute;
 
-        // On demande au conteneur de changer sa scène courante (La page qui est chargée)
+        // On demande au conteneur de changer sa scène courante (La page qui est
+        // chargée)
         rootScene.changeCurrentScene(routes.get(currentRoute));
 
         // Changement titre de la fenêtre
@@ -153,7 +166,8 @@ public class Router {
     }
 
     /**
-     * Permet de changer la scène courante, sans transition, sans déclenchement des événement
+     * Permet de changer la scène courante, sans transition, sans déclenchement des
+     * événement
      * d'unfocus sur la scène précédemment affichée
      * 
      * @param newRoute route de la nouvelle scène
@@ -173,7 +187,8 @@ public class Router {
     }
 
     /**
-     * Permet de change la scène actuelle (La page courante) en donnant un item sélectionné /!\ Cela
+     * Permet de change la scène actuelle (La page courante) en donnant un item
+     * sélectionné /!\ Cela
      * implique que l'item donnée corresponde avec la route
      * 
      * @param newRoute
@@ -181,9 +196,14 @@ public class Router {
     public static <I extends Item> void goToScreen(Routes newRoute, I item) {
         if (rootScene == null)
             return;
-        if (routes.get(newRoute) instanceof ItemScene<?>) {
+        if (newRoute.isRestrictedToAdmins() && !User.getConnected().isAdmin()) {
+            showToast(ToastType.ERROR, "Vous n'avez pas accès à cette page...");
+            log("Route bloqued, user not admin");
+            return;
+        }
+        if (routes.get(newRoute) instanceof IItemScene<?>) {
             @SuppressWarnings("unchecked")
-            ItemScene<I> nextScene = (ItemScene<I>) routes.get(newRoute);
+            IItemScene<I> nextScene = (IItemScene<I>) routes.get(newRoute);
             nextScene.selectItem(item);
         }
         log("[Router] Selecting " + item.getDisplayName() + " on "

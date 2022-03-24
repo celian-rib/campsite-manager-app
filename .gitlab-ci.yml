@@ -1,28 +1,35 @@
 image: maven:3.8.4-jdk-11
 
-# workflow:
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-
 cache:
   paths:
-    - .m2/repository
+  - ".m2/repository"
 
 variables:
-  DB_URL:  $DB_URL
-  DB_USER: $DB_USER
-  DB_PASSWORD: $DB_PASSWORD
+  DB_URL: "$DB_URL"
+  DB_USER: "$DB_USER"
+  DB_PASSWORD: "$DB_PASSWORD"
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS: "-s ci_settings.xml --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
 
 stages:
-  - tests
+- tests
+- build
 
 tests:
   stage: tests
   script:
-    - echo "DB_URL=$DB_URL" >> .env
-    - echo "DB_USER=$DB_USER" >> .env
-    - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-    - mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.3 -Dpackaging=jar -DskipTests
-    - mvn test
+  - echo "DB_URL=$DB_URL" >> .env
+  - echo "DB_USER=$DB_USER" >> .env
+  - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+  - mvn install -DskipTests
+  - mvn test
 
+build:
+  dependencies: ["tests"]
+  stage: build
+  script:
+  - scripts/buildArtifact.sh
+  artifacts:
+    expose_as: 'App Artifact'
+    paths: ['target/flots-blancs-1.0.0.jar']

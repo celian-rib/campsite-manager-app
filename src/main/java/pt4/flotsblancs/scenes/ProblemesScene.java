@@ -2,8 +2,11 @@ package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
@@ -44,7 +47,7 @@ public class ProblemesScene extends ItemScene<Problem> {
     private TextArea description;
 
     private boolean descriptionModified;
-
+    private MFXButton saveButton;
     private ChangeListener<? super Object> changeListener = (obs, oldValue, newValue) -> {
         if (oldValue == newValue || oldValue == null)
             return;
@@ -82,16 +85,18 @@ public class ProblemesScene extends ItemScene<Problem> {
         container.getChildren().add(new VBoxSpacer());
         container.getChildren().add(createBottomSlot());
 
+        container.getChildren().add(createActionsButtonsSlot());
+
         refreshPage();
 
         return container;
     }
 
     private void refreshPage() {
-        startDate.setText("Date de début : " + DateUtils.toFormattedString(problem.getStartDate()));
-        endDate.setText("Date de fin : " + (problem.getEndDate() == null ? ""
+        startDate.setText("Date de début :   " + DateUtils.toFormattedString(problem.getStartDate()));
+        endDate.setText("Date de résolution :   " + (problem.getEndDate() == null ? "non résolu"
                 : DateUtils.toFormattedString(problem.getEndDate())));
-        lastUpdateDate.setText("Dernière mise à jour : " + problem.getLastUpdateDate().toString());
+        lastUpdateDate.setText("Dernière mise à jour :   " + DateUtils.toFormattedString(problem.getLastUpdateDate()));
     }
 
     private BorderPane createBottomSlot() {
@@ -102,6 +107,7 @@ public class ProblemesScene extends ItemScene<Problem> {
         description.textProperty().addListener((obs, oldVal, newVal) -> {
             if (oldVal != null && oldVal != newVal)
                 this.descriptionModified = true;
+                saveButton.setDisable(false);
         });
 
         BorderPane spacing = new BorderPane();
@@ -195,8 +201,10 @@ public class ProblemesScene extends ItemScene<Problem> {
 
     private void refreshDatabase() {
         try {
+            problem.setDescription(description.getText());
             Database.getInstance().getProblemDao().update(problem);
             Router.showToast(ToastType.SUCCESS, "Problème mis à jour");
+            updateItemList();
         } catch (SQLException e) {
             ExceptionHandler.updateIssue(e);
         }
@@ -214,7 +222,26 @@ public class ProblemesScene extends ItemScene<Problem> {
 
     @Override
     public void onContainerUnfocus() {
-        if (this.descriptionModified)
+        if (this.saveButton != null)
+            if (!saveButton.isDisabled() && this.descriptionModified)
             refreshDatabase();
+    }
+
+    private HBox createActionsButtonsSlot() {
+        var container = new HBox(10);
+
+        saveButton = new MFXButton("Sauvegarder");
+        saveButton.getStyleClass().add("action-button");
+        saveButton.setDisable(true);
+
+        container.getChildren().addAll(saveButton);
+
+        saveButton.setOnAction(e -> {
+            if (!saveButton.isDisabled() && this.descriptionModified)
+                refreshDatabase();
+            saveButton.setDisable(true);
+        });
+    container.setAlignment(Pos.CENTER_RIGHT);
+    return container;
     }
 }

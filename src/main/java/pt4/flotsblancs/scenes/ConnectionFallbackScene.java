@@ -43,7 +43,7 @@ public class ConnectionFallbackScene extends VBox implements IScene {
             System.out.println("Trying to reconnect");
             try {
                 if(Database.getInstance().isConnected()) {
-                    Router.goToScreen(Routes.HOME);
+                    Router.goToScreen(Routes.LOGIN);
                 } else {
                     throw new Exception("getInstance error");
                 }
