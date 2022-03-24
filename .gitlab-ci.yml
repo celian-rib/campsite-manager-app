@@ -22,6 +22,8 @@ tests:
   - echo "DB_URL=$DB_URL" >> .env
   - echo "DB_USER=$DB_USER" >> .env
   - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+  - echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> .env
+  - echo "MAIL_USERNAME=$MAIL_USERNAME" >> .env
   - mvn install -DskipTests
   - mvn test
 
