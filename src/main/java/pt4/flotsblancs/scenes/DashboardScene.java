@@ -1,10 +1,15 @@
 package pt4.flotsblancs.scenes;
 
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
+import javafx.print.Collation;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.Stats;
 import pt4.flotsblancs.Stats.Period;
+import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.scenes.components.FlotsBlancsLogo;
 import pt4.flotsblancs.scenes.components.InformationCard;
@@ -12,9 +17,28 @@ import pt4.flotsblancs.scenes.components.VBoxSpacer;
 
 public class DashboardScene extends VBox implements IScene {
 
+	private Period currentPeriod;
+
+	private int nbIncomingClients;
+	private int nbOutgoingClients;
+	private int nbReservations;
+	private float averageProblemTime;
+
+	private HashMap<CampGround, Integer> mostProblematicCampgrounds;
+	private HashMap<CampGround, Integer> mostRentedCampgrounds;
+
 	@Override
 	public String getName() {
 		return "Accueil";
+	}
+
+	private void queryStats() throws SQLException {
+		this.nbIncomingClients = Stats.nbClientToday(false);
+		this.nbOutgoingClients = Stats.nbClientToday(true);
+		this.nbReservations = Stats.affluence(currentPeriod);
+		this.averageProblemTime = Stats.averageProblemTime(currentPeriod);
+		this.mostProblematicCampgrounds = Stats.mostProblematicCampground(currentPeriod);
+		this.mostRentedCampgrounds = Stats.mostRentedCampground(currentPeriod);
 	}
 
 	/////////////////////////////////////
@@ -78,6 +102,10 @@ public class DashboardScene extends VBox implements IScene {
 
 	private BorderPane createStatsContainer() {
 		var container = new BorderPane();
+		var left = new VBox(10);
+		// var nbClientStats = new InformationCard("Nombre de clients", "Ce mois-ci", Stats.nbClientToday(false)
+
+		var right = new VBox(10);
 		return container;
 	}
 }
