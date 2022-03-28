@@ -62,7 +62,7 @@ public class Stock implements Item {
 
     @Override
     public String getDisplayName() {
-        return item;
+        return item + "  (qte : " + quantity + ")";
     }
 
     @Override
@@ -86,8 +86,6 @@ public class Stock implements Item {
         int val = (this.getStatusColor() == StatusColors.GREEN ? 100 : 1000) + this.getId();
         int otherVal = (other.getStatusColor() == StatusColors.GREEN ? 100 : 1000) + other.getId();
         return val - otherVal;
-        
-
     }
 
 }

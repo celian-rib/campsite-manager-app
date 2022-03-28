@@ -237,6 +237,7 @@ public class UserScene extends ItemScene<User> {
         deleteUserBtn.setDisable(User.getConnected().equals(stagiaire));
         deleteUserBtn.setOnConfirmedAction((e) -> {
             try {
+                Router.showToast(ToastType.INFO, "Utilisateur supprimé");
                 Database.getInstance().getUsersDao().delete(stagiaire);
                 super.onItemDelete(stagiaire);
             } catch (Exception e1) {

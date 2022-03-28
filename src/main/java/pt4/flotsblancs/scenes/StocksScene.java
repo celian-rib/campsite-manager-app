@@ -3,35 +3,55 @@ package pt4.flotsblancs.scenes;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.kordamp.ikonli.javafx.FontIcon;
-
 import io.github.palexdev.materialfx.controls.MFXButton;
-import javafx.beans.binding.Bindings;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+
+import javafx.beans.value.ChangeListener;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
+
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Stock;
-import pt4.flotsblancs.router.IScene;
+
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.components.ConfirmButton;
+import pt4.flotsblancs.scenes.components.HBoxSpacer;
+import pt4.flotsblancs.scenes.components.PromptedTextField;
+import pt4.flotsblancs.scenes.components.VBoxSpacer;
+import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
-public class StocksScene extends VBox implements IScene {
+public class StocksScene extends ItemScene<Stock> {
 
-    private TableView<Stock> table;
-    private MFXButton addItemBtn;
-    private MFXButton deleteItemBtn;
+    private Label title;
+
+    private Stock stock;
+
+    private MFXTextField itemInput;
+    private MFXTextField storageLocationInput;
+
+    private Spinner<Integer> quantitySpinner;
+    private Spinner<Integer> quantityAlertSpinner;
+
+    private MFXButton saveButton;
+
+    private ChangeListener<? super Object> changeListener = (obs, oldVal, newVal) -> {
+        if (oldVal == null || newVal == null || oldVal == newVal)
+            return;
+        saveButton.setDisable(false);
+    };
 
     @Override
     public String getName() {
@@ -39,135 +59,40 @@ public class StocksScene extends VBox implements IScene {
     }
 
     @Override
-    public boolean showNavBar() {
-        return true;
+    protected String addButtonText() {
+        return "Ajouter un nouveau stock";
     }
 
     @Override
-    public void onFocus() {
-        updateTable();
-    }
-
-    @Override
-    public void start() {
-        setAlignment(Pos.CENTER);
-        setSpacing(10);
-        displayTableView();
-        this.getChildren().add(createActionsButtonsSlot());
-        deleteItemBtn.setDisable(true);
-        table.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldSelection, newSelection) -> {
-                    deleteItemBtn.setDisable(table.getSelectionModel().getSelectedItem() == null);
-                });
-    }
-
-    private void displayTableView() {
-        table = new TableView<Stock>();
-        table.setEditable(true);
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<Stock, String> itemCol = new TableColumn<Stock, String>("Produit");
-        TableColumn<Stock, Integer> quantityCol = new TableColumn<Stock, Integer>("Quantité");
-        TableColumn<Stock, String> storageLocCol = new TableColumn<Stock, String>("Emplacement");
-        TableColumn<Stock, Integer> alertCol = new TableColumn<Stock, Integer>("Seuil d'alerte");
-
-        table.getColumns().add(itemCol);
-        table.getColumns().add(quantityCol);
-        table.getColumns().add(storageLocCol);
-        table.getColumns().add(alertCol);
-
-        itemCol.setCellValueFactory(new PropertyValueFactory<>("item"));
-        itemCol.setCellFactory(TextFieldTableCell.<Stock>forTableColumn());
-
-        quantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-
-        quantityCol.setCellFactory(col -> {
-            TableCell<Stock, Integer> cell = new TableCell<Stock, Integer>();
-
-            cell.itemProperty().addListener((observableValue, o, newValue) -> {
-                if (newValue != null) {
-                    var graphic = new Spinner<Integer>();
-                    SpinnerValueFactory<Integer> valueFactory =
-                            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000000);
-                    valueFactory.setValue(cell.getItem());
-                    valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
-                        if (oldVal == null)
-                            return;
-                        var stock = cell.getTableRow().getItem();
-                        stock.setQuantity(newVal);
-                        // TODO debounce l'update pour ne pas spam la BD
-                        updateDatabase(stock);
-                    });
-                    graphic.setValueFactory(valueFactory);
-
-                    cell.graphicProperty().bind(Bindings.when(cell.emptyProperty())
-                            .then((Node) null).otherwise(graphic));
-                }
-            });
-
-            return cell;
-        });
-
-        alertCol.setCellValueFactory(new PropertyValueFactory<>("quantityAlertThreshold"));
-
-        alertCol.setCellFactory(col -> {
-            TableCell<Stock, Integer> cell = new TableCell<Stock, Integer>();
-
-            cell.itemProperty().addListener((observableValue, o, newValue) -> {
-                if (newValue != null) {
-                    var graphic = new Spinner<Integer>();
-                    SpinnerValueFactory<Integer> valueFactory =
-                            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000000);
-                    valueFactory.setValue(cell.getItem());
-                    valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
-                        if (oldVal == null)
-                            return;
-                        var stock = cell.getTableRow().getItem();
-                        stock.setQuantityAlertThreshold(newVal);
-                        // TODO debounce l'update pour ne pas spam la BD
-                        updateDatabase(stock);
-                    });
-                    graphic.setValueFactory(valueFactory);
-
-                    cell.graphicProperty().bind(Bindings.when(cell.emptyProperty())
-                            .then((Node) null).otherwise(graphic));
-                }
-            });
-
-            return cell;
-        });
-
-        storageLocCol.setCellValueFactory(new PropertyValueFactory<>("storageLocation"));
-        storageLocCol.setCellFactory(TextFieldTableCell.<Stock>forTableColumn());
-
-        itemCol.setOnEditCommit(event -> {
-            event.getRowValue().setItem(event.getNewValue());
-            updateDatabase(event.getRowValue());
-        });
-
-        storageLocCol.setOnEditCommit(event -> {
-            event.getRowValue().setStorageLocation(event.getNewValue());
-            updateDatabase(event.getRowValue());
-        });
-        storageLocCol.setOnEditCommit(event -> {
-            event.getRowValue().setStorageLocation(event.getNewValue());
-            updateDatabase(event.getRowValue());
-        });
-
-        this.getChildren().add(table);
-    }
-
-    private void updateTable() {
+    protected void onAddButtonClicked() {
+        var newStock = new Stock();
+        newStock.setItem("Nouveau produit");
+        newStock.setQuantity(0);
+        newStock.setQuantityAlertThreshold(5);
+        newStock.setStorageLocation("Pas d'emplacement");
         try {
-            table.getItems().clear();
-            table.getItems().addAll(queryAll());
-        } catch (SQLException e) {
-            ExceptionHandler.loadIssue(e);
+            Database.getInstance().getStockDao().create(newStock);
+            Router.showToast(ToastType.SUCCESS, "Nouveau stock créé");
+            Router.goToScreen(Routes.STOCKS, newStock);
+        } catch (SQLException e1) {
+            ExceptionHandler.loadIssue(e1);
         }
     }
-    
+
     private void updateDatabase(Stock stock) {
         try {
+            if (!stock.getItem().equals(itemInput.getText()))
+                stock.setItem(itemInput.getText());
+
+            if (!stock.getStorageLocation().equals(storageLocationInput.getText()))
+                stock.setStorageLocation(storageLocationInput.getText());
+
+            if (stock.getQuantity() != quantitySpinner.getValue())
+                stock.setQuantity(quantitySpinner.getValue());
+
+            if (stock.getQuantityAlertThreshold() != quantityAlertSpinner.getValue())
+                stock.setQuantityAlertThreshold(quantityAlertSpinner.getValue());
+
             Database.getInstance().getStockDao().update(stock);
             Router.showToast(ToastType.SUCCESS, "Stock mis à jour");
         } catch (SQLException e) {
@@ -175,54 +100,126 @@ public class StocksScene extends VBox implements IScene {
         }
     }
 
+    private void refreshPage() {
+        title.setText(stock.getItem() + "  #" + stock.getId());
+    }
+
+    @Override
+    protected Region createContainer(Stock item) {
+        this.stock = item;
+        var container = new VBox();
+        container.setPadding(new Insets(50));
+
+        container.getChildren().add(createHeader());
+        container.getChildren().add(new VBoxSpacer());
+        container.getChildren().add(createMainContainer());
+        container.getChildren().add(new VBoxSpacer());
+        container.getChildren().add(createActionsButtonsSlot());
+
+        refreshPage();
+        return container;
+    }
+
     private HBox createActionsButtonsSlot() {
         var container = new HBox(10);
 
-        deleteItemBtn = new MFXButton("Supprimer un produit");
-        addItemBtn = new MFXButton("Ajouter un produit");
-        FontIcon icon = new FontIcon("fas-exclamation-triangle:10");
-        icon.setIconColor(Color.WHITE);
+        saveButton = new MFXButton("Sauvegarder");
+        saveButton.getStyleClass().add("action-button");
+        saveButton.setDisable(true);
 
-        addItemBtn.getStyleClass().add("action-button");
-        deleteItemBtn.getStyleClass().add("action-button");
-
-        container.setAlignment(Pos.CENTER_RIGHT);
-        container.getChildren().addAll(deleteItemBtn, addItemBtn);
-
-        deleteItemBtn.setOnAction(e -> {
+        ConfirmButton deleteStockButton = new ConfirmButton("Supprimer");
+        deleteStockButton.getStyleClass().add("action-button-outlined");
+        deleteStockButton.setOnConfirmedAction((e) -> {
             try {
-                Database.getInstance().getStockDao()
-                        .delete(table.getSelectionModel().getSelectedItem());
-            } catch (SQLException e1) {
+                Router.showToast(ToastType.INFO, "Stock supprimé");
+                Database.getInstance().getStockDao().delete(stock);
+                super.onItemDelete(stock);
+            } catch (Exception e1) {
                 e1.printStackTrace();
-                Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-                Router.goToScreen(Routes.HOME);
             }
-            updateTable();
         });
 
-        addItemBtn.setOnAction(e -> {
-            var s = new Stock();
-            s.setItem("Nouveau produit");
-            s.setQuantity(0);
-            s.setQuantityAlertThreshold(5);
-            s.setStorageLocation("Pas d'emplacement");
-            try {
-                Database.getInstance().getStockDao().create(s);
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-                Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-                Router.goToScreen(Routes.HOME);
-            }
-            updateTable();
-            table.getSelectionModel().selectLast();
-            table.scrollTo(table.getSelectionModel().getSelectedItem()); 
+        container.setAlignment(Pos.CENTER_RIGHT);
+        container.getChildren().addAll(deleteStockButton, saveButton);
+
+        saveButton.setOnAction(e -> {
+            updateDatabase(stock);
+            updateItemList();
+            saveButton.setDisable(true);
         });
 
         return container;
     }
 
-    private List<Stock> queryAll() throws SQLException {
+    private BorderPane createHeader() {
+        BorderPane container = new BorderPane();
+
+        title = new Label();
+        title.setFont(new Font(24));
+        title.setTextFill(Color.rgb(51, 59, 97));
+
+        container.setLeft(title);
+        return container;
+    }
+
+    private HBox createMainContainer() {
+        HBox container = new HBox();
+
+        container.getChildren().add(new HBoxSpacer());
+        container.getChildren().add(createTextInfosContainer());
+        container.getChildren().add(new HBoxSpacer());
+        container.getChildren().add(createQuantitysContainer());
+        container.getChildren().add(new HBoxSpacer());
+        return container;
+    }
+
+    private VBox createTextInfosContainer() {
+        VBox container = new VBox(30);
+
+        itemInput = new PromptedTextField(stock.getItem(), "Nom du produit");
+        storageLocationInput =
+                new PromptedTextField(stock.getStorageLocation(), "Emplacement de stockage");
+
+        itemInput.textProperty().addListener(changeListener);
+        storageLocationInput.textProperty().addListener(changeListener);
+
+        container.getChildren().add(itemInput);
+        container.getChildren().add(storageLocationInput);
+
+        return container;
+    }
+
+    private VBox createQuantitysContainer() {
+        VBox container = new VBox(30);
+
+        VBox quantityContainer = new VBox(5);
+        Label prompt = new Label("Quantité actuellement en stock");
+        SpinnerValueFactory<Integer> vFact =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, stock.getQuantity());
+        quantitySpinner = new Spinner<Integer>();
+        quantitySpinner.setEditable(true);
+        quantitySpinner.setValueFactory(vFact);
+        quantitySpinner.valueProperty().addListener(changeListener);
+        quantityContainer.getChildren().addAll(prompt, quantitySpinner);
+
+        VBox quantityAlertContainer = new VBox(5);
+        Label promptAlert = new Label("Seuil d'alerte quantité");
+        SpinnerValueFactory<Integer> vFactAlert =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000,
+                        stock.getQuantityAlertThreshold());
+        quantityAlertSpinner = new Spinner<Integer>();
+        quantityAlertSpinner.setEditable(true);
+        quantityAlertSpinner.setValueFactory(vFactAlert);
+        quantityAlertSpinner.valueProperty().addListener(changeListener);
+        quantityContainer.getChildren().addAll(promptAlert, quantityAlertSpinner);
+
+        container.getChildren().add(quantityContainer);
+        container.getChildren().add(quantityAlertContainer);
+        return container;
+    }
+
+    @Override
+    protected List<Stock> queryAll() throws SQLException {
         return Database.getInstance().getStockDao().queryForAll();
     }
 }
