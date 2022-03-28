@@ -140,7 +140,7 @@ public class Router {
             return;
         }
 
-        if (newRoute.isRestrictedToAdmins() && !User.getConnected().isAdmin()) {
+        if (User.getConnected() != null && newRoute.isRestrictedToAdmins() && !User.getConnected().isAdmin()) {
             showToast(ToastType.ERROR, "Vous n'avez pas accès à cette page...");
             log("Route bloqued, user not admin");
             return;
