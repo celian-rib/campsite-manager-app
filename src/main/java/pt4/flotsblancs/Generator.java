@@ -138,7 +138,7 @@ public class Generator {
         for (int i = 0; i < nbr; i++) {
             var c = new Client();
             c.setAddresse(f.address().fullAddress());
-            c.setPhone(f.phoneNumber().cellPhone().toString());
+            c.setPhone("0956674332");
             String hp = f.harryPotter().spell();
             c.setName((hp.split(" ").length > 1) ? hp.split(" ")[1] : hp.split(" ")[0]);
             c.setFirstName(f.dragonBall().character().split(" ")[0]);
