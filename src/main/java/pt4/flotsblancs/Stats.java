@@ -10,7 +10,6 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Problem;

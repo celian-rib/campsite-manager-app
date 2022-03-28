@@ -3,10 +3,7 @@ package pt4.flotsblancs.scenes;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import io.github.palexdev.materialfx.controls.MFXComboBox;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -14,16 +11,16 @@ import pt4.flotsblancs.Stats;
 import pt4.flotsblancs.Stats.Period;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.router.IScene;
+import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.scenes.components.FlotsBlancsLogo;
 import pt4.flotsblancs.scenes.components.HBoxSpacer;
 import pt4.flotsblancs.scenes.components.InformationCard;
 import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.components.ComboBoxes.PeriodComboBox;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
+import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class DashboardScene extends VBox implements IScene {
-
-    private Period currentPeriod;
 
     private int nbIncomingClients;
     private int nbOutgoingClients;
@@ -33,33 +30,17 @@ public class DashboardScene extends VBox implements IScene {
     private HashMap<CampGround, Integer> mostProblematicCampgrounds;
     private HashMap<CampGround, Integer> mostRentedCampgrounds;
 
+    private InformationCard<Integer> nbIncomingClientStats;
+    private InformationCard<Integer> nbOutgoingClientStats;
+    private InformationCard<Integer> nbReservationsStats;
+
+    private InformationCard<Float> averageProblemTimeStats;
+
+    private PeriodComboBox periodComboBox;
+
     @Override
     public String getName() {
         return "Accueil";
-    }
-
-    private void queryStats() throws SQLException {
-        this.currentPeriod = Period.ANNUALY;
-        this.nbIncomingClients = Stats.nbClientToday(false);
-        this.nbOutgoingClients = Stats.nbClientToday(true);
-        this.nbReservations = Stats.affluence(currentPeriod);
-        this.averageProblemTime = Stats.averageProblemTime(currentPeriod);
-        this.mostProblematicCampgrounds = Stats.mostProblematicCampground(currentPeriod);
-
-        mostProblematicCampgrounds.forEach((k, v) -> {
-           System.out.println(k); 
-           System.out.println(v); 
-           System.out.println("----"); 
-        });
-
-        this.mostRentedCampgrounds = Stats.mostRentedCampground(currentPeriod);
-        // print all the above variables
-        System.out.println("nbIncomingClients: " + nbIncomingClients);
-        System.out.println("nbOutgoingClients: " + nbOutgoingClients);
-        System.out.println("nbReservations: " + nbReservations);
-        System.out.println("averageProblemTime: " + averageProblemTime);
-        System.out.println("mostProblematicCampgrounds: " + mostProblematicCampgrounds);
-        System.out.println("mostRentedCampgrounds: " + mostRentedCampgrounds);
     }
 
     /////////////////////////////////////
@@ -73,61 +54,49 @@ public class DashboardScene extends VBox implements IScene {
 
     @Override
     public void start() {
-        try {
-            queryStats();
-        } catch (SQLException e) {
-            ExceptionHandler.loadIssue(e);
-            return;
-        }
-
         setSpacing(40);
         setAlignment(Pos.CENTER);
 
         var logo = new FlotsBlancsLogo(true, false, 130);
+        periodComboBox = new PeriodComboBox();
+        periodComboBox.addUserChangedValueListenerNoCheck((obs, oldV, newV) -> {
+            refreshPage();
+            Router.showToast(ToastType.SUCCESS,
+                    "Statistiques de " + periodComboBox.getSelectedPeriod().toString().toLowerCase() + " affichées");
+        });
 
         this.getChildren().add(new VBoxSpacer());
         this.getChildren().add(logo);
         this.getChildren().add(new VBoxSpacer());
         this.getChildren().add(createStatsContainer());
-        this.getChildren().add(new PeriodComboBox());
+        this.getChildren().add(periodComboBox);
         this.getChildren().add(new VBoxSpacer());
+    }
 
-        // try {
-        // BorderPane stats = new BorderPane();
+    @Override
+    public void onFocus() {
+        refreshPage();
+    }
 
-        // VBox left = new VBox();
-        // VBox right = new VBox();
+    private void refreshPage() {
+        try {
+            Period currentPeriod = periodComboBox.getSelectedPeriod();
 
-        // InformationCard c1 = new InformationCard("Résolution des problèmes","Temps
-        // moyen, ce mois-ci",Stats.averageProblemTime(Period.MONTHLY)+"
-        // jours",Color.rgb(236, 204, 104,0.5f));
-        // InformationCard c2 = new InformationCard("Occupation","Ce
-        // mois-ci",Stats.affluence(Period.MONTHLY)+" emplacements",Color.rgb(164, 176,
-        // 190,0.5f));
-        // InformationCard c3 = new
-        // InformationCard("TITRE","Sous-titre","information",Color.rgb(255, 155, 155));
+            nbIncomingClientStats.setData(Stats.nbClientToday(false), currentPeriod);
+            nbOutgoingClientStats.setData(Stats.nbClientToday(true), currentPeriod);
+            nbReservationsStats.setData(Stats.affluence(currentPeriod), currentPeriod);
 
-        // left.getChildren().addAll(c1,c2);
-        // right.getChildren().add(c3);
+            var avgPrblm = Math.round(Stats.averageProblemTime(currentPeriod) * 100.0) / 100.0;
+            averageProblemTimeStats.setData((float) avgPrblm, "jours", currentPeriod);
 
-        // /*left.setBackground(new Background(new BackgroundFill(Color.rgb(255, 0, 0),
-        // CornerRadii.EMPTY, Insets.EMPTY)));
-        // left.setPrefWidth(300D);
-        // left.setPrefHeight(100D);
-
-        // right.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 0),
-        // CornerRadii.EMPTY, Insets.EMPTY)));
-        // right.setPrefWidth(300D);
-        // right.setPrefHeight(100D);*/
-
-        // stats.setLeft(left);
-        // stats.setRight(right);
-
-        // this.setTop(null);
-        // this.setBottom(stats);
-        // } catch(Exception e) {
-        // e.printStackTrace();
-        // }
+            // this.averageProblemTime = Stats.averageProblemTime(currentPeriod);
+            // this.mostProblematicCampgrounds =
+            // Stats.mostProblematicCampground(currentPeriod);
+            // this.mostRentedCampgrounds = Stats.mostRentedCampground(currentPeriod);
+        } catch (SQLException e) {
+            ExceptionHandler.loadIssue(e);
+            return;
+        }
     }
 
     private HBox createStatsContainer() {
@@ -135,22 +104,16 @@ public class DashboardScene extends VBox implements IScene {
 
         var left = new VBox(20);
 
-        var nbIncomingClientStats = new InformationCard(
+        nbIncomingClientStats = new InformationCard<>(
                 "Clients arrivants",
-                "Ce mois-ci",
-                this.nbIncomingClients + "",
                 Color.rgb(166, 255, 190));
 
-        var nbOutgoingClientStats = new InformationCard(
+        nbOutgoingClientStats = new InformationCard<>(
                 "Clients partants",
-                "Ce mois-ci",
-                this.nbIncomingClients + "",
                 Color.rgb(197, 226, 252));
 
-        var nbReservationsStats = new InformationCard(
+        nbReservationsStats = new InformationCard<>(
                 "Réservations",
-                "Ce mois-ci",
-                this.nbReservations + "",
                 Color.rgb(234, 166, 255));
 
         left.getChildren().add(nbIncomingClientStats);
@@ -159,10 +122,8 @@ public class DashboardScene extends VBox implements IScene {
 
         var right = new VBox(10);
 
-        var averageProblemTimeStats = new InformationCard(
+        averageProblemTimeStats = new InformationCard<>(
                 "Résolution de problème",
-                "Temps moyen ce mois-ci",
-                Math.round(this.averageProblemTime * 100.0) / 100.0 + " jours",
                 Color.rgb(255, 188, 166));
 
         right.getChildren().add(averageProblemTimeStats);
@@ -172,7 +133,6 @@ public class DashboardScene extends VBox implements IScene {
         container.getChildren().add(new HBoxSpacer());
         container.getChildren().add(right);
         container.getChildren().add(new HBoxSpacer());
-        
 
         return container;
     }
