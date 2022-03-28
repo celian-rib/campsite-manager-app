@@ -22,19 +22,13 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class DashboardScene extends VBox implements IScene {
 
-    private int nbIncomingClients;
-    private int nbOutgoingClients;
-    private int nbReservations;
-    private float averageProblemTime;
-
-    private HashMap<CampGround, Integer> mostProblematicCampgrounds;
-    private HashMap<CampGround, Integer> mostRentedCampgrounds;
-
     private InformationCard<Integer> nbIncomingClientStats;
     private InformationCard<Integer> nbOutgoingClientStats;
     private InformationCard<Integer> nbReservationsStats;
 
     private InformationCard<Float> averageProblemTimeStats;
+    private InformationCard<HashMap<CampGround, Integer>> mostProblemsStats;
+    private InformationCard<HashMap<CampGround, Integer>> mostRentedCampsStats;
 
     private PeriodComboBox periodComboBox;
 
@@ -42,15 +36,6 @@ public class DashboardScene extends VBox implements IScene {
     public String getName() {
         return "Accueil";
     }
-
-    /////////////////////////////////////
-    // Nb de client qui quittent
-    // Nb de client qui arrivent
-    // affluence
-    // Temps moyen de réolution de problèmes
-    // emplacments les plus problématiques
-    // emplacements les plus réservés
-    /////////////////////////////////////
 
     @Override
     public void start() {
@@ -89,10 +74,8 @@ public class DashboardScene extends VBox implements IScene {
             var avgPrblm = Math.round(Stats.averageProblemTime(currentPeriod) * 100.0) / 100.0;
             averageProblemTimeStats.setData((float) avgPrblm, "jours", currentPeriod);
 
-            // this.averageProblemTime = Stats.averageProblemTime(currentPeriod);
-            // this.mostProblematicCampgrounds =
-            // Stats.mostProblematicCampground(currentPeriod);
-            // this.mostRentedCampgrounds = Stats.mostRentedCampground(currentPeriod);
+            mostProblemsStats.setData(Stats.mostProblematicCampground(currentPeriod), "prblm", currentPeriod);
+            mostRentedCampsStats.setData(Stats.mostRentedCampground(currentPeriod), "résa", currentPeriod);
         } catch (SQLException e) {
             ExceptionHandler.loadIssue(e);
             return;
@@ -102,7 +85,9 @@ public class DashboardScene extends VBox implements IScene {
     private HBox createStatsContainer() {
         var container = new HBox();
 
-        var left = new VBox(20);
+        var SPACING = 10;
+
+        var left = new VBox(SPACING);
 
         nbIncomingClientStats = new InformationCard<>(
                 "Clients arrivants",
@@ -120,13 +105,23 @@ public class DashboardScene extends VBox implements IScene {
         left.getChildren().add(nbOutgoingClientStats);
         left.getChildren().add(nbReservationsStats);
 
-        var right = new VBox(10);
+        var right = new VBox(SPACING);
 
         averageProblemTimeStats = new InformationCard<>(
                 "Résolution de problème",
+                Color.rgb(255, 212, 133));
+
+        mostProblemsStats = new InformationCard<>(
+                "Emplacements problématiques",
                 Color.rgb(255, 188, 166));
 
+        mostRentedCampsStats = new InformationCard<>(
+                "Emplacements les plus réservés",
+                Color.rgb(166, 255, 190));
+
         right.getChildren().add(averageProblemTimeStats);
+        right.getChildren().add(mostProblemsStats);
+        right.getChildren().add(mostRentedCampsStats);
 
         container.getChildren().add(new HBoxSpacer());
         container.getChildren().add(left);

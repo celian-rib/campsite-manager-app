@@ -1,6 +1,7 @@
 package pt4.flotsblancs.scenes.components;
 
 import java.util.HashMap;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -22,19 +23,37 @@ public class InformationCard<T> extends BorderPane {
     public InformationCard(String mainTitle, Color color) {
         this.setPadding(new Insets(20));
         this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(17), null)));
-        this.setPrefSize(400D, 60D);
+        this.setPrefSize(400D, 90D);
 
         this.setLeft(createTitlesContainer(mainTitle));
+
         this.setRight(createStaticInfoContainer());
     }
 
-    public InformationCard(String mainTitle, String subtitle, HashMap<CampGround, Integer> data, Color color) {
-        this.setPadding(new Insets(20));
-        this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(17), null)));
-        this.setPrefSize(400D, 60D);
+    private VBox createCampgroundListContainer(HashMap<CampGround, Integer> data, String suffix) {
+        var container = new VBox();
 
-        this.setLeft(createTitlesContainer(mainTitle));
-        // this.setRight(createStaticInfoContainer(data));
+        HashMap<CampGround, Integer> dataToDisplay = data.entrySet()
+                .stream()
+                .limit(3)
+                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+
+        dataToDisplay.forEach((k, v) -> {
+            var pane = new BorderPane();
+            pane.setMinWidth(100);
+
+            var left = new Label("#" + k.getId());
+            var right = new Label(v + "   " + suffix);
+
+            left.setFont(new Font(12));
+            right.setFont(new Font(12));
+
+            pane.setLeft(left);
+            pane.setRight(right);
+            container.getChildren().add(pane);
+        });
+
+        return container;
     }
 
     private VBox createStaticInfoContainer() {
@@ -67,7 +86,10 @@ public class InformationCard<T> extends BorderPane {
     }
 
     public void setData(T data, String suffix, Period period) {
-        infoLabel.setText(data + " " + suffix);
+        if (data instanceof HashMap)
+            this.setRight(createCampgroundListContainer((HashMap<CampGround, Integer>) data, suffix));
+        else
+            infoLabel.setText(data + " " + suffix);
         subtitleLabel.setText(period.toString());
     }
 }

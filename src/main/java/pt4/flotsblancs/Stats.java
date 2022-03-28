@@ -128,7 +128,7 @@ public class Stats
 	
 	public static HashMap<CampGround,Integer> mostProblematicCampground(Period period) throws SQLException
 	{
-		
+		// TODO trier par nombre de problèmes
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
 		Calendar c = Calendar.getInstance();
@@ -189,7 +189,7 @@ public class Stats
 	
 	public static HashMap<CampGround,Integer> mostRentedCampground(Period period) throws SQLException
 	{
-		
+		// TODO trier par nombre de reservations
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
 		Calendar c = Calendar.getInstance();
