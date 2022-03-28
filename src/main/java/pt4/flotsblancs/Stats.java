@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Problem;
@@ -16,8 +19,21 @@ import pt4.flotsblancs.database.model.Reservation;
 public class Stats 
 {
 
+	@AllArgsConstructor
 	public enum Period {
-		WEEKLY, MONTHLY, ANNUALY, TWO_YEAR, THREE_YEAR;
+		WEEKLY("Cette semaine"), 
+		MONTHLY("Ce mois"), 
+		ANNUALY("Cette année"), 
+		TWO_YEAR("Deux dernière années"), 
+		THREE_YEAR("Trois dernières années");
+
+		@Getter
+		private String name;
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 	
 	public static void main(String[] args) throws SQLException

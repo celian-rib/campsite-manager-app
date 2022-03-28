@@ -1,5 +1,6 @@
 package pt4.flotsblancs.scenes.components;
 
+import java.util.HashMap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -10,38 +11,50 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import pt4.flotsblancs.database.model.CampGround;
 
 public class InformationCard extends BorderPane {
 
-  public InformationCard(String mainTitle, String subtitle, String info, Color color) {
+    public InformationCard(String mainTitle, String subtitle, String data, Color color) {
+        this.setPadding(new Insets(20));
+        this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(17), null)));
+        this.setPrefSize(400D, 60D);
 
-    this.setPadding(new Insets(25, 25, 25, 25));
-    this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(25), null)));
-    this.setPrefSize(500D, 90D);
+        this.setLeft(createTitlesContainer(mainTitle, subtitle));
+        this.setRight(createStaticInfoContainer(data));
+    }
+    
+    public InformationCard(String mainTitle, String subtitle, HashMap<CampGround, Integer> data, Color color) {
+        this.setPadding(new Insets(20));
+        this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(17), null)));
+        this.setPrefSize(400D, 60D);
 
-    Label mainTitleLabel = new Label(mainTitle);
-    Label subtitleLabel = new Label(subtitle);
-    Label infoLabel = new Label(info);
+        this.setLeft(createTitlesContainer(mainTitle, subtitle));
+        // this.setRight(createStaticInfoContainer(data));
+    }
 
-    /*
-     * mainTitleLabel.setPadding(new Insets(0,0,0,10));
-     * subtitleLabel.setPadding(new Insets(0,0,0,10));
-     * infoLabel.setPadding(new Insets(0,0,0,-10));
-     */
+    private VBox createStaticInfoContainer(String info) {
+        Label infoLabel = new Label(info + "");
+        infoLabel.setFont(new Font(20));
 
-    mainTitleLabel.setFont(new Font(15));
-    subtitleLabel.setFont(new Font(12));
-    infoLabel.setFont(new Font(15));
+        VBox infoBox = new VBox();
+        infoBox.setAlignment(Pos.CENTER);
+        infoBox.getChildren().addAll(infoLabel);
+        return infoBox;
+    }
 
-    VBox titleBox = new VBox();
-    titleBox.setAlignment(Pos.CENTER);
-    titleBox.getChildren().addAll(mainTitleLabel, subtitleLabel);
+    private VBox createTitlesContainer(String title, String subtitle) {
+        VBox titleBox = new VBox(5);
+        titleBox.setAlignment(Pos.CENTER_LEFT);
 
-    VBox infoBox = new VBox();
-    infoBox.setAlignment(Pos.CENTER);
-    infoBox.getChildren().addAll(infoLabel);
+        Label mainTitleLabel = new Label(title);
+        Label subtitleLabel = new Label(subtitle);
 
-    this.setLeft(titleBox);
-    this.setRight(infoBox);
-  }
+        mainTitleLabel.setFont(new Font(16));
+        subtitleLabel.setFont(new Font(13));
+        subtitleLabel.setTextFill(Color.GRAY);
+
+        titleBox.getChildren().addAll(mainTitleLabel, subtitleLabel);
+        return titleBox;
+    }
 }
