@@ -293,7 +293,7 @@ public class Reservation implements Item {
 
         if (DateUtils.isInPast(newStartDate)) {
             throw new ConstraintException(
-                    "La date de début sélectionnée est antérieur à la date actuelle", false);
+                    "La date de début sélectionnée est antérieure à la date actuelle", false);
         }
 
         if (DateUtils.isAfter(newStartDate, endDate)) {

@@ -67,7 +67,7 @@ public class Client implements Item {
     @Getter
     @DatabaseField(canBeNull = false)
     private Date creationDate;
-    
+
     public Client() {
         this.creationDate = new Date();
     }
@@ -134,6 +134,8 @@ public class Client implements Item {
     }
 
     public Reservation getOpenReservation() {
+        if(!isForeignCorrect())
+            return null;
         return reservations.stream().filter(r -> r.getPaymentDate() == null && !r.getCanceled()).findFirst()
                 .orElse(null);
     }
@@ -160,10 +162,11 @@ public class Client implements Item {
     }
 
     public boolean hasOpenProblem() {
-        if (problems.size() == 0) return false;
+        if (problems.size() == 0)
+            return false;
         return problems
-        .stream()
-        .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
+                .stream()
+                .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
     }
 
     @Override
@@ -174,61 +177,44 @@ public class Client implements Item {
     private int getSortScore() {
         int score = 0;
         score -= this.getOpenReservation() != null ? 100 : 0;
-        //score -= this.hasOpenProblem()  ? 10 : 0;
+        // score -= this.hasOpenProblem() ? 10 : 0;
         System.out.println(this.toString());
         return score;
 
-
     }
-    
-    public boolean isKing()
-    {
-    	
-    	int clientId = this.getId();
-    	
-    	for(int i=0;i<5;i++);
-    	System.out.println("");
-    	
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar c = Calendar.getInstance();
-		Date currentDate = c.getTime();
-		String currentDateString = dateFormat.format(currentDate);
-		
-    	
-    	try {
-			ReservationDAO dbr = Database.getInstance().getReservationDao();
-			
-	        List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
-	                .raw("DATEDIFF('"+currentDateString+"',DATE(end_date))>=0 AND client_id = "+clientId)
-	                .prepare()));
-	
 
-	        
-	        if(reservations.size() >= 3)
-	        {
-	        	return true;
-	        }
-	        
-	    	for(int i=0;i<5;i++);
-	    	System.out.println("");
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-    	
-    	return false;
+    public boolean isKing() {
+        // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais plus explicite)
+        int clientId = this.getId();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        Date currentDate = c.getTime();
+        String currentDateString = dateFormat.format(currentDate);
+
+        try {
+            ReservationDAO dbr = Database.getInstance().getReservationDao();
+            List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
+                    .raw("DATEDIFF('" + currentDateString + "',DATE(end_date))>=0 AND client_id = " + clientId)
+                    .prepare()));
+
+            return reservations.size() >= 3;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public int compareTo(Item o) {
-        Client other = (Client)o;
+        Client other = (Client) o;
         return name.compareTo(other.getName());
-        // le tri par problème est compliqué à implémenter, l'utilisation de stream ralentit l'UI
+        // le tri par problème est compliqué à implémenter, l'utilisation de stream
+        // ralentit l'UI
         // Et j'ai pas réussi à implémenter l'async.
-        
-        //int score = getSortScore(), otherScore = other.getSortScore();
-        //return (score - otherScore) + name.compareTo(other.getName());
+
+        // int score = getSortScore(), otherScore = other.getSortScore();
+        // return (score - otherScore) + name.compareTo(other.getName());
     }
-    
+
 }
