@@ -72,6 +72,14 @@ public class Client implements Item {
         this.creationDate = new Date();
     }
 
+    /**
+     * crée un client et lui donne des valeurs pas défaut
+     * l'action est loggé
+     * 
+     * @param name
+     * @throws SQLException
+     */
+
     public Client(String name) throws SQLException {
         this.creationDate = new Date();
         this.firstName = "NOUVEAU Prénom";
@@ -85,6 +93,13 @@ public class Client implements Item {
         User.addlog(LogType.ADD, "Ajout d'un nouveau client");
     }
 
+    /**
+     * met à jour le téléphone du client si il est valide
+     * l'action est loggé
+     * 
+     * @param phone
+     * @throws ConstraintException
+     */
     public void setPhone(String phone) throws ConstraintException {
         if (TxtFieldValidation.phoneValidation(phone)) {
             this.phone = phone;
@@ -95,6 +110,13 @@ public class Client implements Item {
         throw new ConstraintException("Téléphone invalide, modification annulée", false);
     }
 
+    /**
+     * met à jour l'adresse du client si elle est valide
+     * l'action est loggé
+     * 
+     * @param addresse
+     * @throws ConstraintException
+     */
     public void setAddresse(String addresse) throws ConstraintException {
         if (!TxtFieldValidation.phoneValidation(addresse)
                 && !TxtFieldValidation.emailValidation(addresse)) {
@@ -106,11 +128,23 @@ public class Client implements Item {
         throw new ConstraintException("Adresse invalide, modification annulée", false);
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param preferences
+     */
+
     public void setPreferences(String preferences) {
         User.addlog(LogType.MODIFY,
                 "Préférences du client " + getDisplayName() + " changé pour " + preferences);
         this.preferences = preferences;
     }
+
+    /**
+     * l'action est loggé
+     * 
+     * @param firstName
+     */
 
     public void setFirstName(String firstName) {
         User.addlog(LogType.MODIFY,
@@ -118,11 +152,24 @@ public class Client implements Item {
         this.firstName = firstName;
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param name
+     */
+    
     public void setName(String name) {
         User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
         this.name = name;
     }
 
+    /**
+     * met à jour l'email si il est valide
+     * l'action est loggé
+     * 
+     * @param email
+     * @throws ConstraintException
+     */
     public void setEmail(String email) throws ConstraintException {
         if (TxtFieldValidation.emailValidation(email)) {
             User.addlog(LogType.MODIFY,
@@ -133,6 +180,9 @@ public class Client implements Item {
         throw new ConstraintException("Email invalide, modification annulée", false);
     }
 
+    /**
+     * @return la réservation actuelle (ou null) du client
+     */
     public Reservation getOpenReservation() {
         if(!isForeignCorrect())
             return null;
@@ -161,6 +211,9 @@ public class Client implements Item {
         return reservations != null && problems != null;
     }
 
+    /**
+     * @return renvois vrai si le client a un problème
+     */
     public boolean hasOpenProblem() {
         if (problems.size() == 0)
             return false;

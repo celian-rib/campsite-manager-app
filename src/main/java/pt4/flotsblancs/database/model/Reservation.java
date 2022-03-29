@@ -281,6 +281,21 @@ public class Reservation implements Item {
         }
     }
 
+    /**
+     * @param newStartDate
+     * @throws ConstraintException
+     * @throws SQLException
+     */
+
+    /**
+     * Vérifie si les nouvelles dates de début de séjour sélectionnées sont valides
+     * l'action est loggé
+     * 
+     * @param newStartDate
+     * @throws ConstraintException
+     * @throws SQLException
+     */
+
     public void setStartDate(Date newStartDate) throws ConstraintException, SQLException {
         // Gére le cas ou la réservation n'est pas encore bien construite
         if (this.endDate == null || this.campground == null) {
@@ -308,6 +323,15 @@ public class Reservation implements Item {
                 "Date de début de la réservation #" + id + " changé à " + newStartDate);
         this.startDate = newStartDate;
     }
+
+    /**
+     * Vérifie si les nouvelles dates de fin de séjour sélectionnées sont valides
+     * l'action est loggé
+     * 
+     * @param newEndDate
+     * @throws ConstraintException
+     * @throws SQLException
+     */
 
     public void setEndDate(Date newEndDate) throws ConstraintException, SQLException {
         // Gére le cas ou la réservation n'est pas encore bien construite
@@ -351,7 +375,7 @@ public class Reservation implements Item {
 
         var i = (int) Math.floor(withService * cashBack.getReduction());
         return i;
-        
+
     }
 
     /**
@@ -385,12 +409,12 @@ public class Reservation implements Item {
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return String.join(";",
-        ""+this.id,
-        formatter.format(this.startDate),
-        this.client.getFirstName(),
-        this.client.getName(),
-        this.client.getPhone())
-        .trim().toLowerCase();
+                "" + this.id,
+                formatter.format(this.startDate),
+                this.client.getFirstName(),
+                this.client.getName(),
+                this.client.getPhone())
+                .trim().toLowerCase();
     }
 
     @Override
@@ -403,11 +427,22 @@ public class Reservation implements Item {
         return prefix + format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param nbP
+     */
     public void setNbPersons(int nbP) {
         User.addlog(LogType.MODIFY,
                 "Nombre de personnes de la réservation #" + id + " changé pour " + nbP);
         this.nbPersons = nbP;
     }
+
+    /**
+     * l'action est loggé
+     * 
+     * @param date
+     */
 
     public void setPaymentDate(Date date) {
         if (date == null) {
@@ -420,11 +455,23 @@ public class Reservation implements Item {
         this.paymentDate = date;
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param client
+     */
+
     public void setClient(Client client) {
         this.client = client;
         User.addlog(LogType.MODIFY,
                 "Client de la réservation #" + id + " changé pour " + this.client.getDisplayName());
     }
+
+    /**
+     * l'action est loggé
+     * 
+     * @param date
+     */
 
     public void setDepositDate(Date date) {
         if (date == null) {
@@ -437,15 +484,33 @@ public class Reservation implements Item {
         this.depositDate = date;
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param cb
+     */
+
     public void setCashBack(CashBack cb) {
         User.addlog(LogType.MODIFY, "Remise de la réservation #" + id + " changé pour " + cb);
         this.cashBack = cb;
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param canceled
+     */
+
     public void setCanceled(boolean canceled) {
         User.addlog(LogType.DELETE, "Réservation #" + id + " annulée");
         this.canceled = canceled;
     }
+
+    /**
+     * l'action est loggé
+     * 
+     * @param fileData
+     */
 
     public void setBill(byte[] fileData) {
         User.addlog(LogType.ADD, "Génération de la facture de la réservation #" + id);
@@ -459,7 +524,7 @@ public class Reservation implements Item {
 
     @Override
     public Color getStatusColor() {
-        if (canceled) 
+        if (canceled)
             return StatusColors.BLACK;
         if (isInPast())
             return StatusColors.RED;
@@ -468,16 +533,25 @@ public class Reservation implements Item {
         return StatusColors.YELLOW;
     }
 
+    /**
+     * Définit l'échelle de comparaison d'une réservation selon son état
+     * 
+     * @return
+     */
+
     private int getCompareScale() {
-        if (isInPast() || canceled) return -10000; // Reservation passée ou annulée
-        if (depositDate == null && paymentDate == null) return 1000; // Non payé, pas d'accompte
-        if (paymentDate == null) return 100; // accompte payé
+        if (isInPast() || canceled)
+            return -10000; // Reservation passée ou annulée
+        if (depositDate == null && paymentDate == null)
+            return 1000; // Non payé, pas d'accompte
+        if (paymentDate == null)
+            return 100; // accompte payé
         return 10; // payé
     }
 
     @Override
     public int compareTo(Item o) {
-        Reservation other = (Reservation)o;
+        Reservation other = (Reservation) o;
         return (other.getCompareScale() - getCompareScale()) + this.getStartDate().compareTo(other.getStartDate());
     }
 }

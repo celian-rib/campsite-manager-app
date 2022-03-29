@@ -38,21 +38,45 @@ public class Stock implements Item {
     @DatabaseField(canBeNull = false, columnName = "storage_location")
     private String storageLocation;
 
+    /**
+     * l'action est loggé
+     * 
+     * @param item
+     */
+
     public void setItem(String item) {
         User.addlog(LogType.ADD, "Mise à jour du stock " + this.item + " à " + item);
         this.item = item;
     }
+
+    /**
+     * l'action est loggé
+     * 
+     * @param quantity
+     */
 
     public void setQuantity(int quantity) {
         User.addlog(LogType.ADD, "Mise à jour de la quantité de " + item + " de " + this.quantity + " à " + quantity);
         this.quantity = quantity;
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param quantityAlert
+     */
+
     public void setQuantityAlertThreshold(int quantityAlert) {
         User.addlog(LogType.ADD,
                 "Mise à jour de l'alerte de " + item + " de " + this.quantityAlertThreshold + " à " + quantity);
         this.quantityAlertThreshold = quantityAlert;
     }
+
+    /**
+     * l'action est loggé
+     * 
+     * @param location
+     */
 
     public void setStorageLocation(String location) {
         User.addlog(LogType.ADD, "Mise à jour de l'emplacement de stockage de " + item + " de " + this.storageLocation
