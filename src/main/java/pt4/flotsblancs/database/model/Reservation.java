@@ -1,20 +1,8 @@
 package pt4.flotsblancs.database.model;
 
-import com.j256.ormlite.table.DatabaseTable;
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-
-import pt4.flotsblancs.database.Database;
-import pt4.flotsblancs.database.model.types.*;
-import javafx.scene.paint.Color;
-import pt4.flotsblancs.scenes.items.Item;
-import pt4.flotsblancs.scenes.utils.StatusColors;
-import pt4.flotsblancs.utils.DateUtils;
-
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +11,20 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import javafx.scene.paint.Color;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.types.CashBack;
+import pt4.flotsblancs.database.model.types.Equipment;
+import pt4.flotsblancs.database.model.types.LogType;
+import pt4.flotsblancs.database.model.types.Service;
+import pt4.flotsblancs.scenes.items.Item;
+import pt4.flotsblancs.scenes.utils.StatusColors;
+import pt4.flotsblancs.utils.DateUtils;
 
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -110,17 +112,20 @@ public class Reservation implements Item {
     public Reservation(Client client) throws SQLException, ConstraintException {
         this.client = client;
 
-        // Date par défaut : de aujourd'hui à ajd + 5jours
-        this.startDate = new Date();
-        this.endDate = DateUtils.plusDays(new Date(), 5);
+        int plusDay = 0;
+        List<CampGround> availablesCamps = new ArrayList<CampGround>();
+        
+        do
+        {
+            // Date par défaut : de aujourd'hui à ajd + 5jours
+            this.startDate = DateUtils.plusDays(new Date(),plusDay);
+            this.endDate = DateUtils.plusDays(startDate, 5);
 
-        List<CampGround> availablesCamps = Database.getInstance().getCampgroundDao()
-                .getAvailablesCampgrounds(startDate, endDate, -1);
-
-        if (availablesCamps.size() == 0) {
-            // TODO gérer ce cas (ps : c'est très relou)
-            // (Attention si il y en a plus de dispo décaler date résa)
-        }
+            availablesCamps = Database.getInstance().getCampgroundDao()
+                    .getAvailablesCampgrounds(startDate, endDate, -1);
+            plusDay++;
+        } while(availablesCamps.size() == 0);
+        
 
         this.nbPersons = 1;
         this.cashBack = CashBack.NONE;
