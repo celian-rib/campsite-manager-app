@@ -29,7 +29,7 @@ class ItemList<I extends Item> extends StackPane {
 
     private final static int CONTENT_WIDTH = 250;
     private String query = "";
-    private List<I> initialList;
+    private List<I> initialList = new ArrayList<I>();
 
     private ItemScene<I> itemScene;
 
@@ -97,6 +97,7 @@ class ItemList<I extends Item> extends StackPane {
 
     private void filterList(String filter) {
         query = filter.trim().toLowerCase();
+        System.out.println(query.length());
         if (query.isEmpty()) {
             updateItems(initialList);
             return;
@@ -106,6 +107,7 @@ class ItemList<I extends Item> extends StackPane {
             var words = query.split(" ");
             return Arrays.stream(words).allMatch(item.getSearchString()::contains);
         }).collect(Collectors.toList());
+        System.out.println(initialList.size() + "initial");
         updateItems(filteredList, true);
     }
 
@@ -117,19 +119,22 @@ class ItemList<I extends Item> extends StackPane {
     }
 
     private void updateItems(List<I> items, boolean filtered) {
+        System.out.println(items.size() + " items");
         if(items.size() == 0)
             return;
         if (!filtered) {
+            initialList = items;
             new Thread(() -> {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<I> sorted = new ArrayList<I>(new TreeSet<I>(items));
-                        initialList = sorted;
-                    }
-                });
-            }).start();
-        }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    List<I> sorted = new ArrayList<I>(new TreeSet<I>(items));
+                    System.out.println(initialList.size() + " vs " + sorted.size());
+                    initialList = sorted;
+                }
+            });
+        }).start();
+    } 
         listButtons = createListButtons(items);
 
         ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();

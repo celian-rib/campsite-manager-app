@@ -145,9 +145,13 @@ public class Client implements Item {
 
     public boolean hasOpenProblem() {
         if (problems.size() == 0) return false;
-        return problems
-        .stream()
-        .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
+        for (Problem p : problems) {
+            if (p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT) return true;
+        }
+        return false;
+        // return problems
+        // .stream()
+        // .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
     }
 
     @Override

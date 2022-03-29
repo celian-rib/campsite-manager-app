@@ -1,5 +1,6 @@
 package pt4.flotsblancs.scenes.items;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -10,6 +11,7 @@ import javafx.scene.text.Text;
 
 class ItemPane<I extends Item> extends BorderPane {
     private I item;
+    private Circle statusDot;
 
     ItemPane(I item, int maxWith) {
         this.item = item;
@@ -19,9 +21,10 @@ class ItemPane<I extends Item> extends BorderPane {
 
         HBox leftContainer = new HBox(8);
         leftContainer.setAlignment(Pos.CENTER);
+        statusDot = new Circle(4);
+        statusDot.setFill(Color.GREY);
 
-        Circle statusDot = new Circle(4);
-        statusDot.setFill(item.getStatusColor());
+        
         
         Text display = new Text(item.getDisplayName());
         display.setFill(Color.rgb(50, 60, 100));
@@ -38,6 +41,7 @@ class ItemPane<I extends Item> extends BorderPane {
         setAlignment(id, Pos.CENTER);
         setAlignment(leftContainer, Pos.CENTER);
         setMaxWidth(maxWith);
+        
     }
 
     I getItem() {
@@ -50,5 +54,9 @@ class ItemPane<I extends Item> extends BorderPane {
             return true;
         }
         return anObject instanceof Item && this.getItem().equals(anObject);
+    }
+
+    public void setStatusColor(Color statusColor) {
+        statusDot.setFill(statusColor);
     }
 }
