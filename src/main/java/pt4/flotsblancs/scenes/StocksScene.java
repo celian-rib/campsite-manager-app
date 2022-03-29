@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -63,6 +64,7 @@ public class StocksScene extends VBox implements IScene {
 
     private void displayTableView() {
         table = new TableView<Stock>();
+        table.setPrefHeight(620);
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -76,6 +78,23 @@ public class StocksScene extends VBox implements IScene {
         table.getColumns().add(storageLocCol);
         table.getColumns().add(alertCol);
 
+        table.setRowFactory(t -> new TableRow<Stock>() {
+            @Override
+            public void updateItem(Stock item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setStyle("");
+                } else {
+                    if (item.getQuantity() <= item.getQuantityAlertThreshold()) {
+                        setStyle("-fx-background-color: #ff7961");
+                    } else {
+                        setStyle("");
+                    }
+                }
+            }
+        });
+
+        itemCol.setCellValueFactory(new PropertyValueFactory<>("item"));
         itemCol.setCellValueFactory(new PropertyValueFactory<>("item"));
         itemCol.setCellFactory(TextFieldTableCell.<Stock>forTableColumn());
 
@@ -167,6 +186,7 @@ public class StocksScene extends VBox implements IScene {
     }
     
     private void updateDatabase(Stock stock) {
+        table.refresh();
         try {
             Database.getInstance().getStockDao().update(stock);
             Router.showToast(ToastType.SUCCESS, "Stock mis à jour");
