@@ -201,14 +201,16 @@ public class Router {
             log("Route bloqued, user not admin");
             return;
         }
+
+        log("Selecting " + item.getDisplayName() + " on "
+                + routes.get(newRoute).getName());
+        goToScreen(newRoute);
+
         if (routes.get(newRoute) instanceof IItemScene<?>) {
             @SuppressWarnings("unchecked")
             IItemScene<I> nextScene = (IItemScene<I>) routes.get(newRoute);
             nextScene.selectItem(item);
         }
-        log("[Router] Selecting " + item.getDisplayName() + " on "
-                + routes.get(newRoute).getName());
-        goToScreen(newRoute);
     }
 
     /**
