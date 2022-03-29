@@ -31,6 +31,7 @@ import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.utils.DateUtils;
 
 public class ClientsScene extends ItemScene<Client> {
 
@@ -147,7 +148,7 @@ public class ClientsScene extends ItemScene<Client> {
 
         var card = new ReservationCard(client.getOpenReservation(), 250);
 
-        var clientSince = new Label("Client depuis :    TODO");
+        var clientSince = new Label("Client depuis : " + DateUtils.toFormattedString(this.client.getCreationDate()));
         clientSince.setFont(new Font(15));
         clientSince.setTextFill(Color.GRAY);
 
@@ -178,11 +179,10 @@ public class ClientsScene extends ItemScene<Client> {
         container.setAlignment(Pos.BASELINE_LEFT);
 
         boolean isReduced = isReducedSize(BreakPointManager.getCurrentHorizontalBreakPoint());
-        
+
         phone = new PromptedTextField(client.getPhone(), "Téléphone");
         phone.setMinWidth(isReduced ? 180 : 350);
         phone.textProperty().addListener(changeListener);
-
 
         adresse = new PromptedTextField(client.getAddresse(), "Adresse");
         adresse.setMinWidth(isReduced ? 180 : 350);
@@ -191,7 +191,6 @@ public class ClientsScene extends ItemScene<Client> {
         preferences = new PromptedTextField(client.getPreferences(), "Préférences");
         preferences.setMinWidth(isReduced ? 180 : 350);
         preferences.textProperty().addListener(changeListener);
-
 
         container.getChildren().addAll(phone, adresse, preferences);
         return container;
@@ -237,16 +236,16 @@ public class ClientsScene extends ItemScene<Client> {
             return;
         boolean update = false;
         try {
-            if (!client.getFirstName().equals(firstName.getText())){
+            if (!client.getFirstName().equals(firstName.getText())) {
                 client.setFirstName(firstName.getText());
                 update = true;
             }
-            if (!client.getName().equals(name.getText())){
+            if (!client.getName().equals(name.getText())) {
                 client.setName(name.getText());
                 update = true;
             }
 
-            if (!client.getAddresse().equals(adresse.getText())){
+            if (!client.getAddresse().equals(adresse.getText())) {
                 try {
                     client.setAddresse(adresse.getText());
                     update = true;
@@ -256,7 +255,7 @@ public class ClientsScene extends ItemScene<Client> {
                 }
             }
 
-            if (!client.getPhone().equals(phone.getText())){
+            if (!client.getPhone().equals(phone.getText())) {
                 try {
                     client.setPhone(phone.getText());
                     update = true;
@@ -266,7 +265,7 @@ public class ClientsScene extends ItemScene<Client> {
                 }
             }
 
-            if (!client.getEmail().equals(email.getText())){
+            if (!client.getEmail().equals(email.getText())) {
                 try {
                     client.setEmail(email.getText());
                     update = true;
@@ -276,12 +275,13 @@ public class ClientsScene extends ItemScene<Client> {
                 }
             }
 
-            if (preferences.getText() != null)
-                if (!preferences.getText().equals(client.getPreferences()))
-                    client.setPreferences(preferences.getText());
+            if (!preferences.getText().equals(client.getPreferences())) {
+                client.setPreferences(preferences.getText());
+                update = true;
+            }
 
             Database.getInstance().getClientsDao().update(client);
-            if(update) {
+            if (update) {
                 Router.showToast(ToastType.SUCCESS, "Client mis à jour");
                 updateItemList();
             }

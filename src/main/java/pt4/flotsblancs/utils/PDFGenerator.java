@@ -29,8 +29,10 @@ import java.awt.Desktop;
 public class PDFGenerator {
 
     /**
-     * Télécharge la facture de la réservation donnée (Si il y en a une) et l'ouvre via
-     * l'explorateur de fichier de l'os La facture est stocké dans le répertoire d'accueil de
+     * Télécharge la facture de la réservation donnée (Si il y en a une) et l'ouvre
+     * via
+     * l'explorateur de fichier de l'os La facture est stocké dans le répertoire
+     * d'accueil de
      * l'ordinateur
      * 
      * @param reservation réservation contenant la facture à ouvrir
@@ -170,17 +172,20 @@ public class PDFGenerator {
     private static PdfPTable createPriceTable(Reservation reservation) {
         PdfPTable table = new PdfPTable(2);
 
-        table.addCell(createCell("Prix acompte : "));
-        table.addCell(createCell(reservation.getDepositPrice() + "€"));
-
         table.addCell(createCell("Prix services (jours) : "));
         table.addCell(createCell(PriceUtils.priceToString(reservation.getSelectedServices().getPricePerDay()) + "€"));
 
         table.addCell(createCell("Prix emplacement (jours) : "));
         table.addCell(createCell(PriceUtils.priceToString(reservation.getCampground().getPricePerDays()) + "€"));
 
+        table.addCell(createCell("Prix acompte : "));
+        table.addCell(createCell(reservation.getDepositPrice() + "€"));
+
+        table.addCell(createCell("Prix payé après acompte : "));
+        table.addCell(createCell(reservation.getTotalPrice() - reservation.getDepositPrice() + "€"));
+
         var font = FontFactory.getFont("Arial", 12, Font.BOLD);
-        table.addCell(new PdfPCell(new Paragraph("Prix total", font)));
+        table.addCell(new PdfPCell(new Paragraph("Prix TTC", font)));
         table.addCell(new PdfPCell(new Paragraph(PriceUtils.priceToString(reservation.getTotalPrice()) + "€", font)));
 
         return table;

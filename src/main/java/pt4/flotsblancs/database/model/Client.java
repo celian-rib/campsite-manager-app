@@ -1,15 +1,23 @@
 package pt4.flotsblancs.database.model;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import javafx.scene.paint.Color;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.daos.ReservationDAO;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.scenes.items.Item;
@@ -17,7 +25,6 @@ import pt4.flotsblancs.scenes.utils.StatusColors;
 import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
 
 @EqualsAndHashCode
-@NoArgsConstructor
 @DatabaseTable(tableName = "clients")
 public class Client implements Item {
 
@@ -57,7 +64,16 @@ public class Client implements Item {
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Reservation> reservations;
 
+    @Getter
+    @DatabaseField(canBeNull = false)
+    private Date creationDate;
+
+    public Client() {
+        this.creationDate = new Date();
+    }
+
     public Client(String name) throws SQLException {
+        this.creationDate = new Date();
         this.firstName = "NOUVEAU Prénom";
         this.name = "NOUVEAU Nom";
         this.addresse = "NOUVEAU Adresse";
@@ -118,7 +134,9 @@ public class Client implements Item {
     }
 
     public Reservation getOpenReservation() {
-        return reservations.stream().filter(r -> r.getPaymentDate() == null).findFirst()
+        if(!isForeignCorrect())
+            return null;
+        return reservations.stream().filter(r -> r.getPaymentDate() == null && !r.getCanceled()).findFirst()
                 .orElse(null);
     }
 
@@ -144,10 +162,11 @@ public class Client implements Item {
     }
 
     public boolean hasOpenProblem() {
-        if (problems.size() == 0) return false;
+        if (problems.size() == 0)
+            return false;
         return problems
-        .stream()
-        .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
+                .stream()
+                .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
     }
 
     @Override
@@ -158,22 +177,44 @@ public class Client implements Item {
     private int getSortScore() {
         int score = 0;
         score -= this.getOpenReservation() != null ? 100 : 0;
-        //score -= this.hasOpenProblem()  ? 10 : 0;
+        // score -= this.hasOpenProblem() ? 10 : 0;
         System.out.println(this.toString());
         return score;
 
+    }
 
+    public boolean isKing() {
+        // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais plus explicite)
+        int clientId = this.getId();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        Date currentDate = c.getTime();
+        String currentDateString = dateFormat.format(currentDate);
+
+        try {
+            ReservationDAO dbr = Database.getInstance().getReservationDao();
+            List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
+                    .raw("DATEDIFF('" + currentDateString + "',DATE(end_date))>=0 AND client_id = " + clientId)
+                    .prepare()));
+
+            return reservations.size() >= 3;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public int compareTo(Item o) {
-        Client other = (Client)o;
+        Client other = (Client) o;
         return name.compareTo(other.getName());
-        // le tri par problème est compliqué à implémenter, l'utilisation de stream ralentit l'UI
+        // le tri par problème est compliqué à implémenter, l'utilisation de stream
+        // ralentit l'UI
         // Et j'ai pas réussi à implémenter l'async.
-        
-        //int score = getSortScore(), otherScore = other.getSortScore();
-        //return (score - otherScore) + name.compareTo(other.getName());
+
+        // int score = getSortScore(), otherScore = other.getSortScore();
+        // return (score - otherScore) + name.compareTo(other.getName());
     }
-    
+
 }

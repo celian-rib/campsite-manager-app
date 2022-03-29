@@ -15,8 +15,6 @@ import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableUtils;
 
-
-
 public class Database {
 
     private static Database instance = null;
@@ -48,7 +46,7 @@ public class Database {
     private Dao<Stock, String> stockDao;
 
     private Database() throws SQLException {
-        Logger.setGlobalLogLevel(Level.WARNING);
+        Logger.setGlobalLogLevel(Level.ERROR);
 
         // Chargement variables d'environnement
         Dotenv dotenv = Dotenv.load();

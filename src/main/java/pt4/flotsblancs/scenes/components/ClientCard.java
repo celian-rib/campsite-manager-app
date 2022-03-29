@@ -1,6 +1,7 @@
 package pt4.flotsblancs.scenes.components;
 
 import org.kordamp.ikonli.javafx.FontIcon;
+
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -39,6 +40,15 @@ public class ClientCard extends BorderPane {
 
         FontIcon icon = new FontIcon("far-user-circle:30");
         icon.setIconColor(Color.rgb(51, 59, 97));
+        
+        if(client.isKing())
+        {
+        	icon = new FontIcon("fas-crown:25");
+        	icon.setIconColor(Color.rgb(255, 215, 0));
+        }
+        
+        
+        
 
         VBox clientInfos = new VBox(2);
         Label name = new Label(client.getFirstName() + " " + client.getName());
