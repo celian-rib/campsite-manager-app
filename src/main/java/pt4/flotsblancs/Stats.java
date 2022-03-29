@@ -39,6 +39,14 @@ public class Stats
 		public String toString() {
 			return name;
 		}
+		
+		
+		public static boolean future(Period period)
+		{
+			if(period == NEXT_WEEK || period == NEXT_MONTH || period == NEXT_YEAR || period == NEXT_TWO_YEAR || period == NEXT_THREE_YEAR)
+				return true;
+			return false;
+		}
 	}
 	
 	public static void main(String[] args) throws SQLException

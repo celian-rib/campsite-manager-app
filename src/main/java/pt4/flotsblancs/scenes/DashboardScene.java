@@ -29,6 +29,8 @@ public class DashboardScene extends VBox implements IScene {
     private InformationCard<Float> averageProblemTimeStats;
     private InformationCard<HashMap<CampGround, Integer>> mostProblemsStats;
     private InformationCard<HashMap<CampGround, Integer>> mostRentedCampsStats;
+    
+    private VBox right;
 
     private PeriodComboBox periodComboBox;
 
@@ -76,6 +78,18 @@ public class DashboardScene extends VBox implements IScene {
 
             mostProblemsStats.setData(Stats.mostProblematicCampground(currentPeriod), "prblm", currentPeriod);
             mostRentedCampsStats.setData(Stats.mostRentedCampground(currentPeriod), "résa", currentPeriod);
+            
+            right.getChildren().get(0).setOpacity(0);
+            
+            
+            if(!Period.future(currentPeriod)) {
+            	averageProblemTimeStats.setOpacity(1);
+            	mostProblemsStats.setOpacity(1);
+            } else {
+            	averageProblemTimeStats.setOpacity(0);
+            	mostProblemsStats.setOpacity(0);
+            }
+            
         } catch (SQLException e) {
             ExceptionHandler.loadIssue(e);
             return;
@@ -105,8 +119,8 @@ public class DashboardScene extends VBox implements IScene {
         left.getChildren().add(nbOutgoingClientStats);
         left.getChildren().add(nbReservationsStats);
 
-        var right = new VBox(SPACING);
-
+        right = new VBox(SPACING);
+        
         averageProblemTimeStats = new InformationCard<>(
                 "Résolution de problème",
                 Color.rgb(255, 212, 133));
@@ -118,6 +132,7 @@ public class DashboardScene extends VBox implements IScene {
         mostRentedCampsStats = new InformationCard<>(
                 "Emplacements les plus réservés",
                 Color.rgb(166, 255, 190));
+        
 
         right.getChildren().add(averageProblemTimeStats);
         right.getChildren().add(mostProblemsStats);
