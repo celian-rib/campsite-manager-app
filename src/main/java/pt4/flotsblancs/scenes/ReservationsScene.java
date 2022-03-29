@@ -56,6 +56,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
     private HBox bottomSlot;
 
     private Label depositPrice;
+    private Label toPayPrice;
     private Label totalPrice;
 
     private Label datesLabel;
@@ -138,6 +139,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
         dayCount.setText(reservation.getDayCount() + " jours");
         depositPrice.setText("Prix acompte : " + PriceUtils.priceToString(reservation.getDepositPrice()) + "€");
+        toPayPrice.setText("A payer : " + PriceUtils.priceToString(reservation.getToPayPrice()) + "€");
         totalPrice.setText("Prix total : " + PriceUtils.priceToString(reservation.getTotalPrice()) + "€");
         sendBillBtn.setText(reservation.getBill() != null ? "Regénérer et envoyer facture"
                 : "Générer et envoyer facture");
@@ -249,8 +251,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
         totalPrice = new Label();
         totalPrice.setMinWidth(110);
         totalPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
+        
+        toPayPrice = new Label();
+        toPayPrice.setMinWidth(110);
+        toPayPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
 
-        labelsContainer.getChildren().addAll(depositPrice, totalPrice);
+        labelsContainer.getChildren().addAll(depositPrice, toPayPrice, totalPrice);
 
         container.getChildren().addAll(btnContainer, labelsContainer);
         return container;

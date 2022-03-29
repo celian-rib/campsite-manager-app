@@ -9,6 +9,7 @@ import pt4.flotsblancs.scenes.utils.WindowManager;
 import java.sql.SQLException;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -48,6 +49,9 @@ public class App extends Application {
 		// Affichage de la fenêtre
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 		primaryStage.setResizable(true);
+		
+		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("/app_logo.png")));
+		
 		primaryStage.show();
 
 		

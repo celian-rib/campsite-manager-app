@@ -117,7 +117,7 @@ public class MailSender {
         String helloStr = StringEscapeUtils.escapeHtml4(
                 "Bonjour " +
                         reservation.getClient().getDisplayName() +
-                        ", merci d'avoir réservé au camping Les Flots Blancs");
+                        ", merci d'avoir réservé au camping Les Flots Blancs. Vous pouvez nous aider en répondant à ce petit formulaire de satisfaction : ");
         String seeAttachment = StringEscapeUtils.escapeHtml4(
                 "Vous trouverez votre facture en pièce-jointe.");
 
@@ -130,6 +130,7 @@ public class MailSender {
                 "</h2>" +
                 "<p style=\"color:#333B61;\">" +
                 helloStr +
+                "<a href='https://forms.gle/oDaon95GHg5L5bm68'> formulaire </a> " +
                 "<b>Les Flots Blancs</b></p>" +
                 "<p style=\"color:#333B61;font-style:italic;\">" +
                 seeAttachment +
