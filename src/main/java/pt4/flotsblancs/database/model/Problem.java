@@ -106,14 +106,13 @@ public class Problem implements Item {
 
     @Override
     public String getDisplayName() {
-        if (client != null) {
-            String returnMsg = "[Pb client] " + client;
-            if (returnMsg.length() > 30)
-                return returnMsg.substring(0, 30) + " [...]";
-            return returnMsg;
-        } else {
-            return "Problème sans client";
-        }
+        if(reservation != null)
+            return "[R]  " + reservation.getDisplayName();
+        if (client != null)
+            return "[C]  " + client.getDisplayName();
+        if (campground != null)
+            return "[E]  " + campground.getDisplayName();
+        return "Problème";
     }
 
     @Override
@@ -141,5 +140,12 @@ public class Problem implements Item {
             default:
                 return StatusColors.GREEN;
         }
+    }
+
+    @Override
+    public int compareTo(Item o) {
+        Problem other = (Problem) o;
+        
+        return (status.getCompareScale() + getId()) - (other.status.getCompareScale() + getId());
     }
 }

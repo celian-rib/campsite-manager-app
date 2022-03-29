@@ -12,7 +12,6 @@ import com.github.javafaker.Pokemon;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
-import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.Stock;
@@ -23,7 +22,7 @@ import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
 public class Generator {
-    public static void main(String[] args) throws SQLException, ConstraintException {
+    public static void main(String[] args) throws SQLException {
         Database.getInstance(); // Initialisation connexion BD
 
         var f = new Faker();
@@ -31,13 +30,13 @@ public class Generator {
         generateAdmin();
         generateUsers();
 
-        generateStocks(f, 100);
-        generateClients(f, 50);
+        generateStocks(f, 10);
+        generateClients(f, 120);
         generateCampGrounds(f, 100);
-        generateReservations(f, 20);
-        generateProblemsResa(f, 5);
-        generateProblemsCg(f, 3);
-        generateProblemsClient(f, 3);
+        generateReservations(f, 200);
+        generateProblemsResa(f, 10);
+        generateProblemsCg(f, 10);
+        generateProblemsClient(f, 10);
     }
 
     private static int rdmNbrBtwn(int min, int max) {
@@ -80,45 +79,51 @@ public class Generator {
         }
     }
 
-    private static void generateReservations(Faker f, int nbr) throws SQLException, ConstraintException {
+    private static void generateReservations(Faker f, int nbr) throws SQLException {
         List<CampGround> CGlist = Database.getInstance().getCampgroundDao().queryForAll();
         List<Client> ClientsList = Database.getInstance().getClientsDao().queryForAll();
         for (int i = 0; i < nbr; i++) {
             var resa = new Reservation();
 
-            resa.setCampground(CGlist.get(rdmNbrBtwn(0, CGlist.size())));
-            resa.setClient(ClientsList.get(rdmNbrBtwn(0, ClientsList.size())));
-            resa.setNbPersons(rdmNbrBtwn(1, 5));
+            try {
+                resa.setCampground(CGlist.get(rdmNbrBtwn(0, CGlist.size())));
+                resa.setClient(ClientsList.get(rdmNbrBtwn(0, ClientsList.size())));
+                resa.setNbPersons(rdmNbrBtwn(1, 5));
 
-            var cashbacks = CashBack.values();
-            resa.setCashBack(cashbacks[rdmNbrBtwn(0, cashbacks.length)]);
+                var cashbacks = CashBack.values();
+                resa.setCashBack(cashbacks[rdmNbrBtwn(0, cashbacks.length)]);
 
-            var equipments = resa.getCampground().getCompatiblesEquipments();
-            resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
+                var equipments = resa.getCampground().getCompatiblesEquipments();
+                resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
 
-            var services = resa.getCampground().getCompatiblesServices();
-            resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
+                var services = resa.getCampground().getCompatiblesServices();
+                resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
 
-            resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
-            resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
-            resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+                resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
+                resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
+                resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
 
-            if (rdmNbrBtwn(0, 10) > 5) {
-                resa.setDepositDate(new Date());
-                if (rdmNbrBtwn(0, 10) > 5)
-                    resa.setPaymentDate(new Date());
+                if (rdmNbrBtwn(0, 10) > 5) {
+                    resa.setDepositDate(new Date());
+                    if (rdmNbrBtwn(0, 10) > 5)
+                        resa.setPaymentDate(new Date());
+                }
+                Database.getInstance().getReservationDao().create(resa);
+                Database.getInstance().getReservationDao().refresh(resa);
+                System.out.println(resa);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            Database.getInstance().getReservationDao().create(resa);
-            Database.getInstance().getReservationDao().refresh(resa);
-            System.out.println(resa);
+
         }
     }
 
     private static void generateCampGrounds(Faker f, int nbr) throws SQLException {
         for (int i = 0; i < nbr; i++) {
             var cg = new CampGround();
-            cg.setDescription(f.lorem().sentence(300).toString());
-            cg.setPricePerDays(f.number().randomDigitNotZero()*100);
+            cg.setDescription(f.lorem().sentence().toString() + f.lorem().sentence().toString()
+                    + f.lorem().sentence().toString());
+            cg.setPricePerDays(f.number().randomDigitNotZero() * 100);
             cg.setSurface(f.number().randomDigitNotZero());
             cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);
             if (cg.getAllowedEquipments() == Equipment.MOBILHOME)
@@ -136,14 +141,14 @@ public class Generator {
 
     private static void generateClients(Faker f, int nbr) throws SQLException {
         for (int i = 0; i < nbr; i++) {
-            var c = new Client();
-            c.setAddresse(f.address().fullAddress());
-            c.setPhone(f.phoneNumber().cellPhone().toString());
-            String hp = f.harryPotter().spell();
-            c.setName((hp.split(" ").length > 1) ? hp.split(" ")[1] : hp.split(" ")[0]);
-            c.setFirstName(f.dragonBall().character().split(" ")[0]);
-            c.setEmail(f.internet().emailAddress());
             try {
+                var c = new Client();
+                c.setAddresse(f.address().fullAddress());
+                c.setPhone("0956674332");
+                String hp = f.harryPotter().spell();
+                c.setName((hp.split(" ").length > 1) ? hp.split(" ")[1] : hp.split(" ")[0]);
+                c.setFirstName(f.dragonBall().character().split(" ")[0]);
+                c.setEmail(f.internet().emailAddress());
                 Database.getInstance().getClientsDao().create(c);
             } catch (Exception e) {
                 System.err.println(e.getMessage());

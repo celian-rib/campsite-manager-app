@@ -60,8 +60,18 @@ public class ProblemsAddScene extends VBox implements IItemScene<Item> {
 		BorderPane content = new BorderPane();
 		content.setTop(createHeader());
 		content.setCenter(createBottom());
-
+		this.getChildren().clear();
 		this.getChildren().add(content);
+	}
+
+	@Override
+	public void onFocus() {
+		this.problem = new Problem();
+		this.description.clear();
+		resaCombo.clearSelection();
+		campCombo.clearSelection();
+		clientCombo.clearSelection();
+
 	}
 
 	public HBox createHeader() {
