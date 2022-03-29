@@ -6,9 +6,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextFormatter;
 
 import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
@@ -19,6 +23,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.converter.IntegerStringConverter;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.Router;
@@ -183,6 +188,27 @@ public class UserScene extends ItemScene<User> {
         hoursSpinner.setEditable(true);
         hoursSpinner.setValueFactory(vFact);
         hoursSpinner.valueProperty().addListener(changeListener);
+
+        NumberFormat format = NumberFormat.getIntegerInstance();
+        UnaryOperator<TextFormatter.Change> filter = c -> {
+            if (c.isContentChange()) {
+                ParsePosition parsePosition = new ParsePosition(0);
+                // NumberFormat evaluates the beginning of the text
+                format.parse(c.getControlNewText(), parsePosition);
+                if (parsePosition.getIndex() == 0 ||
+                        parsePosition.getIndex() < c.getControlNewText().length()) {
+                    // reject parsing the complete text failed
+                    return null;
+                }
+            }
+            return c;
+        };
+
+        TextFormatter<Integer> priceFormatter = new TextFormatter<Integer>(
+        new IntegerStringConverter(), stagiaire.getWeeklyHours(), filter);
+
+        hoursSpinner.getEditor().setTextFormatter(priceFormatter);
+        vFact.setValue(stagiaire.getWeeklyHours());
 
         container.getChildren().addAll(heuresLabel, hoursSpinner);
         return container;

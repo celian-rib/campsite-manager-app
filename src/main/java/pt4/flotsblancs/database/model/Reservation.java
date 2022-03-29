@@ -293,7 +293,7 @@ public class Reservation implements Item {
 
         if (DateUtils.isInPast(newStartDate)) {
             throw new ConstraintException(
-                    "La date de début sélectionnée est antérieur à la date actuelle", false);
+                    "La date de début sélectionnée est antérieure à la date actuelle", false);
         }
 
         if (DateUtils.isAfter(newStartDate, endDate)) {
@@ -356,6 +356,17 @@ public class Reservation implements Item {
     public int getDepositPrice() {
         var i = (int) Math.floor((getTotalPrice() * 0.3f) * cashBack.getReduction());// Acompte de 30%
         return i;
+    }
+
+    /**
+     * @return Prix de la réservation restant a payer
+     */
+    public int getToPayPrice() {
+        if(getDepositDate() == null)
+            return getTotalPrice();
+        if(getPaymentDate() == null)
+            return getTotalPrice() - getDepositPrice();
+        return 0;
     }
 
     /**

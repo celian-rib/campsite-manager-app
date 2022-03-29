@@ -113,6 +113,8 @@ public class StocksScene extends VBox implements IScene {
                         if (oldVal == null)
                             return;
                         var stock = cell.getTableRow().getItem();
+                        if(stock == null)
+                            return;
                         stock.setQuantity(newVal);
                         // TODO debounce l'update pour ne pas spam la BD
                         updateDatabase(stock);
@@ -142,6 +144,8 @@ public class StocksScene extends VBox implements IScene {
                         if (oldVal == null)
                             return;
                         var stock = cell.getTableRow().getItem();
+                        if(stock == null)
+                            return;
                         stock.setQuantityAlertThreshold(newVal);
                         // TODO debounce l'update pour ne pas spam la BD
                         updateDatabase(stock);
