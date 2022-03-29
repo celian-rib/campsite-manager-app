@@ -359,6 +359,17 @@ public class Reservation implements Item {
     }
 
     /**
+     * @return Prix de la réservation restant a payer
+     */
+    public int getToPayPrice() {
+        if(getDepositDate() == null)
+            return getTotalPrice();
+        if(getPaymentDate() == null)
+            return getTotalPrice() - getDepositPrice();
+        return 0;
+    }
+
+    /**
      * @return vrai si cette réservation est dans le passé (Soit sa date de fin est
      *         passée)
      */
