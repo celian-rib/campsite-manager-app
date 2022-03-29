@@ -51,6 +51,11 @@ public class ProblemsAddScene extends VBox implements IItemScene<Item> {
 	};
 
 	@Override
+	public String getName() {
+		return "Ajout d'un problème";
+	}
+
+	@Override
 	public void start() {
 		setSpacing(15);
 		setAlignment(Pos.CENTER);
@@ -163,16 +168,22 @@ public class ProblemsAddScene extends VBox implements IItemScene<Item> {
 
 	public void setCampground(CampGround campground) {
 		this.campground = campground;
+		if(!this.campCombo.getItems().contains(campground))
+			this.campCombo.getItems().add(campground);
 		this.campCombo.selectItem(campground);
 	}
 	
 	public void setClient(Client client) {
 		this.client = client;
+		if(!this.clientCombo.getItems().contains(client))
+			this.clientCombo.getItems().add(client);
 		this.clientCombo.selectItem(client);
 	}
 	
 	public void setReservation(Reservation reservation) {
 		this.reservation = reservation;
+		if(!this.resaCombo.getItems().contains(reservation))
+			this.resaCombo.getItems().add(reservation);
 		this.resaCombo.selectItem(reservation);
 	}
 
@@ -240,7 +251,6 @@ public class ProblemsAddScene extends VBox implements IItemScene<Item> {
 
 	@Override
 	public void selectItem(Item item) {
-		System.out.println("SELECTING " + item);
 		if (item instanceof Reservation) {
 			changed = resaCombo;
 			setReservation((Reservation) item);
