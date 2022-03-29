@@ -20,6 +20,7 @@ public class Stats
 
 	@AllArgsConstructor
 	public enum Period {
+		TODAY("Aujourd'hui"),
 		WEEKLY("Cette semaine"), 
 		MONTHLY("Ce mois"), 
 		ANNUALY("Cette année"), 

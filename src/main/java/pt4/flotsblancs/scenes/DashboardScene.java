@@ -67,8 +67,8 @@ public class DashboardScene extends VBox implements IScene {
         try {
             Period currentPeriod = periodComboBox.getSelectedPeriod();
 
-            nbIncomingClientStats.setData(Stats.nbClientToday(false), currentPeriod);
-            nbOutgoingClientStats.setData(Stats.nbClientToday(true), currentPeriod);
+            nbIncomingClientStats.setData(Stats.nbClientToday(false), Period.TODAY);
+            nbOutgoingClientStats.setData(Stats.nbClientToday(true), Period.TODAY);
             nbReservationsStats.setData(Stats.affluence(currentPeriod), currentPeriod);
 
             var avgPrblm = Math.round(Stats.averageProblemTime(currentPeriod) * 100.0) / 100.0;
