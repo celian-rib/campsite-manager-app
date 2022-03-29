@@ -1,6 +1,7 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -31,6 +32,7 @@ import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
+import pt4.flotsblancs.utils.DateUtils;
 
 public class ClientsScene extends ItemScene<Client> {
 
@@ -147,7 +149,7 @@ public class ClientsScene extends ItemScene<Client> {
 
         var card = new ReservationCard(client.getOpenReservation(), 250);
 
-        var clientSince = new Label("Client depuis :    TODO");
+        var clientSince = new Label("Client depuis : " + DateUtils.toFormattedString(this.client.getCreationDate()));
         clientSince.setFont(new Font(15));
         clientSince.setTextFill(Color.GRAY);
 
