@@ -2,6 +2,9 @@ package pt4.flotsblancs.scenes.components;
 
 import java.util.HashMap;
 
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -9,23 +12,26 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.Stats.Period;
 import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
 
 public class InformationCard<T> extends BorderPane {
 
     private Label infoLabel;
     private Label subtitleLabel;
 
-    public InformationCard(String mainTitle, Color color) {
+    public InformationCard(String mainTitle, Routes route, Color color) {
         this.setPadding(new Insets(20));
         this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(17), null)));
         this.setPrefSize(400D, 90D);
 
-        this.setLeft(createTitlesContainer(mainTitle));
+        this.setLeft(createTitlesContainer(mainTitle, route));
 
         this.setRight(createStaticInfoContainer());
     }
@@ -66,9 +72,18 @@ public class InformationCard<T> extends BorderPane {
         return infoBox;
     }
 
-    private VBox createTitlesContainer(String title) {
+    private VBox createTitlesContainer(String title, Routes route) {
         VBox titleBox = new VBox(5);
         titleBox.setAlignment(Pos.CENTER_LEFT);
+
+        HBox redirectBox = new HBox(5);
+
+        MFXButton openBtn = new MFXButton("");
+        openBtn.setOnAction(e -> Router.goToScreen(route));
+
+        FontIcon openIcon = new FontIcon("far-caret-square-right:20");
+        openIcon.setIconColor(Color.rgb(51, 59, 97));
+        openBtn.setGraphic(openIcon);
 
         Label mainTitleLabel = new Label(title);
         subtitleLabel = new Label();
@@ -77,7 +92,8 @@ public class InformationCard<T> extends BorderPane {
         subtitleLabel.setFont(new Font(13));
         subtitleLabel.setTextFill(Color.GRAY);
 
-        titleBox.getChildren().addAll(mainTitleLabel, subtitleLabel);
+        redirectBox.getChildren().addAll(mainTitleLabel, openBtn);
+        titleBox.getChildren().addAll(redirectBox, subtitleLabel);
         return titleBox;
     }
 
