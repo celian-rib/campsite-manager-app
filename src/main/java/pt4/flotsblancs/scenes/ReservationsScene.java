@@ -139,7 +139,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
 
         dayCount.setText(reservation.getDayCount() + " jours");
         depositPrice.setText("Prix acompte : " + PriceUtils.priceToString(reservation.getDepositPrice()) + "€");
-        toPayPrice.setText("A payer : " + PriceUtils.priceToString(reservation.getToPayPrice()) + "€");
+        toPayPrice.setText("Reste à payer : " + PriceUtils.priceToString(reservation.getToPayPrice()) + "€");
         totalPrice.setText("Prix total : " + PriceUtils.priceToString(reservation.getTotalPrice()) + "€");
         sendBillBtn.setText(reservation.getBill() != null ? "Regénérer et envoyer facture"
                 : "Générer et envoyer facture");
@@ -234,7 +234,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         depositComboBox.selectIndex(reservation.getDepositDate() == null ? 1 : 0);
         createDepositListener(depositComboBox);
 
-        paymentComboBox = createPriceComboBox("Réglement complet");
+        paymentComboBox = createPriceComboBox("Règlement complet");
         paymentComboBox.selectIndex(reservation.getPaymentDate() == null ? 1 : 0);
         createPayementListener(paymentComboBox);
 

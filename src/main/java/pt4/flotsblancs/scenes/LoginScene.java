@@ -54,13 +54,13 @@ public class LoginScene extends BorderPane implements IScene {
         setCenter(loginForm());
 
         ///// TO REMOVE ////////
-        Button DEVLOGIN = new Button("FAST LOGIN (DEV)");
-        DEVLOGIN.setOnAction(e -> {
-            User.logIn("test", "test");
-            Router.goToScreen(Routes.HOME);
-        });
-        DEVLOGIN.setTextFill(Color.RED);
-        setBottom(DEVLOGIN);
+        // Button DEVLOGIN = new Button("FAST LOGIN (DEV)");
+        // DEVLOGIN.setOnAction(e -> {
+        //     User.logIn("test", "test");
+        //     Router.goToScreen(Routes.HOME);
+        // });
+        // DEVLOGIN.setTextFill(Color.RED);
+        // setBottom(DEVLOGIN);
         ///// TO REMOVE ////////
     }
 
