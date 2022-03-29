@@ -32,7 +32,7 @@ public class Generator {
 
         generateStocks(f, 10);
         generateClients(f, 120);
-        generateCampGrounds(f, 100);
+        generateCampGrounds(f, 10);
         generateReservations(f, 200);
         generateProblemsResa(f, 10);
         generateProblemsCg(f, 10);
