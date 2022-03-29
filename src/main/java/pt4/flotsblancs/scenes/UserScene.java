@@ -45,11 +45,11 @@ public class UserScene extends ItemScene<User> {
     private Spinner<Integer> hoursSpinner;
     private MFXCheckbox isAdmin;
 
-    private MFXTextField firstName;
-    private MFXTextField lastName;
-    private MFXTextField login;
+    private PromptedTextField firstName;
+    private PromptedTextField lastName;
+    private PromptedTextField login;
 
-    private MFXTextField newPwdTxtField;
+    private PromptedTextField newPwdTxtField;
 
     private MFXButton cancelResetBtn;
     private MFXButton validateResetBtn;
@@ -283,7 +283,7 @@ public class UserScene extends ItemScene<User> {
     }
 
     private void handlePasswordReset() {
-        String newPwd = newPwdTxtField.getText().trim();
+        String newPwd = newPwdTxtField.getTextSafely().trim();
         if (newPwd.isEmpty())
             return;
         newPwdTxtField.setVisible(false);
@@ -303,12 +303,12 @@ public class UserScene extends ItemScene<User> {
         if (stagiaire == null)
             return;
         try {
-            if (!stagiaire.getFirstName().equals(firstName.getText().trim()))
-                stagiaire.setFirstName(firstName.getText().trim());
-            if (!stagiaire.getName().equals(lastName.getText().trim()))
-                stagiaire.setName(lastName.getText().trim());
-            if (!stagiaire.getLogin().equals(login.getText().trim()))
-                stagiaire.setLogin(login.getText().trim());
+            if (!stagiaire.getFirstName().equals(firstName.getTextSafely().trim()))
+                stagiaire.setFirstName(firstName.getTextSafely().trim());
+            if (!stagiaire.getName().equals(lastName.getTextSafely().trim()))
+                stagiaire.setName(lastName.getTextSafely().trim());
+            if (!stagiaire.getLogin().equals(login.getTextSafely().trim()))
+                stagiaire.setLogin(login.getTextSafely().trim());
             if (!stagiaire.getWeeklyHours().equals(hoursSpinner.getValue()))
                 stagiaire.setWeeklyHours(hoursSpinner.getValue());
             if (!stagiaire.isAdmin() == isAdmin.selectedProperty().get())
