@@ -21,11 +21,16 @@ public class Stats
 	@AllArgsConstructor
 	public enum Period {
 		TODAY("Aujourd'hui"),
-		WEEKLY("Cette semaine"), 
-		MONTHLY("Ce mois"), 
-		ANNUALY("Cette année"), 
+		WEEKLY("Semaine précédente"), 
+		MONTHLY("Le mois dernier"), 
+		ANNUALY("Dernière année"), 
 		TWO_YEAR("Deux dernière années"), 
-		THREE_YEAR("Trois dernières années");
+		THREE_YEAR("Trois dernières années"),		
+		NEXT_WEEK("Prochaine semaine"), 
+		NEXT_MONTH("Mois prochain"), 
+		NEXT_YEAR("Prochaine année"), 
+		NEXT_TWO_YEAR("Deux prochaines années"), 
+		NEXT_THREE_YEAR("Trois prochaines années");
 
 		@Getter
 		private String name;
@@ -88,9 +93,31 @@ public class Stats
 			case THREE_YEAR:
 				c.add(Calendar.DATE, -365*3);
 				break;
+			case NEXT_WEEK:
+				c.add(Calendar.DATE, 7);
+				break;
+			case NEXT_MONTH:
+				c.add(Calendar.DATE, 30);
+				break;
+			case NEXT_YEAR:
+				c.add(Calendar.DATE, 365);
+				break;
+			case NEXT_TWO_YEAR:
+				c.add(Calendar.DATE, 365*2);
+				break;
+			case NEXT_THREE_YEAR:
+				c.add(Calendar.DATE, 365*3);
+				break;
 		}
 		
 		Date startDate = c.getTime();
+		
+		if(startDate.after(endDate))
+		{
+			Date switcher = startDate;
+			startDate = endDate;
+			endDate = switcher;
+		}
 		
 		String endDateString = dateFormat.format(endDate);
 		String startDateString = dateFormat.format(startDate);
@@ -98,9 +125,9 @@ public class Stats
 		var dbr = Database.getInstance().getProblemDao();
 		
         List<Problem> problems = dbr.query((dbr.queryBuilder().where()
-                .raw("('" + startDateString + "' < DATE(start_date) AND '" + endDateString + "'"
-                        + " > DATE(start_date)) OR ('" + startDateString + "'" + " < DATE(end_date) AND '"
-                        + endDateString + "'" + " > DATE(start_date))")
+                .raw("('" + startDateString + "' <= DATE(start_date) AND '" + endDateString + "'"
+                        + " >= DATE(start_date)) OR ('" + startDateString + "'" + " <= DATE(end_date) AND '"
+                        + endDateString + "'" + " >= DATE(start_date))")
                 .prepare()));
         
         float duration = 0f;
@@ -138,24 +165,47 @@ public class Stats
 		
 		switch(period)
 		{
-			case WEEKLY:
-				c.add(Calendar.DATE, -7);
-				break;
-			case MONTHLY:
-				c.add(Calendar.DATE, -30);
-				break;
-			case ANNUALY:
-				c.add(Calendar.DATE, -365);
-				break;
-			case TWO_YEAR:
-				c.add(Calendar.DATE, -365*2);
-				break;
-			case THREE_YEAR:
-				c.add(Calendar.DATE, -365*3);
-				break;
+		case WEEKLY:
+			c.add(Calendar.DATE, -7);
+			break;
+		case MONTHLY:
+			c.add(Calendar.DATE, -30);
+			break;
+		case ANNUALY:
+			c.add(Calendar.DATE, -365);
+			break;
+		case TWO_YEAR:
+			c.add(Calendar.DATE, -365*2);
+			break;
+		case THREE_YEAR:
+			c.add(Calendar.DATE, -365*3);
+			break;
+		case NEXT_WEEK:
+			c.add(Calendar.DATE, 7);
+			break;
+		case NEXT_MONTH:
+			c.add(Calendar.DATE, 30);
+			break;
+		case NEXT_YEAR:
+			c.add(Calendar.DATE, 365);
+			break;
+		case NEXT_TWO_YEAR:
+			c.add(Calendar.DATE, 365*2);
+			break;
+		case NEXT_THREE_YEAR:
+			c.add(Calendar.DATE, 365*3);
+			break;
 		}
 		
 		Date startDate = c.getTime();
+		
+		if(startDate.after(endDate))
+		{
+			Date switcher = startDate;
+			startDate = endDate;
+			endDate = switcher;
+		}
+		
 		
 		String endDateString = dateFormat.format(endDate);
 		String startDateString = dateFormat.format(startDate);
@@ -163,11 +213,11 @@ public class Stats
 		var dbr = Database.getInstance().getProblemDao();
 		
         List<Problem> problems = dbr.query((dbr.queryBuilder().where()
-                .raw("('" + startDateString + "' < DATE(start_date) AND '" + endDateString + "'"
-                        + " > DATE(start_date)) OR ('" + startDateString + "'" + " < DATE(end_date) AND '"
-                        + endDateString + "'" + " > DATE(start_date))")
+                .raw("('" + startDateString + "' <= DATE(start_date) AND '" + endDateString + "'"
+                        + " >= DATE(start_date)) OR ('" + startDateString + "'" + " <= DATE(end_date) AND '"
+                        + endDateString + "'" + " >= DATE(start_date))")
                 .prepare()));
-        
+
         HashMap<CampGround,Integer> worstCamps = new HashMap<CampGround,Integer>();
         
         for(Problem problem : problems)
@@ -199,25 +249,47 @@ public class Stats
 		
 		switch(period)
 		{
-			case WEEKLY:
-				c.add(Calendar.DATE, -7);
-				break;
-			case MONTHLY:
-				c.add(Calendar.DATE, -30);
-				break;
-			case ANNUALY:
-				c.add(Calendar.DATE, -365);
-				break;
-			case TWO_YEAR:
-				c.add(Calendar.DATE, -365*2);
-				break;
-			case THREE_YEAR:
-				c.add(Calendar.DATE, -365*3);
-				break;
+		case WEEKLY:
+			c.add(Calendar.DATE, -7);
+			break;
+		case MONTHLY:
+			c.add(Calendar.DATE, -30);
+			break;
+		case ANNUALY:
+			c.add(Calendar.DATE, -365);
+			break;
+		case TWO_YEAR:
+			c.add(Calendar.DATE, -365*2);
+			break;
+		case THREE_YEAR:
+			c.add(Calendar.DATE, -365*3);
+			break;
+		case NEXT_WEEK:
+			c.add(Calendar.DATE, 7);
+			break;
+		case NEXT_MONTH:
+			c.add(Calendar.DATE, 30);
+			break;
+		case NEXT_YEAR:
+			c.add(Calendar.DATE, 365);
+			break;
+		case NEXT_TWO_YEAR:
+			c.add(Calendar.DATE, 365*2);
+			break;
+		case NEXT_THREE_YEAR:
+			c.add(Calendar.DATE, 365*3);
+			break;
 		}
 		
 		
 		Date startDate = c.getTime();
+		
+		if(startDate.after(endDate))
+		{
+			Date switcher = startDate;
+			startDate = endDate;
+			endDate = switcher;
+		}
 		
 		String endDateString = dateFormat.format(endDate);
 		String startDateString = dateFormat.format(startDate);
@@ -225,10 +297,9 @@ public class Stats
 		var dbr = Database.getInstance().getReservationDao();
 		
         List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
-                .raw("('" + startDateString + "' < DATE(start_date) AND '" + endDateString + "'"
-                        + " > DATE(start_date)) OR ('" + startDateString + "'" + " < DATE(end_date) AND '"
-                        + endDateString + "'" + " > DATE(start_date))")
+                .raw("DATE(start_date) >= '"+startDateString+"' AND DATE(start_date) <= '"+endDateString+"'")
                 .prepare()));
+        
         
         HashMap<CampGround,Integer> camps = new HashMap<CampGround,Integer>();
         
@@ -259,24 +330,46 @@ public class Stats
 		
 		switch(period)
 		{
-			case WEEKLY:
-				c.add(Calendar.DATE, 7);
-				break;
-			case MONTHLY:
-				c.add(Calendar.DATE, 30);
-				break;
-			case ANNUALY:
-				c.add(Calendar.DATE, 365);
-				break;
-			case TWO_YEAR:
-				c.add(Calendar.DATE, 365*2);
-				break;
-			case THREE_YEAR:
-				c.add(Calendar.DATE, 365*3);
-				break;
+		case WEEKLY:
+			c.add(Calendar.DATE, -7);
+			break;
+		case MONTHLY:
+			c.add(Calendar.DATE, -30);
+			break;
+		case ANNUALY:
+			c.add(Calendar.DATE, -365);
+			break;
+		case TWO_YEAR:
+			c.add(Calendar.DATE, -365*2);
+			break;
+		case THREE_YEAR:
+			c.add(Calendar.DATE, -365*3);
+			break;
+		case NEXT_WEEK:
+			c.add(Calendar.DATE, 7);
+			break;
+		case NEXT_MONTH:
+			c.add(Calendar.DATE, 30);
+			break;
+		case NEXT_YEAR:
+			c.add(Calendar.DATE, 365);
+			break;
+		case NEXT_TWO_YEAR:
+			c.add(Calendar.DATE, 365*2);
+			break;
+		case NEXT_THREE_YEAR:
+			c.add(Calendar.DATE, 365*3);
+			break;
 		}
 		
 		Date endDate = c.getTime();
+		
+		if(startDate.after(endDate))
+		{
+			Date switcher = startDate;
+			startDate = endDate;
+			endDate = switcher;
+		}
 		
 		String startDateString = dateFormat.format(startDate);
 		String endDateString   = dateFormat.format(endDate);
@@ -284,9 +377,9 @@ public class Stats
 		var dbr = Database.getInstance().getReservationDao();
 		
         List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
-                .raw("('" + startDateString + "' < DATE(start_date) AND '" + endDateString + "'"
-                        + " > DATE(start_date)) OR ('" + startDateString + "'" + " < DATE(end_date) AND '"
-                        + endDateString + "'" + " > DATE(start_date))")
+                .raw("('" + startDateString + "' <= DATE(start_date) AND '" + endDateString + "'"
+                        + " >= DATE(start_date)) OR ('" + startDateString + "'" + " <= DATE(end_date) AND '"
+                        + endDateString + "'" + " >= DATE(start_date))")
                 .prepare()));
 		
 		return reservations.size();
