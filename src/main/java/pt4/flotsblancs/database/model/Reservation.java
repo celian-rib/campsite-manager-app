@@ -115,8 +115,7 @@ public class Reservation implements Item {
         int plusDay = 0;
         List<CampGround> availablesCamps = new ArrayList<CampGround>();
         
-        do
-        {
+        do {
             // Date par défaut : de aujourd'hui à ajd + 5jours
             this.startDate = DateUtils.plusDays(new Date(),plusDay);
             this.endDate = DateUtils.plusDays(startDate, 5);
