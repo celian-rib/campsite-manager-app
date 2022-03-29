@@ -11,7 +11,7 @@ public class PeriodComboBox extends RefreshableComboBox<Period> {
     public PeriodComboBox() {
         setFloatingText("Période");
         setFloatMode(FloatMode.INLINE);
-        getItems().addAll(Period.WEEKLY,Period.MONTHLY,Period.ANNUALY,Period.TWO_YEAR,Period.THREE_YEAR);
+        getItems().addAll(Period.NEXT_THREE_YEAR,Period.NEXT_TWO_YEAR,Period.NEXT_YEAR,Period.NEXT_MONTH,Period.NEXT_WEEK,Period.WEEKLY,Period.MONTHLY,Period.ANNUALY,Period.TWO_YEAR,Period.THREE_YEAR);
         setMinWidth(180);
         setAnimated(false);
         selectFirst();
