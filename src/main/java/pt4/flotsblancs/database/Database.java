@@ -15,8 +15,6 @@ import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableUtils;
 
-
-
 public class Database {
 
     private static Database instance = null;
