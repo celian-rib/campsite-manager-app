@@ -1,7 +1,5 @@
 package pt4.flotsblancs.scenes.components;
 
-import java.util.ArrayList;
-
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.effects.DepthLevel;
@@ -43,9 +41,7 @@ public class ProblemsListCard extends StackPane {
         problemsList = new MFXListView<Problem>();
         noProblemLabel = new Label("Aucun problème lié à ce client");
 
-        ArrayList<Problem> problems = new ArrayList<Problem>();
-        client.getReservations().forEach(r -> problems.addAll(r.getProblems()));
-        problemsList.getItems().addAll(problems);
+        problemsList.getItems().addAll(client.getOpenProblems());
 
         setup();
     }
