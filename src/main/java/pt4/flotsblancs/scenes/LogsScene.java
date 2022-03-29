@@ -49,6 +49,7 @@ public class LogsScene extends VBox implements IScene {
 
     private TableView<Log> createTableView() {
         table = new TableView<Log>();
+        table.setPrefHeight(620);
         table.setEditable(false);
 
         TableColumn<Log, User> userCol = new TableColumn<Log, User>("Utilisateur");
