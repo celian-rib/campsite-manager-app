@@ -108,6 +108,7 @@ public class StocksScene extends VBox implements IScene {
                     var graphic = new Spinner<Integer>();
                     SpinnerValueFactory<Integer> valueFactory =
                             new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000000);
+                    graphic.setEditable(true);
                     valueFactory.setValue(cell.getItem());
                     valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
                         if (oldVal == null)
@@ -137,6 +138,7 @@ public class StocksScene extends VBox implements IScene {
                     var graphic = new Spinner<Integer>();
                     SpinnerValueFactory<Integer> valueFactory =
                             new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000000);
+                    graphic.setEditable(true);
                     valueFactory.setValue(cell.getItem());
                     valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
                         if (oldVal == null)
