@@ -5,6 +5,7 @@ import pt4.flotsblancs.database.model.types.*;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javafx.scene.paint.Color;
@@ -13,6 +14,7 @@ import pt4.flotsblancs.scenes.utils.PriceUtils;
 import pt4.flotsblancs.scenes.utils.StatusColors;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 
 import lombok.*;
 
@@ -53,6 +55,10 @@ public class CampGround implements Item {
     @Setter
     @DatabaseField(canBeNull = false, columnName = "allowed_equipments")
     private Equipment allowedEquipments;
+
+    @Getter
+    @ForeignCollectionField(eager = false)
+    private Collection<Problem> problems;
 
     @Override
     public String toString() {

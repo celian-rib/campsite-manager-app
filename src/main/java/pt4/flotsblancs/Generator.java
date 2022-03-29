@@ -117,7 +117,7 @@ public class Generator {
     private static void generateCampGrounds(Faker f, int nbr) throws SQLException {
         for (int i = 0; i < nbr; i++) {
             var cg = new CampGround();
-            cg.setDescription(f.country().name());
+            cg.setDescription(f.lorem().sentence(300).toString());
             cg.setPricePerDays(f.number().randomDigitNotZero()*100);
             cg.setSurface(f.number().randomDigitNotZero());
             cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);

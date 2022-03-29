@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
@@ -46,6 +47,15 @@ public class ProblemsListCard extends StackPane {
         client.getReservations().forEach(r -> problems.addAll(r.getProblems()));
         problemsList.getItems().addAll(problems);
 
+        setup();
+    }
+
+    public ProblemsListCard(CampGround campGround) {
+        this.item = campGround;
+
+        problemsList = new MFXListView<Problem>();
+        noProblemLabel = new Label("Aucun problème pour cet emplacement");
+        problemsList.getItems().addAll(campGround.getProblems());
         setup();
     }
 
