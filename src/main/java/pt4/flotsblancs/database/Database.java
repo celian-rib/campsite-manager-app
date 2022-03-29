@@ -47,6 +47,12 @@ public class Database {
     @Getter
     private Dao<Stock, String> stockDao;
 
+    /**
+     * constructeur de la base de donnée
+     * 
+     * @throws SQLException
+     */
+
     private Database() throws SQLException {
         Logger.setGlobalLogLevel(Level.WARNING);
 
@@ -63,12 +69,22 @@ public class Database {
         createAllDAOs();
     }
 
+    /**
+     * renvoie l'instance de la base de donnée 
+     * 
+     * @return
+     * @throws SQLException
+     */
+
     public static Database getInstance() throws SQLException {
         if (Database.instance == null)
             Database.instance = new Database();
         return instance;
     }
 
+    /**
+     * @return renvoie true si on est connecté
+     */
     public boolean isConnected() {
         if (this.conn == null)
             return false;
@@ -95,6 +111,12 @@ public class Database {
         TableUtils.createTableIfNotExists(conn, Stock.class);
     }
 
+    /**
+     * crée tous les data access objects
+     * 
+     * @throws SQLException
+     */
+    
     private void createAllDAOs() throws SQLException {
         clientsDao = DaoManager.createDao(conn, Client.class);
         usersDao = DaoManager.createDao(conn, User.class);

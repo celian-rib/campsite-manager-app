@@ -66,6 +66,13 @@ public class User implements Item {
     @Getter
     private static User connected;
 
+    /**
+     * crée un nouvel utilisateur et lui donne des valeurs par défaut
+     * l'action est loggé
+     * 
+     * @param name
+     * @throws SQLException
+     */
     public User(String name) throws SQLException {
         this.firstName = "NOUVEAU Prénom";
         this.name = "NOUVEAU Nom";
@@ -78,15 +85,33 @@ public class User implements Item {
         User.addlog(LogType.ADD, "Ajout d'un nouvel utilisateur");
     }
 
+    /**
+     * vérifie si un utilisateur est connecté
+     * 
+     * @return
+     */
+
     public static boolean isConnected() {
         return connected != null;
     }
+
+    /**
+     * déconnecte un utilisateur si il y en a un
+     */
 
     public static void logOut() {
         if (!isConnected())
             log("/!\\ Impossible de deconnecter si il n\'y a pas d'utilisateur déjà connecté");
         connected = null;
     }
+
+
+    /**
+     * renvoie la version haché d'un mot de passe 
+     * 
+     * @param base
+     * @return
+     */
 
     public static String sha256(final String base) {
         // SOURCE : https://stackoverflow.com/a/11009612/12647299
@@ -105,6 +130,14 @@ public class User implements Item {
             throw new RuntimeException(ex);
         }
     }
+
+    /**
+     * connecte un utilisateur si les identifiants sont correctes
+     * 
+     * @param id
+     * @param mdp
+     * @return
+     */
 
     public static boolean logIn(String id, String mdp) {
         if (isConnected()) {

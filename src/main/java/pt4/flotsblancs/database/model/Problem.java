@@ -58,6 +58,13 @@ public class Problem implements Item {
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Reservation reservation;
 
+    /**
+     * crée un problème et lui donne des valeurs par défauts
+     * l'action est loggé
+     * 
+     * @param status
+     * @throws SQLException
+     */
     public Problem(ProblemStatus status) throws SQLException {
         this.status = status;
         this.startDate = new Date();
@@ -67,11 +74,23 @@ public class Problem implements Item {
         Database.getInstance().getProblemDao().refresh(this);
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param description
+     */
+
     public void setDescription(String description) {
         this.description = description;
         this.lastUpdateDate = new Date();
         User.addlog(LogType.MODIFY, "Modification de la description du problème " + getDisplayName());
     }
+
+    /**
+     * l'action est loggé
+     * 
+     * @param client
+     */
 
     public void setClient(Client client) {
         this.client = client;
@@ -79,11 +98,23 @@ public class Problem implements Item {
         User.addlog(LogType.MODIFY, "Modification du client du problème " + getDisplayName());
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param campGround
+     */
+
     public void setCampground(CampGround campGround) {
         this.campground = campGround;
         this.lastUpdateDate = new Date();
         User.addlog(LogType.MODIFY, "Modification de l'emplacement du problème " + getDisplayName());
     }
+
+    /**
+     * l'action est loggé
+     * 
+     * @param reservation
+     */
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
@@ -91,6 +122,12 @@ public class Problem implements Item {
         User.addlog(LogType.MODIFY, "Modification de la réservation du problème " + getDisplayName());
     }
 
+    /**
+     * l'action est loggé
+     * 
+     * @param newStatus
+     */
+    
     public void setStatus(ProblemStatus newStatus) {
         this.status = newStatus;
         this.endDate = newStatus == ProblemStatus.SOLVED ? new Date() : null;
