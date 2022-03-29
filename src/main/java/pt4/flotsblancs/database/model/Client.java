@@ -16,7 +16,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import javafx.scene.paint.Color;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.daos.ReservationDAO;
 import pt4.flotsblancs.database.model.types.LogType;
@@ -26,7 +25,6 @@ import pt4.flotsblancs.scenes.utils.StatusColors;
 import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
 
 @EqualsAndHashCode
-@NoArgsConstructor
 @DatabaseTable(tableName = "clients")
 public class Client implements Item {
 
@@ -66,7 +64,16 @@ public class Client implements Item {
     @ForeignCollectionField(eager = false)
     private ForeignCollection<Reservation> reservations;
 
+    @Getter
+    @DatabaseField(canBeNull = false)
+    private Date creationDate;
+    
+    public Client() {
+        this.creationDate = new Date();
+    }
+
     public Client(String name) throws SQLException {
+        this.creationDate = new Date();
         this.firstName = "NOUVEAU Prénom";
         this.name = "NOUVEAU Nom";
         this.addresse = "NOUVEAU Adresse";
