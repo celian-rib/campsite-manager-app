@@ -204,45 +204,6 @@ public class Client implements Item {
             return false;
         }
     }
-    
-    public boolean isKing()
-    {
-    	
-    	int clientId = this.getId();
-    	
-    	for(int i=0;i<5;i++);
-    	System.out.println("");
-    	
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar c = Calendar.getInstance();
-		Date currentDate = c.getTime();
-		String currentDateString = dateFormat.format(currentDate);
-		
-    	
-    	try {
-			ReservationDAO dbr = Database.getInstance().getReservationDao();
-			
-	        List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
-	                .raw("DATEDIFF('"+currentDateString+"',DATE(end_date))>=0 AND client_id = "+clientId)
-	                .prepare()));
-	
-
-	        
-	        if(reservations.size() >= 3)
-	        {
-	        	return true;
-	        }
-	        
-	    	for(int i=0;i<5;i++);
-	    	System.out.println("");
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-    	
-    	return false;
-    }
 
     @Override
     public int compareTo(Item o) {
