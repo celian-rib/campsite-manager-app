@@ -1,16 +1,23 @@
 package pt4.flotsblancs.database.model;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import javafx.scene.paint.Color;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.daos.ReservationDAO;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.scenes.items.Item;
@@ -172,6 +179,45 @@ public class Client implements Item {
         return score;
 
 
+    }
+    
+    public boolean isKing()
+    {
+    	
+    	int clientId = this.getId();
+    	
+    	for(int i=0;i<5;i++);
+    	System.out.println("");
+    	
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		Date currentDate = c.getTime();
+		String currentDateString = dateFormat.format(currentDate);
+		
+    	
+    	try {
+			ReservationDAO dbr = Database.getInstance().getReservationDao();
+			
+	        List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
+	                .raw("DATEDIFF('"+currentDateString+"',DATE(end_date))>=0 AND client_id = "+clientId)
+	                .prepare()));
+	
+
+	        
+	        if(reservations.size() >= 3)
+	        {
+	        	return true;
+	        }
+	        
+	    	for(int i=0;i<5;i++);
+	    	System.out.println("");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+    	
+    	return false;
     }
 
     @Override
