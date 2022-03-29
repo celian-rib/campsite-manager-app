@@ -118,7 +118,7 @@ public class Client implements Item {
     }
 
     public Reservation getOpenReservation() {
-        return reservations.stream().filter(r -> r.getPaymentDate() == null).findFirst()
+        return reservations.stream().filter(r -> r.getPaymentDate() == null && !r.getCanceled()).findFirst()
                 .orElse(null);
     }
 
