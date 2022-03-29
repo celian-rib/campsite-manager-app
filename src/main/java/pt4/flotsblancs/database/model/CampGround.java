@@ -7,6 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;

@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -220,6 +221,11 @@ public class Client implements Item {
         return problems
                 .stream()
                 .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
+    }
+
+    public List<Problem> getOpenProblems() {
+        return problems.stream().filter(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT)
+                .collect(Collectors.toList());
     }
 
     @Override
