@@ -14,7 +14,7 @@ public class PeriodComboBox extends RefreshableComboBox<Period> {
         getItems().addAll(Period.NEXT_THREE_YEAR,Period.NEXT_TWO_YEAR,Period.NEXT_YEAR,Period.NEXT_MONTH,Period.NEXT_WEEK,Period.WEEKLY,Period.MONTHLY,Period.ANNUALY,Period.TWO_YEAR,Period.THREE_YEAR);
         setMinWidth(180);
         setAnimated(false);
-        selectFirst();
+        selectItem(Period.NEXT_WEEK);
         setPopupAlignment(Alignment.of(HPos.CENTER, VPos.TOP));
     }
 
