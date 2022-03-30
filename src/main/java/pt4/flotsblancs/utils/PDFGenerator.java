@@ -107,6 +107,8 @@ public class PDFGenerator {
         document.add(createClientTable(reservation.getClient()));
         document.add(createReservationTable(reservation));
         document.add(createPriceTable(reservation));
+        document.add(line);
+        document.add(createFooter());
         document.close();
 
         System.out.println("PDF généré");
@@ -179,15 +181,29 @@ public class PDFGenerator {
         table.addCell(createCell(PriceUtils.priceToString(reservation.getCampground().getPricePerDays()) + "€"));
 
         table.addCell(createCell("Prix acompte : "));
-        table.addCell(createCell(reservation.getDepositPrice() + "€"));
+        table.addCell(createCell(PriceUtils.priceToString(reservation.getDepositPrice()) + "€"));
 
         table.addCell(createCell("Prix payé après acompte : "));
-        table.addCell(createCell(reservation.getTotalPrice() - reservation.getDepositPrice() + "€"));
+        table.addCell(createCell(
+                PriceUtils.priceToString(reservation.getTotalPrice() - reservation.getDepositPrice()) + "€"));
 
         var font = FontFactory.getFont("Arial", 12, Font.BOLD);
         table.addCell(new PdfPCell(new Paragraph("Prix TTC", font)));
         table.addCell(new PdfPCell(new Paragraph(PriceUtils.priceToString(reservation.getTotalPrice()) + "€", font)));
 
         return table;
+    }
+
+    private static Paragraph createFooter() {
+
+        var paragraph = new Paragraph(
+                "Numéro de téléphone : 05 55 55 55 55 \nAdresse de facturation : 1 Ruben de la plage 130008\nEmail : campoforever@campo.fr\nIBAN : FR12 1234 5678\nSWIFT/BIC : ABCDFRP1XXX");
+        paragraph.setAlignment(Element.ALIGN_LEFT);
+        paragraph.setIndentationLeft(50);
+        paragraph.setIndentationRight(50);
+        paragraph.setSpacingBefore(20);
+        paragraph.setSpacingAfter(20);
+
+        return paragraph;
     }
 }
