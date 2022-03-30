@@ -10,18 +10,17 @@ import javafx.scene.text.Text;
 
 class ItemPane<I extends Item> extends BorderPane {
     private I item;
+    private Circle statusDot;
 
     ItemPane(I item, int maxWith) {
         this.item = item;
-        // On aligne verticalement car c'est moche sinon
         setPadding(new Insets(0));
         setPrefHeight(30);
 
         HBox leftContainer = new HBox(8);
         leftContainer.setAlignment(Pos.CENTER);
 
-        Circle statusDot = new Circle(4);
-        statusDot.setFill(item.getStatusColor());
+        statusDot = new Circle(4);
         
         Text display = new Text(item.getDisplayName());
         display.setFill(Color.rgb(50, 60, 100));
@@ -38,6 +37,12 @@ class ItemPane<I extends Item> extends BorderPane {
         setAlignment(id, Pos.CENTER);
         setAlignment(leftContainer, Pos.CENTER);
         setMaxWidth(maxWith);
+
+        loadStatus();
+    }
+
+    void loadStatus() {
+        statusDot.setFill(item.getStatusColor());
     }
 
     I getItem() {

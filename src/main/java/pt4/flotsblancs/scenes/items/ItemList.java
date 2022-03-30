@@ -2,7 +2,6 @@ package pt4.flotsblancs.scenes.items;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -23,7 +22,6 @@ import javafx.scene.effect.Shadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import pt4.flotsblancs.database.model.Reservation;
 
 class ItemList<I extends Item> extends StackPane {
 
@@ -69,7 +67,8 @@ class ItemList<I extends Item> extends StackPane {
         addButton = createAddButton();
 
         // Border pane qui contient l'ensemble des élèments
-        // ItemList en ellse même est une StackPane pour superposer l'ombre avec cette borderpane
+        // ItemList en elle même est une StackPane pour superposer l'ombre avec cette
+        // borderpane
         borderPane = new BorderPane();
         borderPane.setTop(searchBar);
         borderPane.setCenter(scrollPane);
@@ -117,8 +116,12 @@ class ItemList<I extends Item> extends StackPane {
     }
 
     private void updateItems(List<I> items, boolean filtered) {
-        if(items.size() == 0)
+        long start = System.currentTimeMillis();
+        log("Starting update");
+
+        if (items.size() == 0)
             return;
+
         if (!filtered) {
             new Thread(() -> {
                 Platform.runLater(new Runnable() {
@@ -130,23 +133,39 @@ class ItemList<I extends Item> extends StackPane {
                 });
             }).start();
         }
+
+        // time the below function call to see how long it takes
+        long start2 = System.currentTimeMillis();
         listButtons = createListButtons(items);
+        long end2 = System.currentTimeMillis();
+        log("Time to create list buttons: " + (end2 - start2) + "ms");
+
+        ObservableList<ItemPane<I>> itemsListContainer = FXCollections.observableArrayList(listButtons);
 
         ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
-        ObservableList<ItemPane<I>> itemsListContainer =
-                FXCollections.observableArrayList(listButtons);
-
         listView.setFocusTraversable(false);
         listView.setStyle("-fx-background-insets: 0; -fx-background-insets: 0; -fx-padding: 0;");
 
         listView.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
-                ItemPane<I> selected = listView.getSelectionModel().getSelectedItem();
-                if (selected != null)
-                    itemScene.updateContainer(selected.getItem());
+            ItemPane<I> selected = listView.getSelectionModel().getSelectedItem();
+            if (selected != null)
+                itemScene.updateContainer(selected.getItem());
         });
 
         listView.setItems(itemsListContainer);
         scrollPane.setContent(listView);
+
+        new Thread(() -> {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    listView.getItems().forEach(i -> i.loadStatus());
+                }
+            });
+        }).start();
+
+        long end = System.currentTimeMillis();
+        log("Items updated in " + (end - start) + " ms");
     }
 
     /**
@@ -201,7 +220,7 @@ class ItemList<I extends Item> extends StackPane {
     }
 
     private HBox createAddButton() {
-        if(itemScene.addButtonText() == null)
+        if (itemScene.addButtonText() == null)
             return null;
         var container = new HBox();
         var btn = new MFXButton(itemScene.addButtonText());
@@ -212,5 +231,14 @@ class ItemList<I extends Item> extends StackPane {
         container.getChildren().add(btn);
         btn.setMinWidth(CONTENT_WIDTH);
         return container;
+    }
+
+    /**
+     * Permet de logger les actions du routeur pour le débug
+     * 
+     * @param message : Message de débug
+     */
+    private static void log(String message) {
+        System.out.println("[ItemList] " + message);
     }
 }
