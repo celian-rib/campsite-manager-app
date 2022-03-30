@@ -12,6 +12,7 @@ import pt4.flotsblancs.Stats.Period;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.components.FlotsBlancsLogo;
 import pt4.flotsblancs.scenes.components.HBoxSpacer;
 import pt4.flotsblancs.scenes.components.InformationCard;
@@ -51,6 +52,8 @@ public class DashboardScene extends VBox implements IScene {
             Router.showToast(ToastType.SUCCESS,
                     "Statistiques de " + periodComboBox.getSelectedPeriod().toString().toLowerCase() + " affichées");
         });
+
+        periodComboBox.selectItem(Period.WEEKLY);
 
         this.getChildren().add(new VBoxSpacer());
         this.getChildren().add(logo);
@@ -105,14 +108,17 @@ public class DashboardScene extends VBox implements IScene {
 
         nbIncomingClientStats = new InformationCard<>(
                 "Clients arrivants",
+                Routes.CLIENTS,
                 Color.rgb(166, 255, 190));
 
         nbOutgoingClientStats = new InformationCard<>(
                 "Clients partants",
+                Routes.CLIENTS,
                 Color.rgb(197, 226, 252));
 
         nbReservationsStats = new InformationCard<>(
                 "Réservations",
+                Routes.RESERVATIONS,
                 Color.rgb(234, 166, 255));
 
         left.getChildren().add(nbIncomingClientStats);
@@ -123,14 +129,17 @@ public class DashboardScene extends VBox implements IScene {
         
         averageProblemTimeStats = new InformationCard<>(
                 "Résolution de problème",
+                Routes.PROBLEMS,
                 Color.rgb(255, 212, 133));
 
         mostProblemsStats = new InformationCard<>(
                 "Emplacements problématiques",
+                Routes.CAMPGROUNDS,
                 Color.rgb(255, 188, 166));
 
         mostRentedCampsStats = new InformationCard<>(
                 "Emplacements les plus réservés",
+                Routes.CAMPGROUNDS,
                 Color.rgb(166, 255, 190));
         
 
