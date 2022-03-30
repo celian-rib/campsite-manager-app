@@ -11,7 +11,7 @@ public class ProblemStatusComboBox extends RefreshableComboBox<ProblemStatus> {
     public ProblemStatusComboBox(Problem problem) {
         this.problem = problem;
 
-        setFloatingText("Status");
+        setFloatingText("Statut");
         setFloatMode(FloatMode.INLINE);
         getItems().addAll(ProblemStatus.values());
         setMinWidth(180);

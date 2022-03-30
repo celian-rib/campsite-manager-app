@@ -14,6 +14,7 @@ import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.PriceUtils;
 import pt4.flotsblancs.scenes.utils.StatusColors;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
@@ -109,10 +110,14 @@ public class CampGround implements Item {
     public boolean isForeignCorrect() {
         return true;
     }
+    public List<Problem> getOpenProblems() {
+        return problems.stream().filter(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Color getStatusColor() {
-        return StatusColors.GREEN;
+        return getOpenProblems().size() > 0 ? StatusColors.RED : StatusColors.GREEN;
     }
 
     @Override
