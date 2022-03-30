@@ -12,13 +12,18 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.enums.FloatMode;
-
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
-import javafx.scene.layout.*;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.database.Database;
@@ -27,10 +32,19 @@ import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
-
-import pt4.flotsblancs.scenes.breakpoints.*;
-import pt4.flotsblancs.scenes.components.*;
-import pt4.flotsblancs.scenes.components.ComboBoxes.*;
+import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
+import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
+import pt4.flotsblancs.scenes.components.CampgroundCard;
+import pt4.flotsblancs.scenes.components.ClientCard;
+import pt4.flotsblancs.scenes.components.ConfirmButton;
+import pt4.flotsblancs.scenes.components.HBoxSpacer;
+import pt4.flotsblancs.scenes.components.ProblemsListCard;
+import pt4.flotsblancs.scenes.components.ReservationDatePicker;
+import pt4.flotsblancs.scenes.components.VBoxSpacer;
+import pt4.flotsblancs.scenes.components.ComboBoxes.CampGroundComboBox;
+import pt4.flotsblancs.scenes.components.ComboBoxes.EquipmentComboBox;
+import pt4.flotsblancs.scenes.components.ComboBoxes.PersonCountComboBox;
+import pt4.flotsblancs.scenes.components.ComboBoxes.ServiceComboBox;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.PriceUtils;
@@ -366,25 +380,56 @@ public class ReservationsScene extends ItemScene<Reservation> {
         });
 
         sendBillBtn.setOnAction(e -> {
-            try {
-                var bill = PDFGenerator.generateReservationBillPDF(reservation);
-                reservation.setBill(bill.toByteArray());
-                updateDatabase();
-                refreshPage();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                Router.showToast(ToastType.ERROR,
-                        "Une erreur est survenue durant la génération de la facture");
-            }
+        	
+            Task<Void> task = new Task<Void>() {
+                @Override protected Void call() throws Exception {
+                    return null;
+                }
+            };
+            
+            new Thread() {
 
-            try {
-                MailSender.sendMail(reservation);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                Router.showToast(ToastType.ERROR,
-                        "Une erreur est survenue durant l'envoi de l'email au client");
-            }
+                // runnable for that thread
+                public void run() 
+                {
+                    try {
+                    	
+                        var bill = PDFGenerator.generateReservationBillPDF(reservation);
+                        reservation.setBill(bill.toByteArray());
+                        //Tout ce qui doit être run dans un thread javafx on l'encercle avec ça,
+                        //sinon ça merde :(
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+		                        updateDatabase();
+		                        refreshPage();
+                            }
+                        });
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+		                        Router.showToast(ToastType.ERROR,
+		                                "Une erreur est survenue durant la génération de la facture");
+                            }
+                        });
+                    }
+
+                    try {
+                        MailSender.sendMail(reservation);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+                            	Router.showToast(ToastType.ERROR,
+                                        "Une erreur est survenue durant l'envoi de l'email au client");
+                            }
+                        });
+                    }
+                }
+            }.start();
+        	
         });
+        	
 
         openBillBtn.setOnAction(e -> {
             Router.showToast(ToastType.INFO, "Ouverture du fichier...");
@@ -406,6 +451,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.getChildren().addAll(openBillBtn, sendBillBtn, cancelBtn);
         return container;
     }
+    
 
     /**
      * @param typeName
