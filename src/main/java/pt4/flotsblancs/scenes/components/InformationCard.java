@@ -77,6 +77,7 @@ public class InformationCard<T> extends BorderPane {
         titleBox.setAlignment(Pos.CENTER_LEFT);
 
         HBox redirectBox = new HBox(5);
+        redirectBox.setAlignment(Pos.CENTER_LEFT);
 
         MFXButton openBtn = new MFXButton("");
         openBtn.setOnAction(e -> Router.goToScreen(route));
@@ -84,6 +85,7 @@ public class InformationCard<T> extends BorderPane {
         FontIcon openIcon = new FontIcon("far-caret-square-right:20");
         openIcon.setIconColor(Color.rgb(51, 59, 97));
         openBtn.setGraphic(openIcon);
+        openBtn.setBackground(Background.EMPTY);
 
         Label mainTitleLabel = new Label(title);
         subtitleLabel = new Label();
