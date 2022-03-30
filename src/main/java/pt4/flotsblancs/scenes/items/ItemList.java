@@ -36,6 +36,8 @@ class ItemList<I extends Item> extends StackPane {
 
     private MFXTextField searchBar;
 
+    private Item selectedItem = null;
+
     private ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
     private ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
 
@@ -148,8 +150,10 @@ class ItemList<I extends Item> extends StackPane {
 
         listView.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
             ItemPane<I> selected = listView.getSelectionModel().getSelectedItem();
-            if (selected != null)
+            if (selected != null && selected.getItem() != selectedItem) {
+                selectedItem = selected.getItem();
                 itemScene.updateContainer(selected.getItem());
+            }
         });
 
         listView.setItems(itemsListContainer);
