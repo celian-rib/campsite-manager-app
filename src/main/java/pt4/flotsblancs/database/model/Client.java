@@ -230,16 +230,7 @@ public class Client implements Item {
 
     @Override
     public Color getStatusColor() {
-        return hasOpenProblem() ? StatusColors.RED : StatusColors.BLUE;
-    }
-
-    private int getSortScore() {
-        int score = 0;
-        score -= this.getOpenReservation() != null ? 100 : 0;
-        // score -= this.hasOpenProblem() ? 10 : 0;
-        System.out.println(this.toString());
-        return score;
-
+        return getOpenProblems().size() > 0 ? StatusColors.RED : StatusColors.BLUE;
     }
 
     public boolean isKing() {
