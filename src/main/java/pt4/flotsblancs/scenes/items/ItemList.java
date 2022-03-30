@@ -36,7 +36,7 @@ class ItemList<I extends Item> extends StackPane {
 
     private MFXTextField searchBar;
 
-    private Item selectedItem = null;
+    private I selectedItem = null;
 
     private ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
     private ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
@@ -154,7 +154,12 @@ class ItemList<I extends Item> extends StackPane {
                 selectedItem = selected.getItem();
                 itemScene.updateContainer(selected.getItem());
             }
+            
         });
+        if (selectedItem != null){
+            itemScene.updateContainer(selectedItem);
+            selectItem(selectedItem);
+        }
 
         listView.setItems(itemsListContainer);
         scrollPane.setContent(listView);
@@ -190,7 +195,17 @@ class ItemList<I extends Item> extends StackPane {
      * @param item
      */
     void selectItem(I item) {
-        listView.getSelectionModel().select(new ItemPane<I>(item, CONTENT_WIDTH - 15));
+        var itemPane = new ItemPane<I>(item, CONTENT_WIDTH - 15);
+        int index = listView.getItems().indexOf(itemPane);
+        if (index == -1) {
+            System.out.println("not found");
+            listView.getItems().add(itemPane);
+            listView.getSelectionModel().select(itemPane);
+        } else {
+            System.out.println(index);
+            listView.getSelectionModel().select(index);
+        }
+        
         itemScene.updateContainer(item);
     }
 
