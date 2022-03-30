@@ -118,9 +118,13 @@ public class StocksScene extends VBox implements IScene {
                     valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
                         if (oldVal == null)
                             return;
+                        
                         var stock = cell.getTableRow().getItem();
-                        stock.setQuantity(newVal);
-                        updateDatabase(stock);
+                        if(stock != null ) {
+	                        stock.setQuantity(newVal);
+	                        updateDatabase(stock);
+                        }
+                        
                     });
                     graphic.setValueFactory(valueFactory);
 
@@ -148,8 +152,10 @@ public class StocksScene extends VBox implements IScene {
                         if (oldVal == null)
                             return;
                         var stock = cell.getTableRow().getItem();
-                        stock.setQuantityAlertThreshold(newVal);
-                        updateDatabase(stock);
+                        if(stock != null) {
+	                        stock.setQuantityAlertThreshold(newVal);
+	                        updateDatabase(stock);
+                        }
                     });
                     graphic.setValueFactory(valueFactory);
 
