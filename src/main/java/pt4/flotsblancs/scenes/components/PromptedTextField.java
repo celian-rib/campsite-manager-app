@@ -10,4 +10,13 @@ public class PromptedTextField extends MFXTextField {
         setFloatMode(FloatMode.INLINE);
         setMinWidth(180);
     }
+
+    /**
+     * @return le text de l'input non null (String vide dans le pire des cas)
+     */
+    public String getTextSafely() {
+        if(super.getText() == null)
+            return "";
+        return super.getText();
+    }
 }

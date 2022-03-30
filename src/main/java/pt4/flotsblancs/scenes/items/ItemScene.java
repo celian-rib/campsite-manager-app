@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -87,7 +86,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
                 List<I> allItems;
                 try {
                     allItems = queryAll().stream().filter(i -> i.isForeignCorrect()).collect(Collectors.toList());
-                    Platform.runLater(() -> itemList.updateItems(allItems));
+                    itemList.updateItems(allItems);
                     return allItems;
                 } catch (SQLException e) {
                     ExceptionHandler.loadIssue(e);

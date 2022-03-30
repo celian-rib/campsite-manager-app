@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -42,12 +41,12 @@ public class ClientsScene extends ItemScene<Client> {
 
     private Label title;
 
-    private MFXTextField name;
-    private MFXTextField firstName;
-    private MFXTextField adresse;
-    private MFXTextField phone;
-    private MFXTextField preferences;
-    private MFXTextField email;
+    private PromptedTextField name;
+    private PromptedTextField firstName;
+    private PromptedTextField adresse;
+    private PromptedTextField phone;
+    private PromptedTextField preferences;
+    private PromptedTextField email;
 
     private MFXButton saveButton;
     private MFXButton addReservationButton;
@@ -211,6 +210,7 @@ public class ClientsScene extends ItemScene<Client> {
 
         saveButton.setOnAction(e -> {
             updateDatabase(client);
+            refreshPage();
             saveButton.setDisable(true);
         });
 
@@ -236,18 +236,18 @@ public class ClientsScene extends ItemScene<Client> {
             return;
         boolean update = false;
         try {
-            if (!client.getFirstName().equals(firstName.getText())) {
-                client.setFirstName(firstName.getText());
+            if (!client.getFirstName().equals(firstName.getTextSafely())) {
+                client.setFirstName(firstName.getTextSafely());
                 update = true;
             }
-            if (!client.getName().equals(name.getText())) {
-                client.setName(name.getText());
+            if (!client.getName().equals(name.getTextSafely())) {
+                client.setName(name.getTextSafely());
                 update = true;
             }
 
-            if (!client.getAddresse().equals(adresse.getText())) {
+            if (!client.getAddresse().equals(adresse.getTextSafely())) {
                 try {
-                    client.setAddresse(adresse.getText());
+                    client.setAddresse(adresse.getTextSafely());
                     update = true;
                 } catch (ConstraintException e) {
                     adresse.setText(client.getAddresse());
@@ -255,9 +255,9 @@ public class ClientsScene extends ItemScene<Client> {
                 }
             }
 
-            if (!client.getPhone().equals(phone.getText())) {
+            if (!client.getPhone().equals(phone.getTextSafely())) {
                 try {
-                    client.setPhone(phone.getText());
+                    client.setPhone(phone.getTextSafely());
                     update = true;
                 } catch (ConstraintException e) {
                     phone.setText(client.getPhone());
@@ -265,9 +265,9 @@ public class ClientsScene extends ItemScene<Client> {
                 }
             }
 
-            if (!client.getEmail().equals(email.getText())) {
+            if (!client.getEmail().equals(email.getTextSafely())) {
                 try {
-                    client.setEmail(email.getText());
+                    client.setEmail(email.getTextSafely());
                     update = true;
                 } catch (ConstraintException e) {
                     email.setText(client.getEmail());
@@ -275,8 +275,8 @@ public class ClientsScene extends ItemScene<Client> {
                 }
             }
 
-            if (!preferences.getText().equals(client.getPreferences())) {
-                client.setPreferences(preferences.getText());
+            if (!preferences.getTextSafely().equals(client.getPreferences())) {
+                client.setPreferences(preferences.getTextSafely());
                 update = true;
             }
 

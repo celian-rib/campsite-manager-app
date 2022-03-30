@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -222,18 +223,14 @@ public class Client implements Item {
                 .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
     }
 
-    @Override
-    public Color getStatusColor() {
-        return hasOpenProblem() ? StatusColors.RED : StatusColors.BLUE;
+    public List<Problem> getOpenProblems() {
+        return problems.stream().filter(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT)
+                .collect(Collectors.toList());
     }
 
-    private int getSortScore() {
-        int score = 0;
-        score -= this.getOpenReservation() != null ? 100 : 0;
-        // score -= this.hasOpenProblem() ? 10 : 0;
-        System.out.println(this.toString());
-        return score;
-
+    @Override
+    public Color getStatusColor() {
+        return getOpenProblems().size() > 0 ? StatusColors.RED : StatusColors.BLUE;
     }
 
     public boolean isKing() {
