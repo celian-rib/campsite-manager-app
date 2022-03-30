@@ -26,16 +26,16 @@ public class Generator {
 
         var f = new Faker();
 
-        generateAdmin();
-        generateUsers();
+        // generateAdmin();
+        // generateUsers();
 
-        generateStocks(f, 10);
-        generateClients(f, 120);
-        generateCampGrounds(f, 10);
-        generateReservations(f, 200);
-        generateProblemsResa(f, 10);
-        generateProblemsCg(f, 10);
-        generateProblemsClient(f, 10);
+        generateStocks(f);
+        // generateClients(f, 120);
+        // generateCampGrounds(f, 10);
+        // generateReservations(f, 200);
+        // generateProblemsResa(f, 10);
+        // generateProblemsCg(f, 10);
+        // generateProblemsClient(f, 10);
     }
 
     private static int rdmNbrBtwn(int min, int max) {
@@ -154,8 +154,11 @@ public class Generator {
         }
     }
 
-    private static void generateStocks(Faker f, int nbr) throws SQLException {
-        String[] item = { "Pansements", "Désinfectant", "Crème piqure moustique", "Bouteille d'eau 1L", "Bouteille d'eau 50cL", "Savon biodégradable", "Brosse à dents", "Papier toilette" };
+    private static void generateStocks(Faker f) throws SQLException {
+        String[] item = { "Pansements", "Désinfectant", "Crème piqure moustique", "Bouteille d'eau 1L", 
+                        "Bouteille d'eau 50cL", "Savon biodégradable", "Brosse à dents", "Papier toilette", 
+                        "Parapluie", "Mug Flots Blancs", "T-shirt Flots Blancs", "Casquette Flots Blancs", 
+                        "Pins Flots Blancs", "Magnet Flots Blancs", "Carte touristique", "Guide Touristique" };
         String[] location = { "Etagère 1", "Etagère 2", "Meuble de caisse", "Coffre" };
         Stock s;
         for (int i = 0; i < item.length; i++) {

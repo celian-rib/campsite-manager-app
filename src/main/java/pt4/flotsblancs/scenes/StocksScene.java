@@ -80,8 +80,8 @@ public class StocksScene extends VBox implements IScene {
 
         table.getColumns().add(itemCol);
         table.getColumns().add(quantityCol);
-        table.getColumns().add(storageLocCol);
         table.getColumns().add(alertCol);
+        table.getColumns().add(storageLocCol);
 
         table.setRowFactory(t -> new TableRow<Stock>() {
             @Override
