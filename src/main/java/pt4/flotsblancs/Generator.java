@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import com.github.javafaker.Faker;
-import com.github.javafaker.Pokemon;
 
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
@@ -27,16 +26,16 @@ public class Generator {
 
         var f = new Faker();
 
-        generateAdmin();
-        generateUsers();
+        // generateAdmin();
+        // generateUsers();
 
-        generateStocks(f, 10);
-        generateClients(f, 120);
-        generateCampGrounds(f, 10);
-        generateReservations(f, 200);
-        generateProblemsResa(f, 10);
-        generateProblemsCg(f, 10);
-        generateProblemsClient(f, 10);
+        generateStocks(f);
+        // generateClients(f, 120);
+        // generateCampGrounds(f, 10);
+        // generateReservations(f, 200);
+        // generateProblemsResa(f, 10);
+        // generateProblemsCg(f, 10);
+        // generateProblemsClient(f, 10);
     }
 
     private static int rdmNbrBtwn(int min, int max) {
@@ -47,10 +46,10 @@ public class Generator {
     private static void generateAdmin() throws SQLException {
         var u = new User();
         u.setAdmin(true);
-        u.setFirstName("Polp");
-        u.setName("Ogba");
+        u.setFirstName("Paul");
+        u.setName("Campo");
         u.setPassword(User.sha256("test"));
-        u.setLogin("test");
+        u.setLogin("Campo");
         var existing = Database.getInstance().getUsersDao().queryForMatching(u);
         if (existing.size() == 0) {
             Database.getInstance().getUsersDao().create(u);
@@ -58,10 +57,10 @@ public class Generator {
     }
 
     private static void generateUsers() throws SQLException {
-        String[] firstNames = { "Anna", "Paul", "Jérémy" };
-        String[] lastNames = { "Dupont", "Martin", "Delamama" };
-        String[] pwds = { "Pilou33", "123456789", "motdepass" };
-        String[] logins = { "ADupont", "PMartin", "JDelamama" };
+        String[] firstNames = { "Anna", "Paul", "Jérémy", "Polp" };
+        String[] lastNames = { "Dupont", "Martin", "Delamama", "Ogba" };
+        String[] pwds = { "Pilou33", "123456789", "motdepass", "test" };
+        String[] logins = { "ADupont", "PMartin", "JDelamama", "POgba" };
         User u;
         for (int i = 0; i < logins.length; i++) {
             u = new User();
@@ -124,7 +123,7 @@ public class Generator {
             cg.setDescription(f.lorem().sentence().toString() + f.lorem().sentence().toString()
                     + f.lorem().sentence().toString());
             cg.setPricePerDays(f.number().randomDigitNotZero() * 100);
-            cg.setSurface(f.number().randomDigitNotZero());
+            cg.setSurface(f.number().randomDigitNotZero()*10);
             cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);
             if (cg.getAllowedEquipments() == Equipment.MOBILHOME)
                 cg.setProvidedServices(Service.WATER_AND_ELECTRICITY);
@@ -145,9 +144,8 @@ public class Generator {
                 var c = new Client();
                 c.setAddresse(f.address().fullAddress());
                 c.setPhone("0956674332");
-                String hp = f.harryPotter().spell();
-                c.setName((hp.split(" ").length > 1) ? hp.split(" ")[1] : hp.split(" ")[0]);
-                c.setFirstName(f.dragonBall().character().split(" ")[0]);
+                c.setName(f.name().lastName());
+                c.setFirstName(f.name().firstName());
                 c.setEmail(f.internet().emailAddress());
                 Database.getInstance().getClientsDao().create(c);
             } catch (Exception e) {
@@ -156,14 +154,19 @@ public class Generator {
         }
     }
 
-    private static void generateStocks(Faker f, int nbr) throws SQLException {
-        for (int i = 0; i < nbr; i++) {
-            var s = new Stock();
-            Pokemon p = f.pokemon();
-            s.setItem(p.name());
-            s.setQuantity(f.number().randomDigit());
-            s.setQuantityAlertThreshold(5);
-            s.setStorageLocation(p.location());
+    private static void generateStocks(Faker f) throws SQLException {
+        String[] item = { "Pansements", "Désinfectant", "Crème piqure moustique", "Bouteille d'eau 1L", 
+                        "Bouteille d'eau 50cL", "Savon biodégradable", "Brosse à dents", "Papier toilette", 
+                        "Parapluie", "Mug Flots Blancs", "T-shirt Flots Blancs", "Casquette Flots Blancs", 
+                        "Pins Flots Blancs", "Magnet Flots Blancs", "Carte touristique", "Guide Touristique" };
+        String[] location = { "Etagère 1", "Etagère 2", "Meuble de caisse", "Coffre" };
+        Stock s;
+        for (int i = 0; i < item.length; i++) {
+            s = new Stock();
+            s.setItem(item[i]);
+            s.setQuantity(f.random().nextInt(500));
+            s.setQuantityAlertThreshold(f.number().randomDigitNotZero()*10);
+            s.setStorageLocation(location[f.random().nextInt(location.length)]);
             Database.getInstance().getStockDao().create(s);
             System.out.println(s.getItem() + " " + s.getQuantity() + " " + s.getStorageLocation());
         }
