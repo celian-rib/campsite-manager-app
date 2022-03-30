@@ -18,7 +18,7 @@ import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.components.FlotsBlancsLogo;
 import pt4.flotsblancs.scenes.components.HBoxSpacer;
-import pt4.flotsblancs.scenes.components.InformationCard;
+import pt4.flotsblancs.scenes.components.StatsCard;
 import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.components.ComboBoxes.PeriodComboBox;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
@@ -26,13 +26,13 @@ import pt4.flotsblancs.scenes.utils.ToastType;
 
 public class DashboardScene extends VBox implements IScene {
 
-    private InformationCard<Integer> nbIncomingClientStats;
-    private InformationCard<Integer> nbOutgoingClientStats;
-    private InformationCard<Integer> nbReservationsStats;
+    private StatsCard<Integer> nbIncomingClientStats;
+    private StatsCard<Integer> nbOutgoingClientStats;
+    private StatsCard<Integer> nbReservationsStats;
 
-    private InformationCard<Float> averageProblemTimeStats;
-    private InformationCard<HashMap<CampGround, Integer>> mostProblemsStats;
-    private InformationCard<HashMap<CampGround, Integer>> mostRentedCampsStats;
+    private StatsCard<Float> averageProblemTimeStats;
+    private StatsCard<HashMap<CampGround, Integer>> mostProblemsStats;
+    private StatsCard<HashMap<CampGround, Integer>> mostRentedCampsStats;
 
     private VBox right;
 
@@ -55,10 +55,9 @@ public class DashboardScene extends VBox implements IScene {
 
         var logo = new FlotsBlancsLogo(true, false, 130);
         periodComboBox = new PeriodComboBox();
+        periodComboBox.setMinWidth(200);
         periodComboBox.addUserChangedValueListenerNoCheck((obs, oldV, newV) -> {
-            refreshPage();
-            Router.showToast(ToastType.SUCCESS,
-                    "Statistiques de " + periodComboBox.getSelectedPeriod().toString().toLowerCase() + " affichées");
+            refreshPage(true);
         });
 
         periodComboBox.selectItem(Period.WEEKLY);
@@ -73,14 +72,16 @@ public class DashboardScene extends VBox implements IScene {
 
     @Override
     public void onFocus() {
-        if(stats == null)
-            refreshPage();
+        if (stats == null)
+            refreshPage(false);
     }
 
     private class LoadStatsTask extends Task<Stats> {
         private Period period;
+        private boolean showToast;
 
-        public LoadStatsTask(Period period) {
+        public LoadStatsTask(Period period, boolean showToast) {
+            this.showToast = showToast;
             this.period = period;
         }
 
@@ -115,6 +116,10 @@ public class DashboardScene extends VBox implements IScene {
             }
 
             setIsLoading(false);
+            if (showToast)
+                Router.showToast(ToastType.SUCCESS,
+                        "Statistiques de " + periodComboBox.getSelectedPeriod().toString().toLowerCase()
+                                + " affichées");
         };
 
         protected void failed() {
@@ -127,9 +132,9 @@ public class DashboardScene extends VBox implements IScene {
         spinner.setVisible(isLoading);
     }
 
-    private void refreshPage() {
+    private void refreshPage(boolean showToast) {
         Period currentPeriod = periodComboBox.getSelectedPeriod();
-        new Thread(new LoadStatsTask(currentPeriod)).start();
+        new Thread(new LoadStatsTask(currentPeriod, showToast)).start();
     }
 
     private StackPane createStatsContainer() {
@@ -144,45 +149,41 @@ public class DashboardScene extends VBox implements IScene {
 
         var left = new VBox(SPACING);
 
-        nbIncomingClientStats = new InformationCard<>(
-                "Clients arrivants",
-                Routes.CLIENTS,
-                Color.rgb(166, 255, 190));
-
-        nbOutgoingClientStats = new InformationCard<>(
-                "Clients partants",
-                Routes.CLIENTS,
-                Color.rgb(197, 226, 252));
-
-        nbReservationsStats = new InformationCard<>(
-                "Réservations",
-                Routes.RESERVATIONS,
-                Color.rgb(234, 166, 255));
-
-        left.getChildren().add(nbIncomingClientStats);
-        left.getChildren().add(nbOutgoingClientStats);
-        left.getChildren().add(nbReservationsStats);
-
-        right = new VBox(SPACING);
-
-        averageProblemTimeStats = new InformationCard<>(
-                "Résolution de problème",
-                Routes.PROBLEMS,
-                Color.rgb(255, 212, 133));
-
-        mostProblemsStats = new InformationCard<>(
+        mostProblemsStats = new StatsCard<>(
                 "Emplacements problématiques",
                 Routes.CAMPGROUNDS,
                 Color.rgb(255, 188, 166));
 
-        mostRentedCampsStats = new InformationCard<>(
+        nbOutgoingClientStats = new StatsCard<>(
+                "Clients partants",
+                Routes.CLIENTS,
+                Color.rgb(197, 226, 252));
+
+        nbIncomingClientStats = new StatsCard<>(
+                "Clients arrivants",
+                Routes.CLIENTS,
+                Color.rgb(166, 255, 190));
+
+        left.getChildren().addAll(mostProblemsStats, nbIncomingClientStats, nbOutgoingClientStats);
+
+        right = new VBox(SPACING);
+
+        averageProblemTimeStats = new StatsCard<>(
+                "Résolution de problème",
+                Routes.PROBLEMS,
+                Color.rgb(255, 212, 133));
+
+        nbReservationsStats = new StatsCard<>(
+                "Réservations",
+                Routes.RESERVATIONS,
+                Color.rgb(234, 166, 255));
+
+        mostRentedCampsStats = new StatsCard<>(
                 "Emplacements les plus réservés",
                 Routes.CAMPGROUNDS,
                 Color.rgb(166, 255, 190));
 
-        right.getChildren().add(averageProblemTimeStats);
-        right.getChildren().add(mostProblemsStats);
-        right.getChildren().add(mostRentedCampsStats);
+        right.getChildren().addAll(averageProblemTimeStats, nbReservationsStats, mostRentedCampsStats);
 
         statsContainer.getChildren().add(new HBoxSpacer());
         statsContainer.getChildren().add(left);
