@@ -21,12 +21,12 @@ import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 
-public class InformationCard<T> extends BorderPane {
+public class StatsCard<T> extends BorderPane {
 
     private Label infoLabel;
     private Label subtitleLabel;
 
-    public InformationCard(String mainTitle, Routes route, Color color) {
+    public StatsCard(String mainTitle, Routes route, Color color) {
         this.setPadding(new Insets(20));
         this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(17), null)));
         this.setPrefSize(400D, 90D);
