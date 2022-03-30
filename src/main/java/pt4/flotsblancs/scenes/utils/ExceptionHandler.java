@@ -13,7 +13,7 @@ public class ExceptionHandler {
         }
         e.printStackTrace();
         Router.showToast(ToastType.ERROR, "Erreur de mise à jour...");
-        Router.goToScreenDirty(Routes.HOME);
+        Router.goToScreenDirty(Routes.CONN_FALLBACK);
     }
 
     public static void connectionIssue(SQLRecoverableException e) {
