@@ -53,6 +53,8 @@ public class DashboardScene extends VBox implements IScene {
                     "Statistiques de " + periodComboBox.getSelectedPeriod().toString().toLowerCase() + " affichées");
         });
 
+        periodComboBox.selectItem(Period.WEEKLY);
+
         this.getChildren().add(new VBoxSpacer());
         this.getChildren().add(logo);
         this.getChildren().add(new VBoxSpacer());
