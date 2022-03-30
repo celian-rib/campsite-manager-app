@@ -3,9 +3,11 @@ package pt4.flotsblancs.scenes;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import pt4.flotsblancs.Stats;
@@ -36,8 +38,10 @@ public class DashboardScene extends VBox implements IScene {
 
     private PeriodComboBox periodComboBox;
 
-    // TODO spinner
-    private boolean isLoading;
+    private MFXProgressSpinner spinner;
+    private HBox statsContainer;
+
+    private Stats stats;
 
     @Override
     public String getName() {
@@ -69,12 +73,12 @@ public class DashboardScene extends VBox implements IScene {
 
     @Override
     public void onFocus() {
-        refreshPage();
+        if(stats == null)
+            refreshPage();
     }
 
     private class LoadStatsTask extends Task<Stats> {
         private Period period;
-        private Stats stats;
 
         public LoadStatsTask(Period period) {
             this.period = period;
@@ -82,6 +86,7 @@ public class DashboardScene extends VBox implements IScene {
 
         @Override
         protected Stats call() throws Exception {
+            setIsLoading(true);
             System.out.println("Loading stats for " + period.toString());
             stats = new Stats(period);
             return stats;
@@ -89,7 +94,6 @@ public class DashboardScene extends VBox implements IScene {
 
         protected void succeeded() {
             System.out.println("Stats loaded");
-            System.out.println(stats);
             nbIncomingClientStats.setData(stats.getNbClientIncomming(), Period.TODAY);
             nbOutgoingClientStats.setData(stats.getNbClientOutgoing(), Period.TODAY);
             nbReservationsStats.setData(stats.getNbReservations(), period);
@@ -110,7 +114,7 @@ public class DashboardScene extends VBox implements IScene {
                 mostProblemsStats.setOpacity(0);
             }
 
-            isLoading = false;
+            setIsLoading(false);
         };
 
         protected void failed() {
@@ -118,13 +122,23 @@ public class DashboardScene extends VBox implements IScene {
         };
     }
 
+    private void setIsLoading(boolean isLoading) {
+        statsContainer.setVisible(!isLoading);
+        spinner.setVisible(isLoading);
+    }
+
     private void refreshPage() {
         Period currentPeriod = periodComboBox.getSelectedPeriod();
         new Thread(new LoadStatsTask(currentPeriod)).start();
     }
 
-    private HBox createStatsContainer() {
-        var container = new HBox();
+    private StackPane createStatsContainer() {
+        var container = new StackPane();
+
+        spinner = new MFXProgressSpinner();
+        spinner.setVisible(false);
+
+        statsContainer = new HBox();
 
         var SPACING = 10;
 
@@ -170,12 +184,13 @@ public class DashboardScene extends VBox implements IScene {
         right.getChildren().add(mostProblemsStats);
         right.getChildren().add(mostRentedCampsStats);
 
-        container.getChildren().add(new HBoxSpacer());
-        container.getChildren().add(left);
-        container.getChildren().add(new HBoxSpacer());
-        container.getChildren().add(right);
-        container.getChildren().add(new HBoxSpacer());
+        statsContainer.getChildren().add(new HBoxSpacer());
+        statsContainer.getChildren().add(left);
+        statsContainer.getChildren().add(new HBoxSpacer());
+        statsContainer.getChildren().add(right);
+        statsContainer.getChildren().add(new HBoxSpacer());
 
+        container.getChildren().addAll(statsContainer, spinner);
         return container;
     }
 }
