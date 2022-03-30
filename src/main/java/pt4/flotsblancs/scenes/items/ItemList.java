@@ -155,15 +155,6 @@ class ItemList<I extends Item> extends StackPane {
         listView.setItems(itemsListContainer);
         scrollPane.setContent(listView);
 
-        new Thread(() -> {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    listView.getItems().forEach(i -> i.loadStatus());
-                }
-            });
-        }).start();
-
         long end = System.currentTimeMillis();
         log("Items updated in " + (end - start) + " ms");
     }
