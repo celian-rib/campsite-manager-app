@@ -133,7 +133,7 @@ public class Problem implements Item {
         this.endDate = newStatus == ProblemStatus.SOLVED ? new Date() : null;
         this.lastUpdateDate = new Date();
         User.addlog(LogType.MODIFY,
-                "Modification du status à " + newStatus.displayName + " pour le problème " + getDisplayName());
+                "Modification du statut à " + newStatus.displayName + " pour le problème " + getDisplayName());
     }
 
     @Override
@@ -171,7 +171,7 @@ public class Problem implements Item {
     public Color getStatusColor() {
         switch(status) {
             case OPEN:
-                return StatusColors.BLUE;
+                return StatusColors.YELLOW;
             case OPEN_URGENT:
                 return StatusColors.RED;
             default:
