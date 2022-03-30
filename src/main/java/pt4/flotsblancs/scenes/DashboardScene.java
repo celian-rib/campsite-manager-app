@@ -3,6 +3,7 @@ package pt4.flotsblancs.scenes;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -30,10 +31,13 @@ public class DashboardScene extends VBox implements IScene {
     private InformationCard<Float> averageProblemTimeStats;
     private InformationCard<HashMap<CampGround, Integer>> mostProblemsStats;
     private InformationCard<HashMap<CampGround, Integer>> mostRentedCampsStats;
-    
+
     private VBox right;
 
     private PeriodComboBox periodComboBox;
+
+    // TODO spinner
+    private boolean isLoading;
 
     @Override
     public String getName() {
@@ -68,35 +72,55 @@ public class DashboardScene extends VBox implements IScene {
         refreshPage();
     }
 
-    private void refreshPage() {
-        try {
-            Period currentPeriod = periodComboBox.getSelectedPeriod();
+    private class LoadStatsTask extends Task<Stats> {
+        private Period period;
+        private Stats stats;
 
-            nbIncomingClientStats.setData(Stats.nbClientToday(false), Period.TODAY);
-            nbOutgoingClientStats.setData(Stats.nbClientToday(true), Period.TODAY);
-            nbReservationsStats.setData(Stats.affluence(currentPeriod), currentPeriod);
-
-            var avgPrblm = Math.round(Stats.averageProblemTime(currentPeriod) * 100.0) / 100.0;
-            averageProblemTimeStats.setData((float) avgPrblm, "jours", currentPeriod);
-
-            mostProblemsStats.setData(Stats.mostProblematicCampground(currentPeriod), "prblm", currentPeriod);
-            mostRentedCampsStats.setData(Stats.mostRentedCampground(currentPeriod), "résa", currentPeriod);
-            
-            right.getChildren().get(0).setOpacity(0);
-            
-            
-            if(!Period.future(currentPeriod)) {
-            	averageProblemTimeStats.setOpacity(1);
-            	mostProblemsStats.setOpacity(1);
-            } else {
-            	averageProblemTimeStats.setOpacity(0);
-            	mostProblemsStats.setOpacity(0);
-            }
-            
-        } catch (SQLException e) {
-            ExceptionHandler.loadIssue(e);
-            return;
+        public LoadStatsTask(Period period) {
+            this.period = period;
         }
+
+        @Override
+        protected Stats call() throws Exception {
+            System.out.println("Loading stats for " + period.toString());
+            stats = new Stats(period);
+            return stats;
+        }
+
+        protected void succeeded() {
+            System.out.println("Stats loaded");
+            System.out.println(stats);
+            nbIncomingClientStats.setData(stats.getNbClientIncomming(), Period.TODAY);
+            nbOutgoingClientStats.setData(stats.getNbClientOutgoing(), Period.TODAY);
+            nbReservationsStats.setData(stats.getNbReservations(), period);
+
+            var avgPrblm = Math.round(stats.getAverageProblemTime() * 100.0) / 100.0;
+            averageProblemTimeStats.setData((float) avgPrblm, "jours", period);
+
+            mostProblemsStats.setData(stats.getMostProblematicCamps(), "prblm", period);
+            mostRentedCampsStats.setData(stats.getMostRentedCamps(), "résa", period);
+
+            right.getChildren().get(0).setOpacity(0);
+
+            if (!period.isInFuture()) {
+                averageProblemTimeStats.setOpacity(1);
+                mostProblemsStats.setOpacity(1);
+            } else {
+                averageProblemTimeStats.setOpacity(0);
+                mostProblemsStats.setOpacity(0);
+            }
+
+            isLoading = false;
+        };
+
+        protected void failed() {
+            ExceptionHandler.loadIssue(new SQLException());
+        };
+    }
+
+    private void refreshPage() {
+        Period currentPeriod = periodComboBox.getSelectedPeriod();
+        new Thread(new LoadStatsTask(currentPeriod)).start();
     }
 
     private HBox createStatsContainer() {
@@ -126,7 +150,7 @@ public class DashboardScene extends VBox implements IScene {
         left.getChildren().add(nbReservationsStats);
 
         right = new VBox(SPACING);
-        
+
         averageProblemTimeStats = new InformationCard<>(
                 "Résolution de problème",
                 Routes.PROBLEMS,
@@ -141,7 +165,6 @@ public class DashboardScene extends VBox implements IScene {
                 "Emplacements les plus réservés",
                 Routes.CAMPGROUNDS,
                 Color.rgb(166, 255, 190));
-        
 
         right.getChildren().add(averageProblemTimeStats);
         right.getChildren().add(mostProblemsStats);
