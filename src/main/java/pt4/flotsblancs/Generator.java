@@ -21,6 +21,9 @@ import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
 public class Generator {
+	
+	private static int nbResaFideleClient = 0;
+	
     public static void main(String[] args) throws SQLException {
         Database.getInstance(); // Initialisation connexion BD
 
@@ -28,11 +31,11 @@ public class Generator {
 
         generateAdmin();
         generateUsers();
-
         generateStocks(f);
         generateClients(f, 120);
         generateCampGrounds(f, 10);
         generateReservations(f, 200);
+        generateClientFidele(f);
         generateProblemsResa(f, 10);
         generateProblemsCg(f, 10);
         generateProblemsClient(f, 10);
@@ -110,6 +113,49 @@ public class Generator {
                 Database.getInstance().getReservationDao().create(resa);
                 Database.getInstance().getReservationDao().refresh(resa);
                 System.out.println(resa);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+    
+    private static void generateClientFidele(Faker f) throws SQLException {
+        List<CampGround> CGlist = Database.getInstance().getCampgroundDao().queryForAll();
+        List<Client> ClientsList = Database.getInstance().getClientsDao().queryForAll();
+        while(nbResaFideleClient<=4)
+        {
+            var resa = new Reservation();
+
+            try {
+                resa.setCampground(CGlist.get(rdmNbrBtwn(0, CGlist.size())));
+
+                resa.setClient(ClientsList.get(0));
+
+                resa.setNbPersons(rdmNbrBtwn(1, 5));
+
+                var cashbacks = CashBack.values();
+                resa.setCashBack(cashbacks[rdmNbrBtwn(0, cashbacks.length)]);
+
+                var equipments = resa.getCampground().getCompatiblesEquipments();
+                resa.setEquipments(equipments.get(rdmNbrBtwn(0, equipments.size())));
+
+                var services = resa.getCampground().getCompatiblesServices();
+                resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
+
+                resa.setDepositDate(f.date().past(50, TimeUnit.DAYS));
+                resa.setStartDate(f.date().past(100, TimeUnit.DAYS, new java.util.Date()));
+                resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+
+                if (rdmNbrBtwn(0, 10) > 5) {
+                    resa.setDepositDate(new Date());
+                    if (rdmNbrBtwn(0, 10) > 5)
+                        resa.setPaymentDate(new Date());
+                }
+                Database.getInstance().getReservationDao().create(resa);
+                Database.getInstance().getReservationDao().refresh(resa);
+                System.out.println(resa);
+                nbResaFideleClient += 1;
             } catch (Exception e) {
                 e.printStackTrace();
             }

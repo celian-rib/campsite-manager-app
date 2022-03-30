@@ -233,7 +233,7 @@ public class Client implements Item {
         return getOpenProblems().size() > 0 ? StatusColors.RED : StatusColors.BLUE;
     }
 
-    public boolean isKing() {
+    public boolean isFrequentClient() {
         // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais plus explicite)
         int clientId = this.getId();
 
