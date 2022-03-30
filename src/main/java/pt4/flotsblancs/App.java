@@ -27,7 +27,7 @@ public class App extends Application {
 		Dotenv dotenv = Dotenv.load();
 		if (dotenv.get("DEFAULT_ROUTE") != null) {
 			System.out.println("DEFAULT ROUTE OVERRIDE");
-			User.logIn("campo", "test");
+			User.logIn("Campo", "test");
 			defaultRoute = Routes.valueOf(dotenv.get("DEFAULT_ROUTE"));
 		}
 
