@@ -4,16 +4,17 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import javafx.scene.paint.Color;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
-import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
 
@@ -27,7 +28,7 @@ public class Problem implements Item {
     private int id;
 
     @Getter
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false,dataType = DataType.LONG_STRING)
     private String description;
 
     @Getter
