@@ -35,8 +35,11 @@ public class ReservationDatePicker extends MFXDatePicker {
         Date defaultDate = isStartDate ? reservation.getStartDate() : reservation.getEndDate();
         setValue(DateUtils.toLocale(defaultDate));
         setText(DateUtils.toFormattedString(defaultDate));
+        
 
         setDisable(DateUtils.toLocale(defaultDate).isBefore(LocalDate.now()));
+        
+        
 
         if (isStartDate)
             createStartDateListener();

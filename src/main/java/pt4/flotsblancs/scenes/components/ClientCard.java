@@ -41,7 +41,7 @@ public class ClientCard extends BorderPane {
         FontIcon icon = new FontIcon("far-user-circle:30");
         icon.setIconColor(Color.rgb(51, 59, 97));
         
-        if(client.isKing())
+        if(client.isFrequentClient())
         {
         	icon = new FontIcon("fas-crown:25");
         	icon.setIconColor(Color.rgb(255, 215, 0));
