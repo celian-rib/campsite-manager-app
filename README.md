@@ -2,6 +2,8 @@
 
 [![pipeline status](https://gitlab-ce.iut.u-bordeaux.fr/criboulet/pt4/badges/main/pipeline.svg)](https://gitlab-ce.iut.u-bordeaux.fr/criboulet/pt4/-/commits/main)
 
+> Voir manuel [Structure / Systèmes](./SYSTEMES_STRUCTURES.md)
+
 ## Setup projet
 
 1. Clone le projet `git clone git@gitlab-ce.iut.u-bordeaux.fr:criboulet/pt4.git`
