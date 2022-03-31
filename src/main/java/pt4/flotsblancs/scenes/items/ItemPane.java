@@ -46,14 +46,14 @@ class ItemPane<I extends Item> extends BorderPane {
     /**
      * Met à jour la couleur de l'item pane
      */
-    public void updateColor() {
+    void updateColor() {
         color = item.getStatusColor();
     }
 
     /**
      * Rend visible le status dot
      */
-    public void showDots() {
+    void showDots() {
         statusDot.setFill(color);
     }
 

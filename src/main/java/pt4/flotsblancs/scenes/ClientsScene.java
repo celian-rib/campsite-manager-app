@@ -283,7 +283,7 @@ public class ClientsScene extends ItemScene<Client> {
             Database.getInstance().getClientsDao().update(client);
             if (update) {
                 Router.showToast(ToastType.SUCCESS, "Client mis à jour");
-                updateItemList();
+                updateItemList(client);
             }
         } catch (SQLException e) {
             ExceptionHandler.loadIssue(e);

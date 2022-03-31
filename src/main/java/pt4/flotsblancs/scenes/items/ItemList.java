@@ -139,8 +139,6 @@ class ItemList<I extends Item> extends StackPane {
         long end2 = System.currentTimeMillis();
         log("Time to create list buttons: " + (end2 - start2) + "ms");
 
-        updateDotsColorAsync(listButtons);
-
         itemsListContainer.clear();
         itemsListContainer.addAll(listButtons);
 
@@ -152,10 +150,11 @@ class ItemList<I extends Item> extends StackPane {
             ItemPane<I> selected = listView.getSelectionModel().getSelectedItem();
             if (selected != null && selected.getItem() != selectedItem) {
                 selectedItem = selected.getItem();
+                log("User selected item: " + selectedItem.getDisplayName());
                 itemScene.updateContainer(selected.getItem());
             }
-
         });
+
         if (selectedItem != null) {
             itemScene.updateContainer(selectedItem);
             selectItem(selectedItem);
@@ -166,6 +165,8 @@ class ItemList<I extends Item> extends StackPane {
 
         long end = System.currentTimeMillis();
         log("Items updated in " + (end - start) + " ms");
+
+        updateDotsColorAsync(listButtons);
     }
 
     private void updateDotsColorAsync(ArrayList<ItemPane<I>> itemPanes) {
@@ -220,6 +221,7 @@ class ItemList<I extends Item> extends StackPane {
      * @param item
      */
     void selectItem(I item) {
+        log("Selecting item " + item.getDisplayName());
         selectedItem = item;
         var itemPane = new ItemPane<I>(item, CONTENT_WIDTH - 15);
         int index = itemsListContainer.indexOf(itemPane);
@@ -237,7 +239,7 @@ class ItemList<I extends Item> extends StackPane {
             listView.getFocusModel().focus(index);
             listView.scrollTo(index);
         }
-
+        log("Selected");
     }
 
     private MFXScrollPane createScrollPane() {
@@ -274,11 +276,6 @@ class ItemList<I extends Item> extends StackPane {
         return container;
     }
 
-    /**
-     * Permet de logger les actions du routeur pour le débug
-     * 
-     * @param message : Message de débug
-     */
     private static void log(String message) {
         System.out.println("[ItemList] " + message);
     }

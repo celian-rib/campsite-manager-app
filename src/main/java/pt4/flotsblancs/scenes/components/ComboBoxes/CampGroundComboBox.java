@@ -57,7 +57,6 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         setMinWidth(180);
         setAnimated(false);
         
-        
         // refresh();
 
         valueProperty().addListener((obs, oldValue, newValue) -> {
