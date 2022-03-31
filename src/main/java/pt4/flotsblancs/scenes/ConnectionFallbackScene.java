@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
@@ -42,10 +43,10 @@ public class ConnectionFallbackScene extends VBox implements IScene {
         refreshBtn.setOnAction(e -> {
             System.out.println("Trying to reconnect");
             try {
-                if (Database.getInstance().isConnected())
-                    Router.goToScreen(Routes.HOME);
-                else
-                    Router.goToScreen(Routes.LOGIN);
+                if (Database.getInstance().isConnected()) {
+                    User.logOut();
+                    Router.goToScreenDirty(Routes.LOGIN);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
                 Router.showToast(ToastType.ERROR, "Impossible de se connecter");

@@ -10,13 +10,28 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Problem;
 import pt4.flotsblancs.database.model.Reservation;
 
+@ToString
 public class Stats 
 {
+	@Getter
+	private int nbClientIncomming;
+	@Getter
+	private int nbClientOutgoing;
+	@Getter
+	private int nbReservations;
+	
+	@Getter
+	private float averageProblemTime;
+	@Getter
+	private HashMap<CampGround, Integer> mostProblematicCamps;
+	@Getter
+	private HashMap<CampGround, Integer> mostRentedCamps;
 
 	@AllArgsConstructor
 	public enum Period {
@@ -41,20 +56,22 @@ public class Stats
 		}
 		
 		
-		public static boolean future(Period period)
+		public boolean isInFuture()
 		{
-			if(period == NEXT_WEEK || period == NEXT_MONTH || period == NEXT_YEAR || period == NEXT_TWO_YEAR || period == NEXT_THREE_YEAR)
-				return true;
-			return false;
+			return (this == NEXT_WEEK || this == NEXT_MONTH || this == NEXT_YEAR || this == NEXT_TWO_YEAR || this == NEXT_THREE_YEAR);
 		}
 	}
-	
-	public static void main(String[] args) throws SQLException
-	{
-		System.out.println(averageProblemTime(Period.ANNUALY));
+
+	public Stats(Period period) throws SQLException {
+		this.nbClientIncomming = nbClientToday(false);
+		this.nbClientOutgoing= nbClientToday(true);
+		this.nbReservations = nbReservations(period);
+		this.averageProblemTime = averageProblemTime(period);
+		this.mostProblematicCamps = mostProblematicCampground(period);
+		this.mostRentedCamps = mostRentedCampground(period);
 	}
 	
-	public static int nbClientToday(boolean isLeaving) throws SQLException
+	private int nbClientToday(boolean isLeaving) throws SQLException
 	{
 		Calendar c = Calendar.getInstance();
 		Date now = c.getTime();
@@ -75,7 +92,7 @@ public class Stats
 		return reservations.size();
 	}
 	
-	public static float averageProblemTime(Period period) throws SQLException
+	private float averageProblemTime(Period period) throws SQLException
 	{
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -162,7 +179,7 @@ public class Stats
         
 	}
 	
-	public static HashMap<CampGround,Integer> mostProblematicCampground(Period period) throws SQLException
+	private HashMap<CampGround,Integer> mostProblematicCampground(Period period) throws SQLException
 	{
 		// TODO trier par nombre de problèmes
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -246,7 +263,7 @@ public class Stats
 		return worstCamps;
 	}
 	
-	public static HashMap<CampGround,Integer> mostRentedCampground(Period period) throws SQLException
+	private HashMap<CampGround,Integer> mostRentedCampground(Period period) throws SQLException
 	{
 		// TODO trier par nombre de reservations
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -327,7 +344,7 @@ public class Stats
 		return camps;
 	}
 
-	public static int affluence(Period period) throws SQLException
+	private int nbReservations(Period period) throws SQLException
 	{
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
