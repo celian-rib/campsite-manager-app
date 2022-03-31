@@ -27,10 +27,10 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         setAnimated(false);
 
         var dao = Database.getInstance().getCampgroundDao();
-        var camps = dao.getAvailablesCampgrounds(reservation.getStartDate(), reservation.getEndDate(),
-                reservation.getId());
+        var camps = dao.getAvailablesCampgrounds(reservation.getStartDate(),
+                reservation.getEndDate(), reservation.getId());
         getItems().addAll(camps);
-        
+
         refresh();
 
         valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -56,8 +56,6 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         getItems().addAll(Database.getInstance().getCampgroundDao().queryForAll());
         setMinWidth(180);
         setAnimated(false);
-        
-        // refresh();
 
         valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue == null)

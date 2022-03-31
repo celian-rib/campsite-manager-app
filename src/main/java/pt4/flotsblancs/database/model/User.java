@@ -67,8 +67,7 @@ public class User implements Item {
     private static User connected;
 
     /**
-     * crée un nouvel utilisateur et lui donne des valeurs par défaut
-     * l'action est loggé
+     * crée un nouvel utilisateur et lui donne des valeurs par défaut l'action est loggé
      * 
      * @param name
      * @throws SQLException
@@ -107,7 +106,7 @@ public class User implements Item {
 
 
     /**
-     * renvoie la version haché d'un mot de passe 
+     * renvoie la version haché d'un mot de passe
      * 
      * @param base
      * @return
@@ -209,7 +208,7 @@ public class User implements Item {
 
     @Override
     public String getSearchString() {
-        return String.join(";", getFirstName(), getName(), getLogin(), "#"+getId());
+        return String.join(";", getFirstName(), getName(), getLogin(), "#" + getId());
     }
 
     @Override
@@ -227,8 +226,8 @@ public class User implements Item {
 
         Collator c = Collator.getInstance(java.util.Locale.FRANCE);
         c.setStrength(Collator.PRIMARY);
-        User other = (User)o;
-        int val = c.compare(this.getDisplayName(),other.getDisplayName());
+        User other = (User) o;
+        int val = c.compare(this.getDisplayName(), other.getDisplayName());
         return val;
     }
 }

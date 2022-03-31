@@ -39,6 +39,6 @@ public class Log {
 
     @Override
     public String toString() {
-        return user +" "+message+" "+date+" "+type;
+        return user + " " + message + " " + date + " " + type;
     }
 }

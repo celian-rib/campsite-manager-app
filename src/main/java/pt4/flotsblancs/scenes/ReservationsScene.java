@@ -14,12 +14,10 @@ import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -152,9 +150,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
         title.setText("Réservation  #" + reservation.getId() + cancelStr);
 
         dayCount.setText(reservation.getDayCount() + " jours");
-        depositPrice.setText("Prix acompte : " + PriceUtils.priceToString(reservation.getDepositPrice()) + "€");
-        toPayPrice.setText("Reste à payer : " + PriceUtils.priceToString(reservation.getToPayPrice()) + "€");
-        totalPrice.setText("Prix total : " + PriceUtils.priceToString(reservation.getTotalPrice()) + "€");
+        depositPrice.setText(
+                "Prix acompte : " + PriceUtils.priceToString(reservation.getDepositPrice()) + "€");
+        toPayPrice.setText(
+                "Reste à payer : " + PriceUtils.priceToString(reservation.getToPayPrice()) + "€");
+        totalPrice.setText(
+                "Prix total : " + PriceUtils.priceToString(reservation.getTotalPrice()) + "€");
         sendBillBtn.setText(reservation.getBill() != null ? "Regénérer et envoyer facture"
                 : "Générer et envoyer facture");
         campCard.refresh(reservation.getCampground());
@@ -265,7 +266,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         totalPrice = new Label();
         totalPrice.setMinWidth(110);
         totalPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
-        
+
         toPayPrice = new Label();
         toPayPrice.setMinWidth(110);
         toPayPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
@@ -380,36 +381,23 @@ public class ReservationsScene extends ItemScene<Reservation> {
         });
 
         sendBillBtn.setOnAction(e -> {
-        	
-            Task<Void> task = new Task<Void>() {
-                @Override protected Void call() throws Exception {
-                    return null;
-                }
-            };
-            
             new Thread() {
-
-                // runnable for that thread
-                public void run() 
-                {
+                public void run() {
                     try {
-                    	
                         var bill = PDFGenerator.generateReservationBillPDF(reservation);
                         reservation.setBill(bill.toByteArray());
-                        //Tout ce qui doit être run dans un thread javafx on l'encercle avec ça,
-                        //sinon ça merde :(
                         Platform.runLater(new Runnable() {
                             public void run() {
-		                        updateDatabase();
-		                        refreshPage();
+                                updateDatabase();
+                                refreshPage();
                             }
                         });
                     } catch (Exception e1) {
                         e1.printStackTrace();
                         Platform.runLater(new Runnable() {
                             public void run() {
-		                        Router.showToast(ToastType.ERROR,
-		                                "Une erreur est survenue durant la génération de la facture");
+                                Router.showToast(ToastType.ERROR,
+                                        "Une erreur est survenue durant la génération de la facture");
                             }
                         });
                     }
@@ -420,22 +408,21 @@ public class ReservationsScene extends ItemScene<Reservation> {
                         e1.printStackTrace();
                         Platform.runLater(new Runnable() {
                             public void run() {
-                            	Router.showToast(ToastType.ERROR,
+                                Router.showToast(ToastType.ERROR,
                                         "Une erreur est survenue durant l'envoi de l'email au client");
                             }
                         });
                     }
                 }
             }.start();
-        	
+
         });
-        	
 
         openBillBtn.setOnAction(e -> {
             Router.showToast(ToastType.INFO, "Ouverture du fichier...");
             try {
                 PDFGenerator.openFile(reservation);
-                
+
             } catch (Exception e1) {
                 e1.printStackTrace();
                 Router.showToast(ToastType.ERROR,
@@ -451,7 +438,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.getChildren().addAll(openBillBtn, sendBillBtn, cancelBtn);
         return container;
     }
-    
+
 
     /**
      * @param typeName

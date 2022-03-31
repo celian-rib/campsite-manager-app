@@ -1,7 +1,5 @@
 package pt4.flotsblancs.router;
 
-import java.io.InputStream;
-
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;

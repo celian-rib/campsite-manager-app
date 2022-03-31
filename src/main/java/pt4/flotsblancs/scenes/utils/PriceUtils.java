@@ -1,9 +1,6 @@
 package pt4.flotsblancs.scenes.utils;
 
-import pt4.flotsblancs.router.Router;
-
 public class PriceUtils {
-    
     /**
      * transforme un prix donné dans le bon format String
      * 

@@ -31,9 +31,6 @@ public class Database {
     private CampgroundDAO campgroundDao;
 
     @Getter
-    private Dao<ProviderBill, String> billDao;
-
-    @Getter
     private Dao<Log, String> logDao;
 
     @Getter
@@ -68,7 +65,7 @@ public class Database {
     }
 
     /**
-     * renvoie l'instance de la base de donnée 
+     * renvoie l'instance de la base de donnée
      * 
      * @return
      * @throws SQLException
@@ -102,7 +99,6 @@ public class Database {
         TableUtils.createTableIfNotExists(conn, Client.class);
         TableUtils.createTableIfNotExists(conn, User.class);
         TableUtils.createTableIfNotExists(conn, CampGround.class);
-        TableUtils.createTableIfNotExists(conn, ProviderBill.class);
         TableUtils.createTableIfNotExists(conn, Log.class);
         TableUtils.createTableIfNotExists(conn, Problem.class);
         TableUtils.createTableIfNotExists(conn, Reservation.class);
@@ -114,12 +110,11 @@ public class Database {
      * 
      * @throws SQLException
      */
-    
+
     private void createAllDAOs() throws SQLException {
         clientsDao = DaoManager.createDao(conn, Client.class);
         usersDao = DaoManager.createDao(conn, User.class);
         campgroundDao = new CampgroundDAO(conn, CampGround.class);
-        billDao = DaoManager.createDao(conn, ProviderBill.class);
         logDao = DaoManager.createDao(conn, Log.class);
         problemDao = DaoManager.createDao(conn, Problem.class);
         reservationDao = new ReservationDAO(conn, Reservation.class);

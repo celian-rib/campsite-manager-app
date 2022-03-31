@@ -1,10 +1,7 @@
 package pt4.flotsblancs.scenes;
 
 import java.sql.SQLException;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.List;
-import java.util.function.UnaryOperator;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -17,14 +14,12 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.converter.IntegerStringConverter;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Stock;
 import pt4.flotsblancs.router.IScene;
@@ -118,13 +113,13 @@ public class StocksScene extends VBox implements IScene {
                     valueFactory.valueProperty().addListener((obs, oldVal, newVal) -> {
                         if (oldVal == null)
                             return;
-                        
+
                         var stock = cell.getTableRow().getItem();
-                        if(stock != null ) {
-	                        stock.setQuantity(newVal);
-	                        updateDatabase(stock);
+                        if (stock != null) {
+                            stock.setQuantity(newVal);
+                            updateDatabase(stock);
                         }
-                        
+
                     });
                     graphic.setValueFactory(valueFactory);
 
@@ -152,9 +147,9 @@ public class StocksScene extends VBox implements IScene {
                         if (oldVal == null)
                             return;
                         var stock = cell.getTableRow().getItem();
-                        if(stock != null) {
-	                        stock.setQuantityAlertThreshold(newVal);
-	                        updateDatabase(stock);
+                        if (stock != null) {
+                            stock.setQuantityAlertThreshold(newVal);
+                            updateDatabase(stock);
                         }
                     });
                     graphic.setValueFactory(valueFactory);
@@ -195,7 +190,7 @@ public class StocksScene extends VBox implements IScene {
             ExceptionHandler.loadIssue(e);
         }
     }
-    
+
     private void updateDatabase(Stock stock) {
         table.refresh();
         try {
@@ -247,7 +242,7 @@ public class StocksScene extends VBox implements IScene {
             }
             updateTable();
             table.getSelectionModel().selectLast();
-            table.scrollTo(table.getSelectionModel().getSelectedItem()); 
+            table.scrollTo(table.getSelectionModel().getSelectedItem());
         });
 
         return container;

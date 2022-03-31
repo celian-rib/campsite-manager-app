@@ -13,6 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
+
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Log;
 import pt4.flotsblancs.database.model.User;
@@ -121,10 +122,10 @@ public class LogsScene extends VBox implements IScene {
 
         userCol.setResizable(false);
         userCol.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
-        
+
         typeCol.setResizable(false);
         typeCol.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
-        
+
         messageCol.setResizable(false);
         messageCol.prefWidthProperty().bind(table.widthProperty().multiply(0.6));
 

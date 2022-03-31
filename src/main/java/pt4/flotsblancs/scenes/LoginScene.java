@@ -4,13 +4,11 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
@@ -56,8 +54,8 @@ public class LoginScene extends BorderPane implements IScene {
         ///// TO REMOVE ////////
         // Button DEVLOGIN = new Button("FAST LOGIN (DEV)");
         // DEVLOGIN.setOnAction(e -> {
-        //     User.logIn("test", "test");
-        //     Router.goToScreen(Routes.HOME);
+        // User.logIn("test", "test");
+        // Router.goToScreen(Routes.HOME);
         // });
         // DEVLOGIN.setTextFill(Color.RED);
         // setBottom(DEVLOGIN);
@@ -82,7 +80,7 @@ public class LoginScene extends BorderPane implements IScene {
 
         MFXButton bValider = new MFXButton("Valider", 150, 30);
         bValider.setButtonType(ButtonType.RAISED);
-        
+
         bValider.setOnAction(e -> handleLoginAction());
         setOnKeyPressed(e -> handleLoginAction());
 

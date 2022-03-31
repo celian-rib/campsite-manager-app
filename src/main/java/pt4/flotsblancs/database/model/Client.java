@@ -74,8 +74,7 @@ public class Client implements Item {
     }
 
     /**
-     * crée un client et lui donne des valeurs pas défaut
-     * l'action est loggé
+     * crée un client et lui donne des valeurs pas défaut l'action est loggé
      * 
      * @param name
      * @throws SQLException
@@ -95,8 +94,7 @@ public class Client implements Item {
     }
 
     /**
-     * met à jour le téléphone du client si il est valide
-     * l'action est loggé
+     * met à jour le téléphone du client si il est valide l'action est loggé
      * 
      * @param phone
      * @throws ConstraintException
@@ -112,8 +110,7 @@ public class Client implements Item {
     }
 
     /**
-     * met à jour l'adresse du client si elle est valide
-     * l'action est loggé
+     * met à jour l'adresse du client si elle est valide l'action est loggé
      * 
      * @param addresse
      * @throws ConstraintException
@@ -158,15 +155,14 @@ public class Client implements Item {
      * 
      * @param name
      */
-    
+
     public void setName(String name) {
         User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
         this.name = name;
     }
 
     /**
-     * met à jour l'email si il est valide
-     * l'action est loggé
+     * met à jour l'email si il est valide l'action est loggé
      * 
      * @param email
      * @throws ConstraintException
@@ -185,10 +181,10 @@ public class Client implements Item {
      * @return la réservation actuelle (ou null) du client
      */
     public Reservation getOpenReservation() {
-        if(!isForeignCorrect())
+        if (!isForeignCorrect())
             return null;
-        return reservations.stream().filter(r -> r.getPaymentDate() == null && !r.getCanceled()).findFirst()
-                .orElse(null);
+        return reservations.stream().filter(r -> r.getPaymentDate() == null && !r.getCanceled())
+                .findFirst().orElse(null);
     }
 
     @Override
@@ -218,14 +214,13 @@ public class Client implements Item {
     public boolean hasOpenProblem() {
         if (problems.size() == 0)
             return false;
-        return problems
-                .stream()
-                .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
+        return problems.stream().anyMatch(p -> p.getStatus() == ProblemStatus.OPEN
+                || p.getStatus() == ProblemStatus.OPEN_URGENT);
     }
 
     public List<Problem> getOpenProblems() {
-        return problems.stream().filter(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT)
-                .collect(Collectors.toList());
+        return problems.stream().filter(p -> p.getStatus() == ProblemStatus.OPEN
+                || p.getStatus() == ProblemStatus.OPEN_URGENT).collect(Collectors.toList());
     }
 
     @Override
@@ -234,7 +229,8 @@ public class Client implements Item {
     }
 
     public boolean isFrequentClient() {
-        // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais plus explicite)
+        // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais plus
+        // explicite)
         int clientId = this.getId();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -244,9 +240,11 @@ public class Client implements Item {
 
         try {
             ReservationDAO dbr = Database.getInstance().getReservationDao();
-            List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
-                    .raw("DATEDIFF('" + currentDateString + "',DATE(end_date))>=0 AND client_id = " + clientId)
-                    .prepare()));
+            List<Reservation> reservations =
+                    dbr.query((dbr.queryBuilder().where()
+                            .raw("DATEDIFF('" + currentDateString
+                                    + "',DATE(end_date))>=0 AND client_id = " + clientId)
+                            .prepare()));
 
             return reservations.size() >= 3;
         } catch (SQLException e) {

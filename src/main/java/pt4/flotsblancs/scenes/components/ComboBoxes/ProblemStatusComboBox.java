@@ -25,7 +25,7 @@ public class ProblemStatusComboBox extends RefreshableComboBox<ProblemStatus> {
             problem.setStatus(newValue);
         });
     }
-    
+
     @Override
     public void refresh() {
         selectItem(problem.getStatus());

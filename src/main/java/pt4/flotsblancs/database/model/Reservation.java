@@ -103,28 +103,26 @@ public class Reservation implements Item {
      * Des données valides et cohérente seront données à la réservation.
      * 
      * @param client client a assigner à cette réservation
-     * @throws SQLException        erreur technique de création
-     * @throws ConstraintException la création à subit des modfications par effet de
-     *                             bords à cause
-     *                             des ses contraintes entre équipements / services
-     *                             / emplacement / dates
+     * @throws SQLException erreur technique de création
+     * @throws ConstraintException la création à subit des modfications par effet de bords à cause
+     *         des ses contraintes entre équipements / services / emplacement / dates
      */
     public Reservation(Client client) throws SQLException, ConstraintException {
         this.client = client;
 
         int plusDay = 0;
         List<CampGround> availablesCamps = new ArrayList<CampGround>();
-        
+
         do {
             // Date par défaut : de aujourd'hui à ajd + 5jours
-            this.startDate = DateUtils.plusDays(new Date(),plusDay);
+            this.startDate = DateUtils.plusDays(new Date(), plusDay);
             this.endDate = DateUtils.plusDays(startDate, 5);
 
             availablesCamps = Database.getInstance().getCampgroundDao()
                     .getAvailablesCampgrounds(startDate, endDate, -1);
             plusDay++;
-        } while(availablesCamps.size() == 0);
-        
+        } while (availablesCamps.size() == 0);
+
 
         this.nbPersons = 1;
         this.cashBack = CashBack.NONE;
@@ -139,10 +137,8 @@ public class Reservation implements Item {
     }
 
     /**
-     * Change l'emplacement actuel de la réservation tout en respectant les
-     * contraintes sur les
-     * équipements et les services demandés (Ces derniers peuvent changer par effet
-     * de bord)
+     * Change l'emplacement actuel de la réservation tout en respectant les contraintes sur les
+     * équipements et les services demandés (Ces derniers peuvent changer par effet de bord)
      * 
      * @param camp nouvel emplacement de la réservation
      * @throws ConstraintException
@@ -153,7 +149,8 @@ public class Reservation implements Item {
         if (this.startDate == null || this.endDate == null) {
             this.campground = camp;
         } else {
-            if (!Database.getInstance().getCampgroundDao().isAvailableForReservation(this, camp, startDate, endDate)) {
+            if (!Database.getInstance().getCampgroundDao().isAvailableForReservation(this, camp,
+                    startDate, endDate)) {
                 throw new ConstraintException(
                         "Cet emplacement n'est pas disponibles sur les dates de la réservation",
                         false);
@@ -161,8 +158,8 @@ public class Reservation implements Item {
         }
 
         this.campground = camp;
-        User.addlog(LogType.MODIFY,
-                "Emplacement de la réservation #" + id + " changé à " + campground.getDisplayName());
+        User.addlog(LogType.MODIFY, "Emplacement de la réservation #" + id + " changé à "
+                + campground.getDisplayName());
 
         // Gestion des contraintes equipements et services
         // ATTENTION -> changer l'emplacement prend la priorité en terme de contrainte
@@ -194,8 +191,7 @@ public class Reservation implements Item {
     }
 
     /**
-     * Permet de changer les équipements demandés par la réservation en conservant
-     * les contraintes
+     * Permet de changer les équipements demandés par la réservation en conservant les contraintes
      * imposées par l'emplacement
      * 
      * @param equipment
@@ -209,8 +205,7 @@ public class Reservation implements Item {
     }
 
     /**
-     * Permet de changer les services demandés par la réservation en conservant les
-     * contraintes
+     * Permet de changer les services demandés par la réservation en conservant les contraintes
      * imposées par l'emplacement
      * 
      * @param service
@@ -224,12 +219,10 @@ public class Reservation implements Item {
     }
 
     /**
-     * Vérifie l'intégrité des contrainte entre les equipement demandés par la
-     * réservation et son
+     * Vérifie l'intégrité des contrainte entre les equipement demandés par la réservation et son
      * emplacement
      * 
-     * En cas de non compatibilité l'équipement sera modifié pour répondre à la
-     * contrainte
+     * En cas de non compatibilité l'équipement sera modifié pour répondre à la contrainte
      * 
      * @throws ConstraintException
      */
@@ -248,12 +241,10 @@ public class Reservation implements Item {
     }
 
     /**
-     * Vérifie l'intégrité des contrainte entre les services demandés par la
-     * réservation et son
+     * Vérifie l'intégrité des contrainte entre les services demandés par la réservation et son
      * emplacement
      * 
-     * En cas de non compatibilité le service sera modifié pour répondre à la
-     * contrainte
+     * En cas de non compatibilité le service sera modifié pour répondre à la contrainte
      * 
      * @throws ConstraintException
      */
@@ -262,21 +253,22 @@ public class Reservation implements Item {
         if (this.selectedServices == null || campground == null)
             return;
 
-        String err = "Services modifiés pour correspondre aux services proposés par l'emplacement selectionné";
+        String err =
+                "Services modifiés pour correspondre aux services proposés par l'emplacement selectionné";
         // Cas ou l'emplacement est un mobilhome, on force eau et électricité
         if (campground.getAllowedEquipments() == Equipment.MOBILHOME
                 && selectedServices != Service.WATER_AND_ELECTRICITY) {
             selectedServices = Service.WATER_AND_ELECTRICITY;
-            User.addlog(LogType.MODIFY,
-                    "Services de la réservation #" + id + " changés à " + selectedServices.getName());
+            User.addlog(LogType.MODIFY, "Services de la réservation #" + id + " changés à "
+                    + selectedServices.getName());
             throw new ConstraintException(err, true);
         }
 
         // Cas ou le service sélectionné n'est pas disponible sur l'emplacement
         if (!selectedServices.isCompatibleWithCampService(campground.getProvidedServices())) {
             selectedServices = campground.getProvidedServices();
-            User.addlog(LogType.MODIFY,
-                    "Services de la réservation #" + id + " changés à " + selectedServices.getName());
+            User.addlog(LogType.MODIFY, "Services de la réservation #" + id + " changés à "
+                    + selectedServices.getName());
             throw new ConstraintException(err, true);
         }
     }
@@ -288,8 +280,8 @@ public class Reservation implements Item {
      */
 
     /**
-     * Vérifie si les nouvelles dates de début de séjour sélectionnées sont valides
-     * l'action est loggé
+     * Vérifie si les nouvelles dates de début de séjour sélectionnées sont valides l'action est
+     * loggé
      * 
      * @param newStartDate
      * @throws ConstraintException
@@ -325,8 +317,7 @@ public class Reservation implements Item {
     }
 
     /**
-     * Vérifie si les nouvelles dates de fin de séjour sélectionnées sont valides
-     * l'action est loggé
+     * Vérifie si les nouvelles dates de fin de séjour sélectionnées sont valides l'action est loggé
      * 
      * @param newEndDate
      * @throws ConstraintException
@@ -352,7 +343,8 @@ public class Reservation implements Item {
                     "La date de fin sélectionnée est antérieure à la date de début de la réservation.",
                     false);
         }
-        User.addlog(LogType.MODIFY, "Date de fin de la réservation #" + id + " changé à " + newEndDate);
+        User.addlog(LogType.MODIFY,
+                "Date de fin de la réservation #" + id + " changé à " + newEndDate);
         this.endDate = newEndDate;
     }
 
@@ -382,7 +374,8 @@ public class Reservation implements Item {
      * @return Prix d'acompte de la réservation
      */
     public int getDepositPrice() {
-        var i = (int) Math.floor((getTotalPrice() * 0.3f) * cashBack.getReduction());// Acompte de 30%
+        var i = (int) Math.floor((getTotalPrice() * 0.3f) * cashBack.getReduction());// Acompte de
+                                                                                     // 30%
         return i;
     }
 
@@ -390,16 +383,15 @@ public class Reservation implements Item {
      * @return Prix de la réservation restant a payer
      */
     public int getToPayPrice() {
-        if(getDepositDate() == null)
+        if (getDepositDate() == null)
             return getTotalPrice();
-        if(getPaymentDate() == null)
+        if (getPaymentDate() == null)
             return getTotalPrice() - getDepositPrice();
         return 0;
     }
 
     /**
-     * @return vrai si cette réservation est dans le passé (Soit sa date de fin est
-     *         passée)
+     * @return vrai si cette réservation est dans le passé (Soit sa date de fin est passée)
      */
     public boolean isInPast() {
         return new Date().compareTo(this.getEndDate()) >= 0;
@@ -408,12 +400,9 @@ public class Reservation implements Item {
     @Override
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return String.join(";",
-                "" + this.id,
-                formatter.format(this.startDate),
-                this.client.getFirstName(),
-                this.client.getName(),
-                this.client.getPhone())
+        return String
+                .join(";", "" + this.id, formatter.format(this.startDate),
+                        this.client.getFirstName(), this.client.getName(), this.client.getPhone())
                 .trim().toLowerCase();
     }
 
@@ -424,7 +413,8 @@ public class Reservation implements Item {
 
         SimpleDateFormat format = new SimpleDateFormat("dd/MM");
         var prefix = canceled ? "[Annulée] " : "";
-        return prefix + format.format(startDate) + "-" + format.format(endDate) + " " + client.getName();
+        return prefix + format.format(startDate) + "-" + format.format(endDate) + " "
+                + client.getName();
     }
 
     /**
@@ -446,11 +436,9 @@ public class Reservation implements Item {
 
     public void setPaymentDate(Date date) {
         if (date == null) {
-            User.addlog(LogType.DELETE,
-                    "Paiement annulé pour la réservation #" + id);
+            User.addlog(LogType.DELETE, "Paiement annulé pour la réservation #" + id);
         } else {
-            User.addlog(LogType.ADD,
-                    "Paiement effectué pour la réservation #" + id);
+            User.addlog(LogType.ADD, "Paiement effectué pour la réservation #" + id);
         }
         this.paymentDate = date;
     }
@@ -475,11 +463,9 @@ public class Reservation implements Item {
 
     public void setDepositDate(Date date) {
         if (date == null) {
-            User.addlog(LogType.DELETE,
-                    "Accompte annulé pour la réservation #" + id);
+            User.addlog(LogType.DELETE, "Accompte annulé pour la réservation #" + id);
         } else {
-            User.addlog(LogType.ADD,
-                    "Accompte versé pour la réservation #" + id);
+            User.addlog(LogType.ADD, "Accompte versé pour la réservation #" + id);
         }
         this.depositDate = date;
     }
@@ -552,6 +538,7 @@ public class Reservation implements Item {
     @Override
     public int compareTo(Item o) {
         Reservation other = (Reservation) o;
-        return (other.getCompareScale() - getCompareScale()) + this.getStartDate().compareTo(other.getStartDate());
+        return (other.getCompareScale() - getCompareScale())
+                + this.getStartDate().compareTo(other.getStartDate());
     }
 }

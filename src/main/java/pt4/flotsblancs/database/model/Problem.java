@@ -28,7 +28,7 @@ public class Problem implements Item {
     private int id;
 
     @Getter
-    @DatabaseField(canBeNull = false,dataType = DataType.LONG_STRING)
+    @DatabaseField(canBeNull = false, dataType = DataType.LONG_STRING)
     private String description;
 
     @Getter
@@ -60,8 +60,7 @@ public class Problem implements Item {
     private Reservation reservation;
 
     /**
-     * crée un problème et lui donne des valeurs par défauts
-     * l'action est loggé
+     * crée un problème et lui donne des valeurs par défauts l'action est loggé
      * 
      * @param status
      * @throws SQLException
@@ -84,7 +83,8 @@ public class Problem implements Item {
     public void setDescription(String description) {
         this.description = description;
         this.lastUpdateDate = new Date();
-        User.addlog(LogType.MODIFY, "Modification de la description du problème " + getDisplayName());
+        User.addlog(LogType.MODIFY,
+                "Modification de la description du problème " + getDisplayName());
     }
 
     /**
@@ -108,7 +108,8 @@ public class Problem implements Item {
     public void setCampground(CampGround campGround) {
         this.campground = campGround;
         this.lastUpdateDate = new Date();
-        User.addlog(LogType.MODIFY, "Modification de l'emplacement du problème " + getDisplayName());
+        User.addlog(LogType.MODIFY,
+                "Modification de l'emplacement du problème " + getDisplayName());
     }
 
     /**
@@ -120,7 +121,8 @@ public class Problem implements Item {
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
         this.lastUpdateDate = new Date();
-        User.addlog(LogType.MODIFY, "Modification de la réservation du problème " + getDisplayName());
+        User.addlog(LogType.MODIFY,
+                "Modification de la réservation du problème " + getDisplayName());
     }
 
     /**
@@ -128,13 +130,13 @@ public class Problem implements Item {
      * 
      * @param newStatus
      */
-    
+
     public void setStatus(ProblemStatus newStatus) {
         this.status = newStatus;
         this.endDate = newStatus == ProblemStatus.SOLVED ? new Date() : null;
         this.lastUpdateDate = new Date();
-        User.addlog(LogType.MODIFY,
-                "Modification du statut à " + newStatus.displayName + " pour le problème " + getDisplayName());
+        User.addlog(LogType.MODIFY, "Modification du statut à " + newStatus.displayName
+                + " pour le problème " + getDisplayName());
     }
 
     @Override
@@ -144,7 +146,7 @@ public class Problem implements Item {
 
     @Override
     public String getDisplayName() {
-        if(reservation != null)
+        if (reservation != null)
             return "[R]  " + reservation.getDisplayName();
         if (client != null)
             return "[C]  " + client.getDisplayName();
@@ -156,11 +158,15 @@ public class Problem implements Item {
     @Override
     public String getSearchString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return String.join(";", ""+this.id,formatter.format(this.startDate),
-        this.endDate != null ? formatter.format(this.endDate) : "",
-        this.client != null ? this.client.getFirstName() + ";" + this.client.getName() : "",
-        this.campground != null ? ""+this.campground.getId() : "",
-        this.reservation != null ? ""+this.reservation.getId() : "").trim().toLowerCase();
+        return String
+                .join(";", "" + this.id, formatter.format(this.startDate),
+                        this.endDate != null ? formatter.format(this.endDate) : "",
+                        this.client != null
+                                ? this.client.getFirstName() + ";" + this.client.getName()
+                                : "",
+                        this.campground != null ? "" + this.campground.getId() : "",
+                        this.reservation != null ? "" + this.reservation.getId() : "")
+                .trim().toLowerCase();
     }
 
     @Override
@@ -170,7 +176,7 @@ public class Problem implements Item {
 
     @Override
     public Color getStatusColor() {
-        switch(status) {
+        switch (status) {
             case OPEN:
                 return StatusColors.YELLOW;
             case OPEN_URGENT:
@@ -183,7 +189,7 @@ public class Problem implements Item {
     @Override
     public int compareTo(Item o) {
         Problem other = (Problem) o;
-        
+
         return (status.getCompareScale() + getId()) - (other.status.getCompareScale() + getId());
     }
 }

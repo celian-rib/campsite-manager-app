@@ -194,8 +194,8 @@ public class UserScene extends ItemScene<User> {
                 ParsePosition parsePosition = new ParsePosition(0);
                 // NumberFormat evaluates the beginning of the text
                 format.parse(c.getControlNewText(), parsePosition);
-                if (parsePosition.getIndex() == 0 ||
-                        parsePosition.getIndex() < c.getControlNewText().length()) {
+                if (parsePosition.getIndex() == 0
+                        || parsePosition.getIndex() < c.getControlNewText().length()) {
                     // reject parsing the complete text failed
                     return null;
                 }
@@ -204,7 +204,7 @@ public class UserScene extends ItemScene<User> {
         };
 
         TextFormatter<Integer> priceFormatter = new TextFormatter<Integer>(
-        new IntegerStringConverter(), stagiaire.getWeeklyHours(), filter);
+                new IntegerStringConverter(), stagiaire.getWeeklyHours(), filter);
 
         hoursSpinner.getEditor().setTextFormatter(priceFormatter);
         vFact.setValue(stagiaire.getWeeklyHours());
