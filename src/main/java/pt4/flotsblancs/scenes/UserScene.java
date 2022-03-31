@@ -64,7 +64,7 @@ public class UserScene extends ItemScene<User> {
 
     @Override
     public String getName() {
-        return "Personnels";
+        return "Personnel";
     }
 
     @Override

@@ -100,15 +100,28 @@ public class Generator {
 
                 var services = resa.getCampground().getCompatiblesServices();
                 resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
+                
+                
+                if(i>nbr/2)
+                {
+                	//futur
+                    resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
+                    resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
+                    resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
 
-                resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
-                resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
-                resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
-
-                if (rdmNbrBtwn(0, 10) > 5) {
-                    resa.setDepositDate(new Date());
-                    if (rdmNbrBtwn(0, 10) > 5)
-                        resa.setPaymentDate(new Date());
+                    if (rdmNbrBtwn(0, 10) > 5) {
+                        resa.setDepositDate(new Date());
+                        if (rdmNbrBtwn(0, 10) > 5)
+                            resa.setPaymentDate(new Date());
+                    }
+                } else {
+                	//passé
+                    resa.setStartDate(f.date().past(100, TimeUnit.DAYS, new java.util.Date()));
+                    resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+                    
+                    resa.setDepositDate(resa.getStartDate());
+                    resa.setPaymentDate(resa.getEndDate());
+               
                 }
                 Database.getInstance().getReservationDao().create(resa);
                 Database.getInstance().getReservationDao().refresh(resa);
