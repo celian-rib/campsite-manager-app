@@ -24,7 +24,15 @@
         ```
 
     - **Eclipse**
-        - TODO
+        1. Ouvrir l'IDE
+        2. File > Import > Maven > Existing maven projects > choisir le dossier racine du projet > Choisir le pom.xml > Finish
+        3. Ajout de javaFX :
+            1. Avec SDK installé à l'étape N°2 du projet, on va créer une user library
+            2. Eclipse > Window > Preferences > Java > Build Path > User Libraries > New > La nommer javafx
+            3. Séléctionner la user library tout juste créée > Add External JARs
+            4. Ajouter tous les .jar du dossier javafx-sdk-17.0.2/lib (Installé à l'étape N°2 du setup)
+            5. Revenir à eclipse
+            6. Cliquer sur Run, dans les onglets du haut > Run configurations > Aller dans arguments > Mettez dans VM Arguments : `java --module-path "chemin\vers\javafx\lib" --add-modules javafx.controls,javafx.fxml` Si il y a une erreur, essayez de mettre des slash à la place des antislash.
 
 7. Le projet utilise [Lombok](https://projectlombok.org/features/GetterSetter) 
 
@@ -32,7 +40,14 @@
         - il faut donc installer [cette extension](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok) (Recharger VSCode si les erreurs persistent)
 
     - **Eclipse**
-        - TODO
+        - Télécharger le .jar depuis : https://projectlombok.org/downloads/lombok.jar
+        - Lancer le .jar et séléctionner l'emplacement de l'IDE (normalement automatique)
+        - Cliquer sur "Install/Update"
+        - Clic droit sur le projet dans eclipse (flots-blancs) > Build Path > Configure build path
+        - Aller dans l'onglet Libraries à droite
+        - Cliquer sur Classpath > Add external jar > Ajouter le .jar précédemment téléchargé.
+
+        
 
 5. Lancer un serveur sql en local ou se connecter à l'iut via tunnel ssh (expliqué plus bas)
 
