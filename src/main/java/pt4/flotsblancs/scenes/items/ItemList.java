@@ -3,6 +3,7 @@ package pt4.flotsblancs.scenes.items;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import javafx.geometry.Insets;
@@ -42,6 +44,8 @@ class ItemList<I extends Item> extends StackPane {
     private ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
 
     private HBox addButton;
+
+    private ObservableList<ItemPane<I>> itemsListContainer = FXCollections.observableArrayList();
 
     /**
      * Permet de créer l'item list associée à l'item scene donnée
@@ -111,10 +115,10 @@ class ItemList<I extends Item> extends StackPane {
     }
 
     private ArrayList<ItemPane<I>> createListButtons(List<I> items) {
-        ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
+        ArrayList<ItemPane<I>> liste = new ArrayList<ItemPane<I>>();
         for (I i : items)
-            listButtons.add(new ItemPane<I>(i, CONTENT_WIDTH - 15));
-        return listButtons;
+            liste.add(new ItemPane<I>(i, CONTENT_WIDTH - 15));
+        return liste;
     }
 
     private void updateItems(List<I> items, boolean filtered) {
@@ -129,7 +133,7 @@ class ItemList<I extends Item> extends StackPane {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        List<I> sorted = new ArrayList<I>(new TreeSet<I>(items));
+                        List<I> sorted = new ArrayList<I>(new PriorityQueue<I>(items));
                         initialList = sorted;
                     }
                 });
@@ -142,9 +146,10 @@ class ItemList<I extends Item> extends StackPane {
         long end2 = System.currentTimeMillis();
         log("Time to create list buttons: " + (end2 - start2) + "ms");
 
-        ObservableList<ItemPane<I>> itemsListContainer = FXCollections.observableArrayList(listButtons);
+        itemsListContainer.clear();
+        itemsListContainer.addAll(listButtons);
 
-        ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
+        listView = new ListView<ItemPane<I>>();
         listView.setFocusTraversable(false);
         listView.setStyle("-fx-background-insets: 0; -fx-background-insets: 0; -fx-padding: 0;");
 
@@ -154,9 +159,9 @@ class ItemList<I extends Item> extends StackPane {
                 selectedItem = selected.getItem();
                 itemScene.updateContainer(selected.getItem());
             }
-            
+
         });
-        if (selectedItem != null){
+        if (selectedItem != null) {
             itemScene.updateContainer(selectedItem);
             selectItem(selectedItem);
         }
@@ -195,18 +200,23 @@ class ItemList<I extends Item> extends StackPane {
      * @param item
      */
     void selectItem(I item) {
+        selectedItem = item;
         var itemPane = new ItemPane<I>(item, CONTENT_WIDTH - 15);
-        int index = listView.getItems().indexOf(itemPane);
-        if (index == -1) {
-            System.out.println("not found");
-            listView.getItems().add(itemPane);
-            listView.getSelectionModel().select(itemPane);
-        } else {
-            System.out.println(index);
-            listView.getSelectionModel().select(index);
-        }
-        
+        int index = itemsListContainer.indexOf(itemPane);
         itemScene.updateContainer(item);
+
+        if (index == -1) {
+            itemsListContainer.add(itemPane);
+            listView.setItems(itemsListContainer);
+            listView.getSelectionModel().select(itemPane);
+            listView.scrollTo(itemPane);
+        } else {
+            listView.setItems(itemsListContainer);
+            listView.getSelectionModel().clearAndSelect(index);
+            listView.getFocusModel().focus(index);
+            listView.scrollTo(index);
+        }
+
     }
 
     private MFXScrollPane createScrollPane() {

@@ -230,7 +230,7 @@ public class Client implements Item {
 
     @Override
     public Color getStatusColor() {
-        return getOpenProblems().size() > 0 ? StatusColors.RED : StatusColors.BLUE;
+        return hasOpenProblem() ? StatusColors.RED : StatusColors.BLUE;
     }
 
     public boolean isKing() {
@@ -258,7 +258,8 @@ public class Client implements Item {
     @Override
     public int compareTo(Item o) {
         Client other = (Client) o;
-        return name.compareTo(other.getName());
+        return other.getOpenProblems().size() - getOpenProblems().size();
+        //return name.compareTo(other.getName());
         // le tri par problème est compliqué à implémenter, l'utilisation de stream
         // ralentit l'UI
         // Et j'ai pas réussi à implémenter l'async.

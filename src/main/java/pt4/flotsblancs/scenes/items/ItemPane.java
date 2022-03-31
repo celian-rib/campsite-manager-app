@@ -47,10 +47,10 @@ class ItemPane<I extends Item> extends BorderPane {
     @Override
     public boolean equals(Object anObject) {
         if (anObject == null) return false;
-        System.out.println("OTHER --> " + anObject.getClass());
-        System.out.println("THIS --> " + this);
+        // System.out.println("OTHER --> " + anObject.getClass());
+        // System.out.println("THIS --> " + this);
         if (!(anObject instanceof ItemPane<?>)) {
-            System.out.println("PAS ITEM PANE");
+            //System.out.println("PAS ITEM PANE");
             return false;
         }
         var other = (ItemPane<I>)anObject;
