@@ -57,7 +57,8 @@ class ItemPane<I extends Item> extends BorderPane {
         if (this == other) {
             return true;
         }
-
-        return this.getItem().getId() == other.getItem().getId();
+        var i1 = this.getItem();
+        var i2 = other.getItem();
+        return i1.getClass().equals(i2.getClass()) && i1.getId() == i2.getId();
     }
 }

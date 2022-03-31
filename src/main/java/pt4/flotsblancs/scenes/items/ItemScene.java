@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -82,27 +83,30 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     protected void updateItemList() {
         itemList.setIsLoading(true);
         final Task<List<I>> updateListTask = new Task<List<I>>() {
-            protected java.util.List<I> call() {
+            @Override
+            protected java.util.List<I> call() throws SQLException {
                 List<I> allItems;
-                try {
                     allItems = queryAll().stream().filter(i -> i.isForeignCorrect()).collect(Collectors.toList());
-                    itemList.updateItems(allItems);
+                    Platform.runLater(() -> itemList.updateItems(allItems));
+                    
+                    System.out.println("UPDATED");
                     return allItems;
-                } catch (SQLException e) {
-                    ExceptionHandler.loadIssue(e);
-                }
-                return null;
             };
 
+            @Override
             protected void succeeded() {
+                super.succeeded();
                 itemList.setIsLoading(false);
             };
 
+            @Override
             protected void failed() {
+                super.failed();
+                getException().printStackTrace();
                 ExceptionHandler.loadIssue(new SQLException());
             };
         };
-
+        
         new Thread(updateListTask).start();
     }
 
