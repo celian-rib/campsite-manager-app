@@ -2,6 +2,7 @@ package pt4.flotsblancs.scenes.items;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.TreeSet;
@@ -24,12 +25,14 @@ import javafx.scene.effect.Shadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import pt4.flotsblancs.scenes.utils.Timer;
 
 class ItemList<I extends Item> extends StackPane {
 
     private final static int CONTENT_WIDTH = 250;
     private String query = "";
     private List<I> initialList;
+    private final Timer TIMER = new Timer();
 
     private ItemScene<I> itemScene;
 
@@ -129,15 +132,19 @@ class ItemList<I extends Item> extends StackPane {
             return;
 
         if (!filtered) {
-            new Thread(() -> {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<I> sorted = new ArrayList<I>(new PriorityQueue<I>(items));
-                        initialList = sorted;
-                    }
-                });
-            }).start();
+            initialList = items;
+            // new Thread(() -> {
+            //     Platform.runLater(new Runnable() {
+            //         @Override
+            //         public void run() {
+            //             TIMER.start("SORTING");
+            //             List<I> sorted = new ArrayList<I>(items);
+            //             Collections.sort(sorted);
+            //             TIMER.time("SORTING");
+            //             initialList = sorted;
+            //         }
+            //     });
+            // }).start();
         }
 
         // time the below function call to see how long it takes
@@ -203,8 +210,10 @@ class ItemList<I extends Item> extends StackPane {
         selectedItem = item;
         var itemPane = new ItemPane<I>(item, CONTENT_WIDTH - 15);
         int index = itemsListContainer.indexOf(itemPane);
-        itemScene.updateContainer(item);
+        
 
+        itemScene.updateContainer(item);
+        
         if (index == -1) {
             itemsListContainer.add(itemPane);
             listView.setItems(itemsListContainer);

@@ -3,11 +3,16 @@ package pt4.flotsblancs.database.model;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.Predicate;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -23,11 +28,14 @@ import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
+import pt4.flotsblancs.scenes.utils.Timer;
 import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
 
 @EqualsAndHashCode
 @DatabaseTable(tableName = "clients")
 public class Client implements Item {
+
+    private static final Timer TIMER = new Timer();
 
     @Getter
     @DatabaseField(generatedId = true)
@@ -68,6 +76,9 @@ public class Client implements Item {
     @Getter
     @DatabaseField(canBeNull = false)
     private Date creationDate;
+
+    private static final Predicate<Problem> isOpen = p -> (p.getStatus() == ProblemStatus.OPEN
+            || p.getStatus() == ProblemStatus.OPEN_URGENT);
 
     public Client() {
         this.creationDate = new Date();
@@ -158,7 +169,7 @@ public class Client implements Item {
      * 
      * @param name
      */
-    
+
     public void setName(String name) {
         User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
         this.name = name;
@@ -185,7 +196,7 @@ public class Client implements Item {
      * @return la réservation actuelle (ou null) du client
      */
     public Reservation getOpenReservation() {
-        if(!isForeignCorrect())
+        if (!isForeignCorrect())
             return null;
         return reservations.stream().filter(r -> r.getPaymentDate() == null && !r.getCanceled()).findFirst()
                 .orElse(null);
@@ -218,14 +229,16 @@ public class Client implements Item {
     public boolean hasOpenProblem() {
         if (problems.size() == 0)
             return false;
-        return problems
+        boolean hasAny = problems
                 .stream()
-                .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
+                .anyMatch(p -> p.getStatus().isOpen());
+        return hasAny;
     }
 
     public List<Problem> getOpenProblems() {
-        return problems.stream().filter(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT)
-                .collect(Collectors.toList());
+
+        List<Problem> openProblems = problems.stream().filter(p -> p.getStatus().isOpen()).collect(Collectors.toList());
+        return openProblems;
     }
 
     @Override
@@ -234,7 +247,8 @@ public class Client implements Item {
     }
 
     public boolean isKing() {
-        // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais plus explicite)
+        // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais
+        // plus explicite)
         int clientId = this.getId();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -258,14 +272,8 @@ public class Client implements Item {
     @Override
     public int compareTo(Item o) {
         Client other = (Client) o;
-        return other.getOpenProblems().size() - getOpenProblems().size();
-        //return name.compareTo(other.getName());
-        // le tri par problème est compliqué à implémenter, l'utilisation de stream
-        // ralentit l'UI
-        // Et j'ai pas réussi à implémenter l'async.
-
-        // int score = getSortScore(), otherScore = other.getSortScore();
-        // return (score - otherScore) + name.compareTo(other.getName());
+        
+        return 0;
     }
 
 }

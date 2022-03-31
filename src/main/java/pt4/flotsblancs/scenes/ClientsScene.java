@@ -304,7 +304,7 @@ public class ClientsScene extends ItemScene<Client> {
 
     @Override
     protected List<Client> queryAll() throws SQLException {
-        return Database.getInstance().getClientsDao().queryForAll();
+        return Database.getInstance().getClientsDao().queryBuilder().orderBy("name", true).query();
     }
 
     private boolean isReducedSize(HBreakPoint currentBp) {

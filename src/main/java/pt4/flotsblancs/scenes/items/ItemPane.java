@@ -21,7 +21,7 @@ class ItemPane<I extends Item> extends BorderPane {
         leftContainer.setAlignment(Pos.CENTER);
 
         statusDot = new Circle(4);
-        statusDot.setFill(item.getStatusColor());
+        //statusDot.setFill(item.getStatusColor());
         
         Text display = new Text(item.getDisplayName());
         display.setFill(Color.rgb(50, 60, 100));
