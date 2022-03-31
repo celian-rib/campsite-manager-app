@@ -116,12 +116,11 @@ public class Generator {
                     }
                 } else {
                 	//passé
-                    resa.setDepositDate(f.date().past(50, TimeUnit.DAYS));
                     resa.setStartDate(f.date().past(100, TimeUnit.DAYS, new java.util.Date()));
                     resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
                     
-                    resa.setDepositDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
-                    resa.setPaymentDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
+                    resa.setDepositDate(resa.getStartDate());
+                    resa.setPaymentDate(resa.getEndDate());
                
                 }
                 Database.getInstance().getReservationDao().create(resa);
