@@ -23,13 +23,11 @@ import pt4.flotsblancs.scenes.breakpoints.BreakPointManager;
 import pt4.flotsblancs.scenes.breakpoints.HBreakPoint;
 import pt4.flotsblancs.scenes.components.EmptyItemContainer;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
-import pt4.flotsblancs.scenes.utils.Timer;
 
 public abstract class ItemScene<I extends Item> extends BorderPane
         implements IItemScene<I>, BreakPointListener {
 
     private ItemList<I> itemList;
-    private final static Timer TIMER = new Timer();
 
     /**
      * Permet de créer le conteneur affichant l'item actuellement sélectionné
@@ -103,8 +101,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
             @Override
             protected void failed() {
                 super.failed();
-                getException().printStackTrace();
-                ExceptionHandler.loadIssue(new SQLException());
+                ExceptionHandler.loadIssue(new SQLException("ItemList update : " + getException().getMessage()));
             };
         };
 

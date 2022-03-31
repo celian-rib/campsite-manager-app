@@ -2,10 +2,7 @@ package pt4.flotsblancs.scenes.items;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -14,7 +11,6 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -26,14 +22,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import lombok.Getter;
-import pt4.flotsblancs.scenes.utils.Timer;
 
 class ItemList<I extends Item> extends StackPane {
 
     private final static int CONTENT_WIDTH = 250;
     private String query = "";
     private List<I> initialList;
-    private final Timer TIMER = new Timer();
 
     private ItemScene<I> itemScene;
 
@@ -137,29 +131,15 @@ class ItemList<I extends Item> extends StackPane {
         if (items.size() == 0)
             return;
 
-        if (!filtered) {
+        if (!filtered)
             initialList = items;
-            // new Thread(() -> {
-            //     Platform.runLater(new Runnable() {
-            //         @Override
-            //         public void run() {
-            //             TIMER.start("SORTING");
-            //             List<I> sorted = new ArrayList<I>(items);
-            //             Collections.sort(sorted);
-            //             TIMER.time("SORTING");
-            //             initialList = sorted;
-            //         }
-            //     });
-            // }).start();
-        }
 
-        // time the below function call to see how long it takes
         long start2 = System.currentTimeMillis();
         listButtons = createListButtons(items);
         long end2 = System.currentTimeMillis();
         log("Time to create list buttons: " + (end2 - start2) + "ms");
 
-        updateDotsColor(listButtons);
+        updateDotsColorAsync(listButtons);
 
         itemsListContainer.clear();
         itemsListContainer.addAll(listButtons);
@@ -188,30 +168,30 @@ class ItemList<I extends Item> extends StackPane {
         log("Items updated in " + (end - start) + " ms");
     }
 
-    private void updateDotsColor(ArrayList<ItemPane<I>> listButtons2) {
-            final Task<ArrayList<ItemPane<I>>> updatesDotsTask = new Task<ArrayList<ItemPane<I>>>() {
-                @Override
-                protected ArrayList<ItemPane<I>> call() {
-                    listButtons2.forEach(ip -> ip.updateColor());
-                    return listButtons2;
-                };
-    
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(() -> listButtons2.forEach(b -> b.showDots()));
-                };
-    
-                @Override
-                protected void failed() {
-                    super.failed();
-                    getException().printStackTrace();
-                };
+    private void updateDotsColorAsync(ArrayList<ItemPane<I>> itemPanes) {
+        final Task<ArrayList<ItemPane<I>>> updatesDotsTask = new Task<ArrayList<ItemPane<I>>>() {
+            @Override
+            protected ArrayList<ItemPane<I>> call() {
+                itemPanes.forEach(ip -> ip.updateColor());
+                return itemPanes;
             };
-    
-            new Thread(updatesDotsTask).start();
-        }
-    
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                Platform.runLater(() -> itemPanes.forEach(b -> b.showDots()));
+            };
+
+            @Override
+            protected void failed() {
+                super.failed();
+                getException().printStackTrace();
+            };
+        };
+
+        new Thread(updatesDotsTask).start();
+    }
+
 
     /**
      * Permet de mettre à jour la liste d'Item affichés par cette ItemList
@@ -243,10 +223,9 @@ class ItemList<I extends Item> extends StackPane {
         selectedItem = item;
         var itemPane = new ItemPane<I>(item, CONTENT_WIDTH - 15);
         int index = itemsListContainer.indexOf(itemPane);
-        
 
         itemScene.updateContainer(item);
-        
+
         if (index == -1) {
             itemsListContainer.add(itemPane);
             listView.setItems(itemsListContainer);

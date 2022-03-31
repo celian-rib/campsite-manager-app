@@ -3,16 +3,11 @@ package pt4.flotsblancs.database.model;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.Predicate;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -25,17 +20,13 @@ import lombok.Getter;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.daos.ReservationDAO;
 import pt4.flotsblancs.database.model.types.LogType;
-import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
-import pt4.flotsblancs.scenes.utils.Timer;
 import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
 
 @EqualsAndHashCode
 @DatabaseTable(tableName = "clients")
 public class Client implements Item {
-
-    private static final Timer TIMER = new Timer();
 
     @Getter
     @DatabaseField(generatedId = true)
@@ -76,9 +67,6 @@ public class Client implements Item {
     @Getter
     @DatabaseField(canBeNull = false)
     private Date creationDate;
-
-    private static final Predicate<Problem> isOpen = p -> (p.getStatus() == ProblemStatus.OPEN
-            || p.getStatus() == ProblemStatus.OPEN_URGENT);
 
     public Client() {
         this.creationDate = new Date();
@@ -271,8 +259,7 @@ public class Client implements Item {
 
     @Override
     public int compareTo(Item o) {
-        Client other = (Client) o;
-        
+        // Le tri est explicitement fait par la requete queryAll de la ClientScene
         return 0;
     }
 

@@ -1,6 +1,5 @@
 package pt4.flotsblancs.scenes.items;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -44,16 +43,23 @@ class ItemPane<I extends Item> extends BorderPane {
         setMaxWidth(maxWith);
     }
 
+    /**
+     * Met à jour la couleur de l'item pane
+     */
     public void updateColor() {
-        
         color = item.getStatusColor();
-        
     }
 
+    /**
+     * Rend visible le status dot
+     */
     public void showDots() {
         statusDot.setFill(color);
     }
 
+    /**
+     * @return L'item actuellement utilisé par l'item pane
+     */
     I getItem() {
         return this.item;
     }
@@ -61,12 +67,10 @@ class ItemPane<I extends Item> extends BorderPane {
     @Override
     public boolean equals(Object anObject) {
         if (anObject == null) return false;
-        // System.out.println("OTHER --> " + anObject.getClass());
-        // System.out.println("THIS --> " + this);
         if (!(anObject instanceof ItemPane<?>)) {
-            //System.out.println("PAS ITEM PANE");
             return false;
         }
+        @SuppressWarnings("unchecked")
         var other = (ItemPane<I>)anObject;
         if (this == other) {
             return true;
