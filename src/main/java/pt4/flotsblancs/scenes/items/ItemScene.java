@@ -80,7 +80,6 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     }
 
     private void initItemList() {
-        log("Sending update request to the List");
         itemList.setIsLoading(true);
         final Task<List<I>> updateListTask = new Task<List<I>>() {
             @Override
@@ -96,7 +95,6 @@ public abstract class ItemScene<I extends Item> extends BorderPane
             protected void succeeded() {
                 super.succeeded();
                 itemList.setIsLoading(false);
-                log("Loaded");
             };
 
             @Override
@@ -131,7 +129,6 @@ public abstract class ItemScene<I extends Item> extends BorderPane
      * @param item item selectionné qui doit être affiché
      */
     void updateContainer(I item) {
-        log("Updating container : " + item);
         if (item != null) {
             onContainerUnfocus();
         }
