@@ -16,7 +16,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -122,8 +122,11 @@ class ItemList<I extends Item> extends StackPane {
 
     private ArrayList<ItemPane<I>> createListButtons(List<I> items) {
         ArrayList<ItemPane<I>> liste = new ArrayList<ItemPane<I>>();
-        for (I i : items)
-            liste.add(new ItemPane<I>(i, CONTENT_WIDTH - 15));
+        ItemPane<I> ipane;
+        for (I i : items) {
+            ipane = new ItemPane<I>(i, CONTENT_WIDTH - 15);
+            liste.add(ipane);
+        }
         return liste;
     }
 
@@ -156,6 +159,8 @@ class ItemList<I extends Item> extends StackPane {
         long end2 = System.currentTimeMillis();
         log("Time to create list buttons: " + (end2 - start2) + "ms");
 
+        updateDotsColor(listButtons);
+
         itemsListContainer.clear();
         itemsListContainer.addAll(listButtons);
 
@@ -182,6 +187,31 @@ class ItemList<I extends Item> extends StackPane {
         long end = System.currentTimeMillis();
         log("Items updated in " + (end - start) + " ms");
     }
+
+    private void updateDotsColor(ArrayList<ItemPane<I>> listButtons2) {
+            final Task<ArrayList<ItemPane<I>>> updatesDotsTask = new Task<ArrayList<ItemPane<I>>>() {
+                @Override
+                protected ArrayList<ItemPane<I>> call() {
+                    listButtons2.forEach(ip -> ip.updateColor());
+                    return listButtons2;
+                };
+    
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(() -> listButtons2.forEach(b -> b.showDots()));
+                };
+    
+                @Override
+                protected void failed() {
+                    super.failed();
+                    getException().printStackTrace();
+                };
+            };
+    
+            new Thread(updatesDotsTask).start();
+        }
+    
 
     /**
      * Permet de mettre à jour la liste d'Item affichés par cette ItemList

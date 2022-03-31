@@ -247,14 +247,8 @@ public class Client implements Item {
         return hasOpenProblem() ? StatusColors.RED : StatusColors.BLUE;
     }
 
-<<<<<<< HEAD
-    public boolean isKing() {
-        // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais
-        // plus explicite)
-=======
     public boolean isFrequentClient() {
         // TODO bouger ça dans un DAO, et le renommer en isFrequentClient ou autre (mais plus explicite)
->>>>>>> main
         int clientId = this.getId();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

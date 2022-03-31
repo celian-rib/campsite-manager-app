@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
@@ -13,6 +14,7 @@ class ItemPane<I extends Item> extends BorderPane {
     private I item;
     private Circle statusDot;
     private HBox leftContainer;
+    private Paint color;
 
     ItemPane(I item, int maxWith) {
         this.item = item;
@@ -22,13 +24,14 @@ class ItemPane<I extends Item> extends BorderPane {
         leftContainer = new HBox(8);
         leftContainer.setAlignment(Pos.CENTER);
 
-        
+        statusDot = new Circle(4);
+        statusDot.setFill(Color.web("#bcc0d1", 0.5));
         
         Text display = new Text(item.getDisplayName());
         display.setFill(Color.rgb(50, 60, 100));
         display.setStyle("-fx-font-weight: bold");
 
-        leftContainer.getChildren().addAll(display);
+        leftContainer.getChildren().addAll(statusDot, display);
         
         Text id = new Text("#" + item.getId());
         id.setFill(Color.rgb(50, 50, 80));
@@ -41,12 +44,15 @@ class ItemPane<I extends Item> extends BorderPane {
         setMaxWidth(maxWith);
     }
 
-    public void displayDot() {
-        statusDot = new Circle(4);
-        statusDot.setFill(Color.GREY);
-        statusDot.setFill(item.getStatusColor());
-        leftContainer.getChildren().add(0,statusDot);
-    } 
+    public void updateColor() {
+        
+        color = item.getStatusColor();
+        
+    }
+
+    public void showDots() {
+        statusDot.setFill(color);
+    }
 
     I getItem() {
         return this.item;

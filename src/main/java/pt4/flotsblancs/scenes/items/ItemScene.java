@@ -89,11 +89,9 @@ public abstract class ItemScene<I extends Item> extends BorderPane
             protected java.util.List<I> call() throws SQLException {
                 List<I> allItems;
                 allItems = queryAll().stream().filter(i -> i.isForeignCorrect()).sorted().collect(Collectors.toList());
-                    Platform.runLater(() -> itemList.updateItems(allItems));
-                    Platform.runLater(() -> itemList.getListButtons().forEach(b -> b.displayDot()));
-                    
-                    System.out.println("UPDATED");
-                    return allItems;
+                Platform.runLater(() -> itemList.updateItems(allItems));
+                System.out.println("UPDATED");
+                return allItems;
             };
 
             @Override
@@ -109,7 +107,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
                 ExceptionHandler.loadIssue(new SQLException());
             };
         };
-        
+
         new Thread(updateListTask).start();
     }
 
