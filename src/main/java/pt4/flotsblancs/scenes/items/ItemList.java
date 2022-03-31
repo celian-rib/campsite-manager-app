@@ -204,6 +204,13 @@ class ItemList<I extends Item> extends StackPane {
     }
 
     /**
+     * Permet de réinitialiser l'item sélectionné dans la liste
+     */
+    void clearSelectedItem() {
+        selectedItem = null;
+    }
+
+    /**
      * Active ou désactive l'animation de chargement de cette itemList
      * 
      * @param isLoading

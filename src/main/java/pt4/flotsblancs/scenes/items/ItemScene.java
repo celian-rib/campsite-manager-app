@@ -70,8 +70,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         itemList = new ItemList<I>(this);
 
         BreakPointManager.addListener(this);
-        setLeft(itemList);
         updateContainer(null);
+        setLeft(itemList);
     }
 
     @Override
@@ -131,6 +131,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
      * @param item item selectionné qui doit être affiché
      */
     void updateContainer(I item) {
+        log("Updating container : " + item);
         if (item != null) {
             onContainerUnfocus();
         }
@@ -157,7 +158,8 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         setCenter((Parent) stack);
     }
 
-    protected void onItemDelete(Item i) {
+    protected void onItemDelete(Item item) {
+        itemList.clearSelectedItem();
         updateContainer(null);
         initItemList();
     }
