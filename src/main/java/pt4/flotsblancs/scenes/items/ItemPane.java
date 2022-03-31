@@ -1,5 +1,6 @@
 package pt4.flotsblancs.scenes.items;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -11,23 +12,23 @@ import javafx.scene.text.Text;
 class ItemPane<I extends Item> extends BorderPane {
     private I item;
     private Circle statusDot;
+    private HBox leftContainer;
 
     ItemPane(I item, int maxWith) {
         this.item = item;
         setPadding(new Insets(0));
         setPrefHeight(30);
 
-        HBox leftContainer = new HBox(8);
+        leftContainer = new HBox(8);
         leftContainer.setAlignment(Pos.CENTER);
 
-        statusDot = new Circle(4);
-        //statusDot.setFill(item.getStatusColor());
+        
         
         Text display = new Text(item.getDisplayName());
         display.setFill(Color.rgb(50, 60, 100));
         display.setStyle("-fx-font-weight: bold");
 
-        leftContainer.getChildren().addAll(statusDot, display);
+        leftContainer.getChildren().addAll(display);
         
         Text id = new Text("#" + item.getId());
         id.setFill(Color.rgb(50, 50, 80));
@@ -39,6 +40,13 @@ class ItemPane<I extends Item> extends BorderPane {
         setAlignment(leftContainer, Pos.CENTER);
         setMaxWidth(maxWith);
     }
+
+    public void displayDot() {
+        statusDot = new Circle(4);
+        statusDot.setFill(Color.GREY);
+        statusDot.setFill(item.getStatusColor());
+        leftContainer.getChildren().add(0,statusDot);
+    } 
 
     I getItem() {
         return this.item;

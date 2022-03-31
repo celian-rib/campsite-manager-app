@@ -25,6 +25,7 @@ import javafx.scene.effect.Shadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import lombok.Getter;
 import pt4.flotsblancs.scenes.utils.Timer;
 
 class ItemList<I extends Item> extends StackPane {
@@ -44,6 +45,8 @@ class ItemList<I extends Item> extends StackPane {
     private I selectedItem = null;
 
     private ListView<ItemPane<I>> listView = new ListView<ItemPane<I>>();
+
+    @Getter
     private ArrayList<ItemPane<I>> listButtons = new ArrayList<ItemPane<I>>();
 
     private HBox addButton;

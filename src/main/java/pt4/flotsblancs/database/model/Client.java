@@ -229,6 +229,7 @@ public class Client implements Item {
     public boolean hasOpenProblem() {
         if (problems.size() == 0)
             return false;
+            
         boolean hasAny = problems
                 .stream()
                 .anyMatch(p -> p.getStatus().isOpen());
