@@ -3,23 +3,22 @@ package pt4.flotsblancs.database.model.types;
 import lombok.Getter;
 
 public enum ProblemStatus {
-	OPEN_URGENT("Urgent", 10, true),
-	OPEN("En cours", 100, true),
-	SOLVED("Résolu", 1000, false);
+	OPEN_URGENT("Urgent", 10, true), OPEN("En cours", 100, true), SOLVED("Résolu", 1000, false);
 
 	@Getter
 	public String displayName;
 
 	@Getter
-	public boolean open;
+	// La boolean est hardcodé pour ne pas faire de if est OPEN ou OPEN_URGENT -> gain performance
+	public boolean isOpen;
 
 	@Getter
 	public int compareScale;
-	
+
 	ProblemStatus(String displayName, int compareScale, boolean open) {
 		this.displayName = displayName;
 		this.compareScale = compareScale;
-		this.open = open;
+		this.isOpen = open;
 	}
 
 	@Override

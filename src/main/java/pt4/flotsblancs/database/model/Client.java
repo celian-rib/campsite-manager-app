@@ -225,7 +225,6 @@ public class Client implements Item {
     }
 
     public List<Problem> getOpenProblems() {
-
         List<Problem> openProblems = problems.stream().filter(p -> p.getStatus().isOpen()).collect(Collectors.toList());
         return openProblems;
     }
