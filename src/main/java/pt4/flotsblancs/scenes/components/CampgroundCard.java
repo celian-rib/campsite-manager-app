@@ -14,6 +14,7 @@ import javafx.util.Duration;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.utils.PriceUtils;
 
 public class CampgroundCard extends BorderPane {
 
@@ -45,7 +46,7 @@ public class CampgroundCard extends BorderPane {
         Label name = new Label("Emplacement #" + camp.getId());
         name.setFont(new Font(15));
 
-        Label id = new Label("Prix / Jours : " + camp.getPricePerDays() + "€");
+        Label id = new Label("Prix / Jours : " + PriceUtils.priceToString(camp.getPricePerDays()) + "€");
         id.setFont(new Font(11));
         id.setTextFill(Color.GRAY);
         clientInfos.getChildren().addAll(name, id);
