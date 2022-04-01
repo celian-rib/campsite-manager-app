@@ -8,10 +8,15 @@ import pt4.flotsblancs.Stats.Period;
 
 public class PeriodComboBox extends RefreshableComboBox<Period> {
 
+    /**
+     * Combo box pour sélectionner une période
+     */
     public PeriodComboBox() {
         setFloatingText("Période");
         setFloatMode(FloatMode.INLINE);
-        getItems().addAll(Period.NEXT_THREE_YEAR,Period.NEXT_TWO_YEAR,Period.NEXT_YEAR,Period.NEXT_MONTH,Period.NEXT_WEEK,Period.WEEKLY,Period.MONTHLY,Period.ANNUALY,Period.TWO_YEAR,Period.THREE_YEAR);
+        getItems().addAll(Period.NEXT_THREE_YEAR, Period.NEXT_TWO_YEAR, Period.NEXT_YEAR,
+                Period.NEXT_MONTH, Period.NEXT_WEEK, Period.WEEKLY, Period.MONTHLY, Period.ANNUALY,
+                Period.TWO_YEAR, Period.THREE_YEAR);
         setMinWidth(180);
         setAnimated(false);
         selectItem(Period.NEXT_WEEK);
@@ -23,7 +28,6 @@ public class PeriodComboBox extends RefreshableComboBox<Period> {
     }
 
     @Override
-    public void refresh() {
-    }
-    
+    public void refresh() {}
+
 }

@@ -1,13 +1,19 @@
 package pt4.flotsblancs.utils;
 
-import java.io.ByteArrayOutputStream;
+import pt4.flotsblancs.database.model.Client;
+import pt4.flotsblancs.database.model.Reservation;
+import pt4.flotsblancs.scenes.utils.PriceUtils;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+
 import javax.swing.filechooser.FileSystemView;
+
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -20,9 +26,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
-import pt4.flotsblancs.database.model.Client;
-import pt4.flotsblancs.database.model.Reservation;
-import pt4.flotsblancs.scenes.utils.PriceUtils;
+
 
 import java.awt.Desktop;
 
@@ -112,7 +116,6 @@ public class PDFGenerator {
         document.close();
 
         System.out.println("PDF généré");
-        MailSender.createSession();
         return outputStream;
     }
 

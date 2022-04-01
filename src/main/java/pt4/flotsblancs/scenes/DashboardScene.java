@@ -1,15 +1,5 @@
 package pt4.flotsblancs.scenes;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
-import javafx.concurrent.Task;
-import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import pt4.flotsblancs.Stats;
 import pt4.flotsblancs.Stats.Period;
 import pt4.flotsblancs.database.model.CampGround;
@@ -23,6 +13,19 @@ import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.components.ComboBoxes.PeriodComboBox;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
+
+import java.util.HashMap;
+import java.sql.SQLException;
+
+import javafx.concurrent.Task;
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+
 
 public class DashboardScene extends VBox implements IScene {
 

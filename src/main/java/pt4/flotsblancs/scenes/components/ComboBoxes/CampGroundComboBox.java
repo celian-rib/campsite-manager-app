@@ -16,6 +16,9 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
     private final Reservation reservation;
     private final Problem problem;
 
+    /**
+     * Combo box contenant tous les emplacement possibles pour une réservation donnée
+     */
     public CampGroundComboBox(Reservation reservation) throws SQLException {
         this.reservation = reservation;
         this.problem = null;
@@ -27,10 +30,10 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         setAnimated(false);
 
         var dao = Database.getInstance().getCampgroundDao();
-        var camps = dao.getAvailablesCampgrounds(reservation.getStartDate(), reservation.getEndDate(),
-                reservation.getId());
+        var camps = dao.getAvailablesCampgrounds(reservation.getStartDate(),
+                reservation.getEndDate(), reservation.getId());
         getItems().addAll(camps);
-        
+
         refresh();
 
         valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -46,6 +49,9 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         });
     }
 
+    /**
+     * Combo box contenant tous les emplacement possibles pour un problème
+     */
     public CampGroundComboBox(Problem problem) throws SQLException {
         this.problem = problem;
         this.reservation = null;
@@ -56,8 +62,6 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         getItems().addAll(Database.getInstance().getCampgroundDao().queryForAll());
         setMinWidth(180);
         setAnimated(false);
-        
-        // refresh();
 
         valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue == null)
@@ -66,6 +70,7 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         });
     }
 
+    @Override
     public void refresh() {
         if (reservation != null)
             selectItem(reservation.getCampground());

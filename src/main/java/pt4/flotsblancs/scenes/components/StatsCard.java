@@ -104,8 +104,11 @@ public class StatsCard<T> extends BorderPane {
     }
 
     public void setData(T data, String suffix, Period period) {
-        if (data instanceof HashMap)
-            this.setRight(createCampgroundListContainer((HashMap<CampGround, Integer>) data, suffix));
+        if (data instanceof HashMap) {
+            @SuppressWarnings("unchecked")
+            var list = createCampgroundListContainer((HashMap<CampGround, Integer>) data, suffix);
+            this.setRight(list);
+        }
         else
             infoLabel.setText(data + " " + suffix);
         subtitleLabel.setText(period.toString());

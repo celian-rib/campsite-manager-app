@@ -10,6 +10,12 @@ import pt4.flotsblancs.database.model.Problem;
 public class ClientComboBox extends RefreshableComboBox<Client> {
     private Problem problem;
 
+    /**
+     * Combo box permettant de sélectionner un client pour un problème donné
+     * 
+     * @param problem
+     * @throws SQLException
+     */
     public ClientComboBox(Problem problem) throws SQLException {
         this.problem = problem;
 
@@ -29,6 +35,7 @@ public class ClientComboBox extends RefreshableComboBox<Client> {
         });
     }
 
+    @Override
     public void refresh() {
         if (problem.getClient() != null)
             selectItem(problem.getClient());

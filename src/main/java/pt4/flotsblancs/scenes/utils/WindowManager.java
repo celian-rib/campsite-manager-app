@@ -19,6 +19,13 @@ public class WindowManager {
     private double mousePressedScreenX, mousePressedScreenY;
     private double mousePressedStageWidth, mousePressedStageHeight;
 
+    /**
+     * Classe permettant de pouvoir changer la taille d'un stage donné
+     * 
+     * @param stage              stage qui doit pouvoir être resize
+     * @param windowEdgeDistance distance entre les bords de la fenêtre et la souris
+     *                           minimum pour pouvoir retailler la fenêtre
+     */
     public WindowManager(Stage stage, int windowEdgeDistance) {
 
         Dotenv dotenv = Dotenv.load();
@@ -45,7 +52,8 @@ public class WindowManager {
             mousePressedStageHeight = stage.getHeight();
         });
 
-        // Enregistremet des différents actions qui correspondent aux différents types de "drag"
+        // Enregistremet des différents actions qui correspondent aux différents types
+        // de "drag"
         dragActions.put(Cursor.NW_RESIZE, event -> {
             double width = mousePressedStageWidth - (event.getScreenX() - mousePressedScreenX);
             double height = mousePressedStageHeight - (event.getScreenY() - mousePressedScreenY);
@@ -148,9 +156,11 @@ public class WindowManager {
     }
 
     /**
-     * Change le type de curseur et l'action réalisée sur la fenêtre si la souris est "draggée"
+     * Change le type de curseur et l'action réalisée sur la fenêtre si la souris
+     * est "draggée"
      * 
-     * @param c curseur actuellemnt utilisé (Le type de curseur donne la direction de resize)
+     * @param c curseur actuellemnt utilisé (Le type de curseur donne la direction
+     *          de resize)
      */
     private void updateSceneAppearence(Cursor c) {
         rootScene.setCursor(c);

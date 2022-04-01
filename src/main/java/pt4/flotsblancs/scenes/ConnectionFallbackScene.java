@@ -1,19 +1,22 @@
 package pt4.flotsblancs.scenes;
 
-import org.kordamp.ikonli.javafx.FontIcon;
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.enums.ButtonType;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.IScene;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
 import pt4.flotsblancs.scenes.utils.ToastType;
+
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.controls.MFXButton;
 
 public class ConnectionFallbackScene extends VBox implements IScene {
 

@@ -10,7 +10,6 @@ public class TxtFieldValidation {
      * @param emailString
      * @return
      */
-
     public static boolean emailValidation(String emailString){
         Pattern pattern = Pattern.compile("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");//source : https://regexr.com/3e48o
         return pattern.matcher(emailString).matches();

@@ -1,19 +1,5 @@
 package pt4.flotsblancs.scenes;
 
-import java.sql.SQLException;
-import java.util.List;
-
-import io.github.palexdev.materialfx.controls.MFXButton;
-import javafx.beans.value.ChangeListener;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.control.Label;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.database.model.ConstraintException;
@@ -31,6 +17,22 @@ import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.DateUtils;
+
+import java.util.List;
+import java.sql.SQLException;
+
+import javafx.beans.value.ChangeListener;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.control.Label;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
 
 public class ClientsScene extends ItemScene<Client> {
 

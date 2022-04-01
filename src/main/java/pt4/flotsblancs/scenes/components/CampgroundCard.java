@@ -4,6 +4,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.kordamp.ikonli.javafx.FontIcon;
 import io.github.palexdev.materialfx.controls.MFXButton;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -11,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
@@ -56,11 +58,18 @@ public class CampgroundCard extends BorderPane {
         return container;
     }
 
+    /**
+     * Permet de créer une "Carte emplacement"
+     */
     public CampgroundCard(CampGround camp, int width) {
         setMaxWidth(width);
         refresh(camp);
     }
 
+    /**
+     * Permet de rafrachir les informations affiché par cette carte, ou de changer
+     * l'emplacement actuellement affiché
+     */
     public void refresh(CampGround camp) {
         this.camp = camp;
         setLeft(createCampgroundInfos());

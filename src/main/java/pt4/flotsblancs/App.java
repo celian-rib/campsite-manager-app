@@ -19,6 +19,9 @@ public class App extends Application {
 		launch(args); // Lancement JFX
 	}
 
+	/**
+	 * Initialise l'application, la scène principale ainsi que le routeur
+	 */
 	@Override
 	public void start(Stage primaryStage) throws SQLException {
 
@@ -40,7 +43,7 @@ public class App extends Application {
 
 		Router.initialize(defaultRoute, primaryStage, 1300, 750);
 
-        BreakPointManager.init(primaryStage);
+		BreakPointManager.init(primaryStage);
 		new WindowManager(primaryStage, 20);
 
 		primaryStage.setMinWidth(950);
@@ -49,11 +52,10 @@ public class App extends Application {
 		// Affichage de la fenêtre
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 		primaryStage.setResizable(true);
-		
-		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("/app_logo.png")));
-		
-		primaryStage.show();
 
-		
+		primaryStage.getIcons()
+				.add(new Image(this.getClass().getResourceAsStream("/app_logo.png")));
+
+		primaryStage.show();
 	}
 }

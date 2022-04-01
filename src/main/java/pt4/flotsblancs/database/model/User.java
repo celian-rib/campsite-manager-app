@@ -8,8 +8,6 @@ import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.StatusColors;
 
-import com.j256.ormlite.table.DatabaseTable;
-
 import javafx.scene.paint.Color;
 
 import java.security.*;
@@ -21,6 +19,7 @@ import java.util.List;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.table.DatabaseTable;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
@@ -67,8 +66,7 @@ public class User implements Item {
     private static User connected;
 
     /**
-     * crée un nouvel utilisateur et lui donne des valeurs par défaut
-     * l'action est loggé
+     * crée un nouvel utilisateur et lui donne des valeurs par défaut l'action est loggé
      * 
      * @param name
      * @throws SQLException
@@ -107,7 +105,7 @@ public class User implements Item {
 
 
     /**
-     * renvoie la version haché d'un mot de passe 
+     * renvoie la version haché d'un mot de passe
      * 
      * @param base
      * @return
@@ -209,7 +207,7 @@ public class User implements Item {
 
     @Override
     public String getSearchString() {
-        return String.join(";", getFirstName(), getName(), getLogin(), "#"+getId());
+        return String.join(";", getFirstName(), getName(), getLogin(), "#" + getId());
     }
 
     @Override
@@ -227,8 +225,8 @@ public class User implements Item {
 
         Collator c = Collator.getInstance(java.util.Locale.FRANCE);
         c.setStrength(Collator.PRIMARY);
-        User other = (User)o;
-        int val = c.compare(this.getDisplayName(),other.getDisplayName());
+        User other = (User) o;
+        int val = c.compare(this.getDisplayName(), other.getDisplayName());
         return val;
     }
 }

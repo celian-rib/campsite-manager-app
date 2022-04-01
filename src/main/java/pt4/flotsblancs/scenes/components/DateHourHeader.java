@@ -3,6 +3,7 @@ package pt4.flotsblancs.scenes.components;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -34,17 +35,22 @@ public class DateHourHeader extends BorderPane {
         setLeft(currentPage);
         setPadding(new Insets(20, 30, 20, 20));
 
-        Timeline clock =
-                new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        hourLabel.setText(format.format(new Date()));
-                    }
-                }));
+        Timeline clock = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                hourLabel.setText(format.format(new Date()));
+            }
+        }));
         clock.setCycleCount(Timeline.INDEFINITE);
         clock.play();
     }
 
+    /**
+     * Permet de mettre à jour le nom de la page actuellement affiché qui est
+     * affiché par le header
+     * 
+     * @param currentPageName nom de la page
+     */
     public void updateCurrentPage(String currentPageName) {
         currentPage.setText(currentPageName);
     }
