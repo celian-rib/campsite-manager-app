@@ -6,6 +6,11 @@ import javafx.beans.value.ChangeListener;
 import pt4.flotsblancs.database.model.Reservation;
 
 public class PersonCountComboBox extends MFXComboBox<Integer> {
+
+    /**
+     * Combobox permettant de sélectionner le nombre de personnes pour une
+     * réservation donnée
+     */
     public PersonCountComboBox(Reservation reservation) {
         setFloatingText("Nombre de personnes");
         setFloatMode(FloatMode.INLINE);

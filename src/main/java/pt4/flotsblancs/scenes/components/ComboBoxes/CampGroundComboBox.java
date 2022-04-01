@@ -16,6 +16,9 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
     private final Reservation reservation;
     private final Problem problem;
 
+    /**
+     * Combo box contenant tous les emplacement possibles pour une réservation donnée
+     */
     public CampGroundComboBox(Reservation reservation) throws SQLException {
         this.reservation = reservation;
         this.problem = null;
@@ -46,6 +49,9 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         });
     }
 
+    /**
+     * Combo box contenant tous les emplacement possibles pour un problème
+     */
     public CampGroundComboBox(Problem problem) throws SQLException {
         this.problem = problem;
         this.reservation = null;
@@ -64,6 +70,7 @@ public class CampGroundComboBox extends RefreshableComboBox<CampGround> {
         });
     }
 
+    @Override
     public void refresh() {
         if (reservation != null)
             selectItem(reservation.getCampground());

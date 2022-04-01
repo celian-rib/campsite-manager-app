@@ -13,6 +13,9 @@ public class ServiceComboBox extends RefreshableComboBox<Service> {
     private final Reservation reservation;
     private final CampGround campground;
 
+    /**
+     * Combo box pour selectionner le service d'une réservation
+     */
     public ServiceComboBox(Reservation reservation) {
         this.campground = null;
         this.reservation = reservation;
@@ -35,6 +38,9 @@ public class ServiceComboBox extends RefreshableComboBox<Service> {
         });
     }
 
+    /**
+     * Combo box pour selectionner le service d'un emplacement
+     */
     public ServiceComboBox(CampGround campground) {
         this.campground = campground;
         this.reservation = null;

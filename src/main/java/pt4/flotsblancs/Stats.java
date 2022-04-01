@@ -1,5 +1,10 @@
 package pt4.flotsblancs;
 
+import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.database.model.Problem;
+import pt4.flotsblancs.database.model.Reservation;
+
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,10 +16,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import pt4.flotsblancs.database.Database;
-import pt4.flotsblancs.database.model.CampGround;
-import pt4.flotsblancs.database.model.Problem;
-import pt4.flotsblancs.database.model.Reservation;
 
 @ToString
 public class Stats {
@@ -34,12 +35,17 @@ public class Stats {
 
 	@AllArgsConstructor
 	public enum Period {
-		TODAY("Aujourd'hui"), WEEKLY("Semaine précédente"), MONTHLY("Le mois dernier"), ANNUALY(
-				"Dernière année"), TWO_YEAR("Deux dernière années"), THREE_YEAR(
-						"Trois dernières années"), NEXT_WEEK("Prochaine semaine"), NEXT_MONTH(
-								"Mois prochain"), NEXT_YEAR("Prochaine année"), NEXT_TWO_YEAR(
-										"Deux prochaines années"), NEXT_THREE_YEAR(
-												"Trois prochaines années");
+		TODAY("Aujourd'hui"),
+		WEEKLY("Semaine précédente"),
+		MONTHLY("Le mois dernier"),
+		ANNUALY("Dernière année"),
+		TWO_YEAR("Deux dernière années"),
+		THREE_YEAR("Trois dernières années"),
+		NEXT_WEEK("Prochaine semaine"),
+		NEXT_MONTH("Mois prochain"),
+		NEXT_YEAR("Prochaine année"),
+		NEXT_TWO_YEAR("Deux prochaines années"),
+		NEXT_THREE_YEAR("Trois prochaines années");
 
 		@Getter
 		private String name;
@@ -49,13 +55,18 @@ public class Stats {
 			return name;
 		}
 
-
+		/**
+		 * Retourne vrai si la période sélectionnée est dans le futur.
+		 */
 		public boolean isInFuture() {
 			return (this == NEXT_WEEK || this == NEXT_MONTH || this == NEXT_YEAR
 					|| this == NEXT_TWO_YEAR || this == NEXT_THREE_YEAR);
 		}
 	}
 
+	/**
+	 * Permet de générer l'ensemble des statistiques sur une période donnée
+	 */
 	public Stats(Period period) throws SQLException {
 		this.nbClientIncomming = nbClientToday(false);
 		this.nbClientOutgoing = nbClientToday(true);
@@ -78,8 +89,6 @@ public class Stats {
 
 		List<Reservation> reservations = dbr.query((dbr.queryBuilder().where()
 				.raw("'" + nowDateString + "' = DATE(" + value + ")").prepare()));
-
-
 
 		return reservations.size();
 	}
@@ -222,7 +231,6 @@ public class Stats {
 			endDate = switcher;
 		}
 
-
 		String endDateString = dateFormat.format(endDate);
 		String startDateString = dateFormat.format(startDate);
 
@@ -294,7 +302,6 @@ public class Stats {
 				break;
 		}
 
-
 		Date startDate = c.getTime();
 
 		if (startDate.after(endDate)) {
@@ -308,13 +315,11 @@ public class Stats {
 
 		var dbr = Database.getInstance().getReservationDao();
 
-		List<Reservation> reservations =
-				dbr.query(
-						(dbr.queryBuilder().where()
-								.raw("DATE(start_date) >= '" + startDateString
-										+ "' AND DATE(start_date) <= '" + endDateString + "'")
-								.prepare()));
-
+		List<Reservation> reservations = dbr.query(
+				(dbr.queryBuilder().where()
+						.raw("DATE(start_date) >= '" + startDateString
+								+ "' AND DATE(start_date) <= '" + endDateString + "'")
+						.prepare()));
 
 		HashMap<CampGround, Integer> camps = new HashMap<CampGround, Integer>();
 

@@ -8,8 +8,6 @@ import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.StatusColors;
 
-import com.j256.ormlite.table.DatabaseTable;
-
 import javafx.scene.paint.Color;
 
 import java.security.*;
@@ -21,6 +19,7 @@ import java.util.List;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.table.DatabaseTable;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor

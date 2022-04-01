@@ -14,9 +14,11 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import javafx.scene.paint.Color;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.CashBack;
 import pt4.flotsblancs.database.model.types.Equipment;

@@ -1,6 +1,7 @@
 package pt4.flotsblancs.scenes.components.ComboBoxes;
 
 import io.github.palexdev.materialfx.enums.FloatMode;
+
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.ConstraintException;
 import pt4.flotsblancs.database.model.Reservation;
@@ -13,6 +14,10 @@ public class EquipmentComboBox extends RefreshableComboBox<Equipment> {
     private final Reservation reservation;
     private final CampGround campground;
 
+    /**
+     * Combobox pour sélecionner les équipements d'une réservation
+     * @param reservation
+     */
     public EquipmentComboBox(Reservation reservation) {
         this.campground = null;
         this.reservation = reservation;
@@ -35,6 +40,9 @@ public class EquipmentComboBox extends RefreshableComboBox<Equipment> {
         });
     }
 
+    /**
+     * Combo box pour sélectionner les equipement d'un emplacement
+     */
     public EquipmentComboBox(CampGround campground) {
         this.campground = campground;
         this.reservation = null;
@@ -53,6 +61,7 @@ public class EquipmentComboBox extends RefreshableComboBox<Equipment> {
         });
     }
 
+    @Override
     public void refresh() {
         getItems().clear();
         if (this.campground != null) {

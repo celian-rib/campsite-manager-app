@@ -17,6 +17,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import javafx.scene.paint.Color;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.daos.ReservationDAO;
 import pt4.flotsblancs.database.model.types.LogType;

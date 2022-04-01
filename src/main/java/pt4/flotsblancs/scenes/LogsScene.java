@@ -1,10 +1,16 @@
 package pt4.flotsblancs.scenes;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.Log;
+import pt4.flotsblancs.database.model.User;
+import pt4.flotsblancs.database.model.types.LogType;
+import pt4.flotsblancs.router.IScene;
+import pt4.flotsblancs.scenes.utils.ExceptionHandler;
+
 import java.util.Date;
 import java.util.List;
-
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
@@ -13,13 +19,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
-
-import pt4.flotsblancs.database.Database;
-import pt4.flotsblancs.database.model.Log;
-import pt4.flotsblancs.database.model.User;
-import pt4.flotsblancs.database.model.types.LogType;
-import pt4.flotsblancs.router.IScene;
-import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 
 public class LogsScene extends VBox implements IScene {
 

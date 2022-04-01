@@ -9,9 +9,11 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import javafx.scene.paint.Color;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.types.LogType;
 import pt4.flotsblancs.database.model.types.ProblemStatus;

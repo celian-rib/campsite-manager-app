@@ -1,5 +1,7 @@
 package pt4.flotsblancs.scenes.utils;
 
+import pt4.flotsblancs.scenes.components.ToastBasket;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.PauseTransition;
@@ -15,7 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import pt4.flotsblancs.scenes.components.ToastBasket;
 
 public class Toaster {
 	/**

@@ -8,6 +8,9 @@ public class ProblemStatusComboBox extends RefreshableComboBox<ProblemStatus> {
 
     private Problem problem;
 
+    /**
+     * Combo box pour changer le statut d'un problème donnée
+     */
     public ProblemStatusComboBox(Problem problem) {
         this.problem = problem;
 

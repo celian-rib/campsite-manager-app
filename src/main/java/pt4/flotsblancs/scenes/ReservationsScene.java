@@ -1,29 +1,5 @@
 package pt4.flotsblancs.scenes;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import org.kordamp.ikonli.javafx.FontIcon;
-
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.enums.FloatMode;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.OverrunStyle;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
@@ -39,16 +15,41 @@ import pt4.flotsblancs.scenes.components.HBoxSpacer;
 import pt4.flotsblancs.scenes.components.ProblemsListCard;
 import pt4.flotsblancs.scenes.components.ReservationDatePicker;
 import pt4.flotsblancs.scenes.components.VBoxSpacer;
-import pt4.flotsblancs.scenes.components.ComboBoxes.CampGroundComboBox;
-import pt4.flotsblancs.scenes.components.ComboBoxes.EquipmentComboBox;
-import pt4.flotsblancs.scenes.components.ComboBoxes.PersonCountComboBox;
-import pt4.flotsblancs.scenes.components.ComboBoxes.ServiceComboBox;
+import pt4.flotsblancs.scenes.components.ComboBoxes.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.PriceUtils;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.MailSender;
 import pt4.flotsblancs.utils.PDFGenerator;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.stream.Collectors;
+
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.text.Font;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.control.OverrunStyle;
+
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.enums.FloatMode;
+
+
 
 public class ReservationsScene extends ItemScene<Reservation> {
 

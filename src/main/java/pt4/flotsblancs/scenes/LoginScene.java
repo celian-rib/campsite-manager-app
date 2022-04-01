@@ -1,7 +1,12 @@
 package pt4.flotsblancs.scenes;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.enums.ButtonType;
+import pt4.flotsblancs.database.model.User;
+import pt4.flotsblancs.router.IScene;
+import pt4.flotsblancs.router.Router;
+import pt4.flotsblancs.router.Router.Routes;
+import pt4.flotsblancs.scenes.components.FlotsBlancsLogo;
+import pt4.flotsblancs.scenes.utils.ToastType;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -9,12 +14,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import pt4.flotsblancs.database.model.User;
-import pt4.flotsblancs.router.IScene;
-import pt4.flotsblancs.router.Router;
-import pt4.flotsblancs.router.Router.Routes;
-import pt4.flotsblancs.scenes.components.FlotsBlancsLogo;
-import pt4.flotsblancs.scenes.utils.ToastType;
+
+import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.controls.MFXButton;
 
 public class LoginScene extends BorderPane implements IScene {
 
@@ -39,30 +41,15 @@ public class LoginScene extends BorderPane implements IScene {
     }
 
     @Override
-    public void onUnfocus() {
-
-    }
-
-    @Override
     public void start() {
         setId("login-page");
 
         setPadding(new Insets(60));
         setTop(new FlotsBlancsLogo(true, true, 100));
         setCenter(loginForm());
-
-        ///// TO REMOVE ////////
-        // Button DEVLOGIN = new Button("FAST LOGIN (DEV)");
-        // DEVLOGIN.setOnAction(e -> {
-        // User.logIn("test", "test");
-        // Router.goToScreen(Routes.HOME);
-        // });
-        // DEVLOGIN.setTextFill(Color.RED);
-        // setBottom(DEVLOGIN);
-        ///// TO REMOVE ////////
     }
 
-    public VBox loginForm() {
+    private VBox loginForm() {
         VBox loginForm = new VBox();
 
         loginForm.setAlignment(Pos.CENTER);

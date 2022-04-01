@@ -8,6 +8,9 @@ import pt4.flotsblancs.Stats.Period;
 
 public class PeriodComboBox extends RefreshableComboBox<Period> {
 
+    /**
+     * Combo box pour sélectionner une période
+     */
     public PeriodComboBox() {
         setFloatingText("Période");
         setFloatMode(FloatMode.INLINE);

@@ -1,5 +1,13 @@
 package pt4.flotsblancs.scenes;
 
+import pt4.flotsblancs.database.Database;
+import pt4.flotsblancs.database.model.CampGround;
+import pt4.flotsblancs.scenes.components.HBoxSpacer;
+import pt4.flotsblancs.scenes.components.ProblemsListCard;
+import pt4.flotsblancs.scenes.components.VBoxSpacer;
+import pt4.flotsblancs.scenes.items.ItemScene;
+import pt4.flotsblancs.scenes.utils.PriceUtils;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -10,13 +18,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import pt4.flotsblancs.database.Database;
-import pt4.flotsblancs.database.model.CampGround;
-import pt4.flotsblancs.scenes.components.HBoxSpacer;
-import pt4.flotsblancs.scenes.components.ProblemsListCard;
-import pt4.flotsblancs.scenes.components.VBoxSpacer;
-import pt4.flotsblancs.scenes.items.ItemScene;
-import pt4.flotsblancs.scenes.utils.PriceUtils;
 
 public class CampgroundsScene extends ItemScene<CampGround> {
 

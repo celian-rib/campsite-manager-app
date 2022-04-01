@@ -1,12 +1,15 @@
 package pt4.flotsblancs.database;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import pt4.flotsblancs.database.daos.CampgroundDAO;
 import pt4.flotsblancs.database.daos.ReservationDAO;
 import pt4.flotsblancs.database.model.*;
-import io.github.cdimascio.dotenv.Dotenv;
+
 import lombok.Getter;
 
 import java.sql.SQLException;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;

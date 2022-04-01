@@ -19,6 +19,9 @@ public class App extends Application {
 		launch(args); // Lancement JFX
 	}
 
+	/**
+	 * Initialise l'application, la scène principale ainsi que le routeur
+	 */
 	@Override
 	public void start(Stage primaryStage) throws SQLException {
 

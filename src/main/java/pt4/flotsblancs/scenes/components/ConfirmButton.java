@@ -12,6 +12,13 @@ public class ConfirmButton extends MFXButton {
     @Setter
     private EventHandler<ActionEvent> onConfirmedAction;
 
+    /**
+     * Permet de créer un bouton ayant un comportement de confirmation
+     * 
+     * Il faut cliquer 2 fois sur le bouton pour valider l'action
+     * 
+     * @param text text de base du bouton
+     */
     public ConfirmButton(String text) {
         super(text);
         this.needConfirm = true;

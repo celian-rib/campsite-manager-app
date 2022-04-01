@@ -20,10 +20,15 @@ import pt4.flotsblancs.database.model.types.Equipment;
 import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.database.model.types.Service;
 
+/**
+ * Cette classe est indépendante de l'application, elle permet de générer des
+ * données
+ * fictives et cohérentes dans la base de donnée.
+ */
 public class Generator {
-	
-	private static int nbResaFideleClient = 0;
-	
+
+    private static int nbResaFideleClient = 0;
+
     public static void main(String[] args) throws SQLException {
         Database.getInstance(); // Initialisation connexion BD
 
@@ -100,11 +105,9 @@ public class Generator {
 
                 var services = resa.getCampground().getCompatiblesServices();
                 resa.setSelectedServices(services.get(rdmNbrBtwn(0, services.size())));
-                
-                
-                if(i>nbr/2)
-                {
-                	//futur
+
+                if (i > nbr / 2) {
+                    // futur
                     resa.setDepositDate(rdmNbrBtwn(0, 10) > 5 ? f.date().past(50, TimeUnit.DAYS) : null);
                     resa.setStartDate(f.date().future(200, TimeUnit.DAYS, new java.util.Date()));
                     resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
@@ -115,13 +118,13 @@ public class Generator {
                             resa.setPaymentDate(new Date());
                     }
                 } else {
-                	//passé
+                    // passé
                     resa.setStartDate(f.date().past(100, TimeUnit.DAYS, new java.util.Date()));
                     resa.setEndDate(f.date().future(30, TimeUnit.DAYS, resa.getStartDate()));
-                    
+
                     resa.setDepositDate(resa.getStartDate());
                     resa.setPaymentDate(resa.getEndDate());
-               
+
                 }
                 Database.getInstance().getReservationDao().create(resa);
                 Database.getInstance().getReservationDao().refresh(resa);
@@ -132,12 +135,11 @@ public class Generator {
 
         }
     }
-    
+
     private static void generateClientFidele(Faker f) throws SQLException {
         List<CampGround> CGlist = Database.getInstance().getCampgroundDao().queryForAll();
         List<Client> ClientsList = Database.getInstance().getClientsDao().queryForAll();
-        while(nbResaFideleClient<=4)
-        {
+        while (nbResaFideleClient <= 4) {
             var resa = new Reservation();
 
             try {
@@ -182,7 +184,7 @@ public class Generator {
             cg.setDescription(f.lorem().sentence().toString() + f.lorem().sentence().toString()
                     + f.lorem().sentence().toString());
             cg.setPricePerDays(f.number().randomDigitNotZero() * 100);
-            cg.setSurface(f.number().randomDigitNotZero()*10);
+            cg.setSurface(f.number().randomDigitNotZero() * 10);
             cg.setAllowedEquipments(Equipment.values()[rdmNbrBtwn(0, Equipment.values().length)]);
             if (cg.getAllowedEquipments() == Equipment.MOBILHOME)
                 cg.setProvidedServices(Service.WATER_AND_ELECTRICITY);
@@ -214,17 +216,17 @@ public class Generator {
     }
 
     private static void generateStocks(Faker f) throws SQLException {
-        String[] item = { "Pansements", "Désinfectant", "Crème piqure moustique", "Bouteille d'eau 1L", 
-                        "Bouteille d'eau 50cL", "Savon biodégradable", "Brosse à dents", "Papier toilette", 
-                        "Parapluie", "Mug Flots Blancs", "T-shirt Flots Blancs", "Casquette Flots Blancs", 
-                        "Pins Flots Blancs", "Magnet Flots Blancs", "Carte touristique", "Guide Touristique" };
+        String[] item = { "Pansements", "Désinfectant", "Crème piqure moustique", "Bouteille d'eau 1L",
+                "Bouteille d'eau 50cL", "Savon biodégradable", "Brosse à dents", "Papier toilette",
+                "Parapluie", "Mug Flots Blancs", "T-shirt Flots Blancs", "Casquette Flots Blancs",
+                "Pins Flots Blancs", "Magnet Flots Blancs", "Carte touristique", "Guide Touristique" };
         String[] location = { "Etagère 1", "Etagère 2", "Meuble de caisse", "Coffre" };
         Stock s;
         for (int i = 0; i < item.length; i++) {
             s = new Stock();
             s.setItem(item[i]);
             s.setQuantity(f.random().nextInt(500));
-            s.setQuantityAlertThreshold(f.number().randomDigitNotZero()*10);
+            s.setQuantityAlertThreshold(f.number().randomDigitNotZero() * 10);
             s.setStorageLocation(location[f.random().nextInt(location.length)]);
             Database.getInstance().getStockDao().create(s);
             System.out.println(s.getItem() + " " + s.getQuantity() + " " + s.getStorageLocation());

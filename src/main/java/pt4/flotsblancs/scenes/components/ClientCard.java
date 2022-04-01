@@ -3,6 +3,7 @@ package pt4.flotsblancs.scenes.components;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -12,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+
 import pt4.flotsblancs.database.model.Client;
 import pt4.flotsblancs.router.Router;
 import pt4.flotsblancs.router.Router.Routes;
@@ -40,15 +42,11 @@ public class ClientCard extends BorderPane {
 
         FontIcon icon = new FontIcon("far-user-circle:30");
         icon.setIconColor(Color.rgb(51, 59, 97));
-        
-        if(client.isFrequentClient())
-        {
-        	icon = new FontIcon("fas-crown:25");
-        	icon.setIconColor(Color.rgb(255, 215, 0));
+
+        if (client.isFrequentClient()) {
+            icon = new FontIcon("fas-crown:25");
+            icon.setIconColor(Color.rgb(255, 215, 0));
         }
-        
-        
-        
 
         VBox clientInfos = new VBox(2);
         Label name = new Label(client.getFirstName() + " " + client.getName());
@@ -63,6 +61,11 @@ public class ClientCard extends BorderPane {
         return container;
     }
 
+    /**
+     * Permet de créer une nouvelle carte client
+     * @param client client actuellement affiché
+     * @param width largeur de la carte
+     */
     public ClientCard(Client client, int width) {
         this.client = client;
         setLeft(createClientInfos());
