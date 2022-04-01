@@ -20,7 +20,6 @@ import lombok.Getter;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.daos.ReservationDAO;
 import pt4.flotsblancs.database.model.types.LogType;
-import pt4.flotsblancs.database.model.types.ProblemStatus;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
 import pt4.flotsblancs.scenes.utils.TxtFieldValidation;
@@ -158,7 +157,7 @@ public class Client implements Item {
      * 
      * @param name
      */
-    
+
     public void setName(String name) {
         User.addlog(LogType.MODIFY, "Nom du client " + getDisplayName() + " changé pour " + name);
         this.name = name;
@@ -185,7 +184,7 @@ public class Client implements Item {
      * @return la réservation actuelle (ou null) du client
      */
     public Reservation getOpenReservation() {
-        if(!isForeignCorrect())
+        if (!isForeignCorrect())
             return null;
         return reservations.stream().filter(r -> r.getPaymentDate() == null && !r.getCanceled()).findFirst()
                 .orElse(null);
@@ -218,19 +217,21 @@ public class Client implements Item {
     public boolean hasOpenProblem() {
         if (problems.size() == 0)
             return false;
-        return problems
+            
+        boolean hasAny = problems
                 .stream()
-                .anyMatch(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT);
+                .anyMatch(p -> p.getStatus().isOpen());
+        return hasAny;
     }
 
     public List<Problem> getOpenProblems() {
-        return problems.stream().filter(p -> p.getStatus() == ProblemStatus.OPEN || p.getStatus() == ProblemStatus.OPEN_URGENT)
-                .collect(Collectors.toList());
+        List<Problem> openProblems = problems.stream().filter(p -> p.getStatus().isOpen()).collect(Collectors.toList());
+        return openProblems;
     }
 
     @Override
     public Color getStatusColor() {
-        return getOpenProblems().size() > 0 ? StatusColors.RED : StatusColors.BLUE;
+        return hasOpenProblem() ? StatusColors.RED : StatusColors.BLUE;
     }
 
     public boolean isFrequentClient() {
@@ -257,14 +258,8 @@ public class Client implements Item {
 
     @Override
     public int compareTo(Item o) {
-        Client other = (Client) o;
-        return name.compareTo(other.getName());
-        // le tri par problème est compliqué à implémenter, l'utilisation de stream
-        // ralentit l'UI
-        // Et j'ai pas réussi à implémenter l'async.
-
-        // int score = getSortScore(), otherScore = other.getSortScore();
-        // return (score - otherScore) + name.compareTo(other.getName());
+        // Le tri est explicitement fait par la requete queryAll de la ClientScene
+        return 0;
     }
 
 }
