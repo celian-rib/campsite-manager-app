@@ -10,6 +10,9 @@ import pt4.flotsblancs.database.model.Reservation;
 public class ReservationComboBox extends RefreshableComboBox<Reservation> {
     private Problem problem;
 
+    /**
+     * Combo box pour changer la réservation d'un problème donné
+     */
     public ReservationComboBox(Problem problem) throws SQLException {
         this.problem = problem;
 

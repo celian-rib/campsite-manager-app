@@ -1,31 +1,5 @@
 package pt4.flotsblancs.scenes;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import org.kordamp.ikonli.javafx.FontIcon;
-
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.enums.FloatMode;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.concurrent.Task;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.OverrunStyle;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.Reservation;
 import pt4.flotsblancs.database.model.types.CashBack;
@@ -41,16 +15,41 @@ import pt4.flotsblancs.scenes.components.HBoxSpacer;
 import pt4.flotsblancs.scenes.components.ProblemsListCard;
 import pt4.flotsblancs.scenes.components.ReservationDatePicker;
 import pt4.flotsblancs.scenes.components.VBoxSpacer;
-import pt4.flotsblancs.scenes.components.ComboBoxes.CampGroundComboBox;
-import pt4.flotsblancs.scenes.components.ComboBoxes.EquipmentComboBox;
-import pt4.flotsblancs.scenes.components.ComboBoxes.PersonCountComboBox;
-import pt4.flotsblancs.scenes.components.ComboBoxes.ServiceComboBox;
+import pt4.flotsblancs.scenes.components.ComboBoxes.*;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.PriceUtils;
 import pt4.flotsblancs.scenes.utils.ToastType;
 import pt4.flotsblancs.utils.MailSender;
 import pt4.flotsblancs.utils.PDFGenerator;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.stream.Collectors;
+
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.text.Font;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.control.OverrunStyle;
+
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.enums.FloatMode;
+
+
 
 public class ReservationsScene extends ItemScene<Reservation> {
 
@@ -152,9 +151,12 @@ public class ReservationsScene extends ItemScene<Reservation> {
         title.setText("Réservation  #" + reservation.getId() + cancelStr);
 
         dayCount.setText(reservation.getDayCount() + " jours");
-        depositPrice.setText("Prix acompte : " + PriceUtils.priceToString(reservation.getDepositPrice()) + "€");
-        toPayPrice.setText("Reste à payer : " + PriceUtils.priceToString(reservation.getToPayPrice()) + "€");
-        totalPrice.setText("Prix total : " + PriceUtils.priceToString(reservation.getTotalPrice()) + "€");
+        depositPrice.setText(
+                "Prix acompte : " + PriceUtils.priceToString(reservation.getDepositPrice()) + "€");
+        toPayPrice.setText(
+                "Reste à payer : " + PriceUtils.priceToString(reservation.getToPayPrice()) + "€");
+        totalPrice.setText(
+                "Prix total : " + PriceUtils.priceToString(reservation.getTotalPrice()) + "€");
         sendBillBtn.setText(reservation.getBill() != null ? "Regénérer et envoyer facture"
                 : "Générer et envoyer facture");
         campCard.refresh(reservation.getCampground());
@@ -265,7 +267,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         totalPrice = new Label();
         totalPrice.setMinWidth(110);
         totalPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
-        
+
         toPayPrice = new Label();
         toPayPrice.setMinWidth(110);
         toPayPrice.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
@@ -380,36 +382,23 @@ public class ReservationsScene extends ItemScene<Reservation> {
         });
 
         sendBillBtn.setOnAction(e -> {
-        	
-            Task<Void> task = new Task<Void>() {
-                @Override protected Void call() throws Exception {
-                    return null;
-                }
-            };
-            
             new Thread() {
-
-                // runnable for that thread
-                public void run() 
-                {
+                public void run() {
                     try {
-                    	
                         var bill = PDFGenerator.generateReservationBillPDF(reservation);
                         reservation.setBill(bill.toByteArray());
-                        //Tout ce qui doit être run dans un thread javafx on l'encercle avec ça,
-                        //sinon ça merde :(
                         Platform.runLater(new Runnable() {
                             public void run() {
-		                        updateDatabase();
-		                        refreshPage();
+                                updateDatabase();
+                                refreshPage();
                             }
                         });
                     } catch (Exception e1) {
                         e1.printStackTrace();
                         Platform.runLater(new Runnable() {
                             public void run() {
-		                        Router.showToast(ToastType.ERROR,
-		                                "Une erreur est survenue durant la génération de la facture");
+                                Router.showToast(ToastType.ERROR,
+                                        "Une erreur est survenue durant la génération de la facture");
                             }
                         });
                     }
@@ -420,22 +409,21 @@ public class ReservationsScene extends ItemScene<Reservation> {
                         e1.printStackTrace();
                         Platform.runLater(new Runnable() {
                             public void run() {
-                            	Router.showToast(ToastType.ERROR,
+                                Router.showToast(ToastType.ERROR,
                                         "Une erreur est survenue durant l'envoi de l'email au client");
                             }
                         });
                     }
                 }
             }.start();
-        	
+
         });
-        	
 
         openBillBtn.setOnAction(e -> {
             Router.showToast(ToastType.INFO, "Ouverture du fichier...");
             try {
                 PDFGenerator.openFile(reservation);
-                
+
             } catch (Exception e1) {
                 e1.printStackTrace();
                 Router.showToast(ToastType.ERROR,
@@ -451,7 +439,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         container.getChildren().addAll(openBillBtn, sendBillBtn, cancelBtn);
         return container;
     }
-    
+
 
     /**
      * @param typeName

@@ -1,28 +1,5 @@
 package pt4.flotsblancs.scenes;
 
-import javafx.beans.value.ChangeListener;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextFormatter;
-
-import java.sql.SQLException;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.List;
-import java.util.function.UnaryOperator;
-
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXCheckbox;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.util.converter.IntegerStringConverter;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.User;
 import pt4.flotsblancs.router.Router;
@@ -34,6 +11,32 @@ import pt4.flotsblancs.scenes.components.VBoxSpacer;
 import pt4.flotsblancs.scenes.items.ItemScene;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
+
+import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.List;
+import java.util.function.UnaryOperator;
+
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.scene.text.Font;
+import javafx.beans.value.ChangeListener;
+import javafx.util.converter.IntegerStringConverter;
+import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.SpinnerValueFactory;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXCheckbox;
+
+
 
 public class UserScene extends ItemScene<User> {
 
@@ -194,8 +197,8 @@ public class UserScene extends ItemScene<User> {
                 ParsePosition parsePosition = new ParsePosition(0);
                 // NumberFormat evaluates the beginning of the text
                 format.parse(c.getControlNewText(), parsePosition);
-                if (parsePosition.getIndex() == 0 ||
-                        parsePosition.getIndex() < c.getControlNewText().length()) {
+                if (parsePosition.getIndex() == 0
+                        || parsePosition.getIndex() < c.getControlNewText().length()) {
                     // reject parsing the complete text failed
                     return null;
                 }
@@ -204,7 +207,7 @@ public class UserScene extends ItemScene<User> {
         };
 
         TextFormatter<Integer> priceFormatter = new TextFormatter<Integer>(
-        new IntegerStringConverter(), stagiaire.getWeeklyHours(), filter);
+                new IntegerStringConverter(), stagiaire.getWeeklyHours(), filter);
 
         hoursSpinner.getEditor().setTextFormatter(priceFormatter);
         vFact.setValue(stagiaire.getWeeklyHours());

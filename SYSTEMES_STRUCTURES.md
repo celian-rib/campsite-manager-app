@@ -1,4 +1,4 @@
-# Manuel développeur de l'application
+# Systèmes et structure de l'application
 
 Ce manuel regroupe les explications des systèmes composants le projet.
 

@@ -1,7 +1,5 @@
 package pt4.flotsblancs.scenes.components;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import javafx.geometry.Insets;

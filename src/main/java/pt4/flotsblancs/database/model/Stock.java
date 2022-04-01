@@ -2,9 +2,10 @@ package pt4.flotsblancs.database.model;
 
 import lombok.*;
 import pt4.flotsblancs.database.model.types.LogType;
-import javafx.scene.paint.Color;
 import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.StatusColors;
+
+import javafx.scene.paint.Color;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -56,7 +57,8 @@ public class Stock implements Item {
      */
 
     public void setQuantity(int quantity) {
-        User.addlog(LogType.ADD, "Mise à jour de la quantité de " + item + " de " + this.quantity + " à " + quantity);
+        User.addlog(LogType.ADD, "Mise à jour de la quantité de " + item + " de " + this.quantity
+                + " à " + quantity);
         this.quantity = quantity;
     }
 
@@ -67,8 +69,8 @@ public class Stock implements Item {
      */
 
     public void setQuantityAlertThreshold(int quantityAlert) {
-        User.addlog(LogType.ADD,
-                "Mise à jour de l'alerte de " + item + " de " + this.quantityAlertThreshold + " à " + quantity);
+        User.addlog(LogType.ADD, "Mise à jour de l'alerte de " + item + " de "
+                + this.quantityAlertThreshold + " à " + quantity);
         this.quantityAlertThreshold = quantityAlert;
     }
 
@@ -79,8 +81,8 @@ public class Stock implements Item {
      */
 
     public void setStorageLocation(String location) {
-        User.addlog(LogType.ADD, "Mise à jour de l'emplacement de stockage de " + item + " de " + this.storageLocation
-                + " à " + location);
+        User.addlog(LogType.ADD, "Mise à jour de l'emplacement de stockage de " + item + " de "
+                + this.storageLocation + " à " + location);
         this.storageLocation = location;
     }
 
@@ -91,14 +93,14 @@ public class Stock implements Item {
 
     @Override
     public String getSearchString() {
-        return String.join(";",this.item,this.storageLocation).trim().toLowerCase();
+        return String.join(";", this.item, this.storageLocation).trim().toLowerCase();
     }
 
     @Override
     public boolean isForeignCorrect() {
         return true;
     }
-    
+
     @Override
     public Color getStatusColor() {
         return this.quantity < this.quantityAlertThreshold ? StatusColors.RED : StatusColors.GREEN;
@@ -106,11 +108,11 @@ public class Stock implements Item {
 
     @Override
     public int compareTo(Item o) {
-        Stock other = (Stock)o;
+        Stock other = (Stock) o;
         int val = (this.getStatusColor() == StatusColors.GREEN ? 100 : 1000) + this.getId();
         int otherVal = (other.getStatusColor() == StatusColors.GREEN ? 100 : 1000) + other.getId();
         return val - otherVal;
-        
+
 
     }
 

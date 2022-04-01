@@ -1,14 +1,11 @@
 package pt4.flotsblancs.scenes.utils;
 
-import pt4.flotsblancs.router.Router;
-
 public class PriceUtils {
-    
     /**
-     * transforme un prix donné dans le bon format String
+     * transforme un prix donné en entier dans le bon format String
      * 
-     * @param price
-     * @return
+     * @param price prix sous forme d'entier (Ex: 128)
+     * @return string représentant le prix (Ex: "1.28")
      */
     public static String priceToString(int price){
         float res = price/10;

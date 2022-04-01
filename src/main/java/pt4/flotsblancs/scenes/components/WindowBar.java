@@ -18,6 +18,9 @@ public class WindowBar extends BorderPane {
         return button;
     }
 
+    /**
+     * Barre de fenêtre de l'application (Contient les boutons fermer / réduire / plein-écran)
+     */
     public WindowBar() {
         setId("top-bar");
 

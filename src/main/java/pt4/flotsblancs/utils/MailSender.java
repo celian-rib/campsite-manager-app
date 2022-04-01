@@ -1,26 +1,30 @@
 package pt4.flotsblancs.utils;
 
-import io.github.cdimascio.dotenv.Dotenv;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Properties;
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.swing.filechooser.FileSystemView;
-import org.apache.commons.text.StringEscapeUtils;
 import pt4.flotsblancs.database.model.Reservation;
+
+import java.io.File;
+import java.util.Properties;
+import java.io.FileOutputStream;
+
+import javax.mail.Session;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Transport;
+import javax.mail.Authenticator;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.InternetAddress;
+import javax.activation.DataSource;
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.swing.filechooser.FileSystemView;
+
+import org.apache.commons.text.StringEscapeUtils;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class MailSender {
 
@@ -29,7 +33,7 @@ public class MailSender {
     static Dotenv dotenv;
     static final String FALLBACK_EMAIL = "camping.les.flots.blancs@gmail.com";
 
-    static Properties createProperties() {
+    private static Properties createProperties() {
         Properties prop = new Properties();
         prop.put("mail.smtp.auth", true);
         prop.put("mail.smtp.starttls.enable", "true");
@@ -39,7 +43,7 @@ public class MailSender {
         return prop;
     }
 
-    static Session createSession() {
+    private static Session createSession() {
         props = props == null ? createProperties() : props;
         dotenv = Dotenv.load();
         Session newS = Session.getInstance(
@@ -55,6 +59,10 @@ public class MailSender {
         return newS;
     }
 
+    /**
+     * Permet d'envoyer un mail contenant une facture à partir d'une réservation
+     * @throws MessagingException
+     */
     public static void sendMail(Reservation reservation) throws MessagingException {
         session = session == null ? createSession() : session;
         if (reservation.getBill() == null) {
@@ -97,7 +105,6 @@ public class MailSender {
             e.printStackTrace();
             return null;
         }
-
     }
 
     private static MimeBodyPart attachBill(File outputFile) {

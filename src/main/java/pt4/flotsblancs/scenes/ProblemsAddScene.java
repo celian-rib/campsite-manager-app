@@ -1,15 +1,5 @@
 package pt4.flotsblancs.scenes;
 
-import java.sql.SQLException;
-import java.util.List;
-
-import io.github.palexdev.materialfx.controls.MFXButton;
-import javafx.beans.value.ChangeListener;
-import javafx.geometry.Pos;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import pt4.flotsblancs.database.Database;
 import pt4.flotsblancs.database.model.CampGround;
 import pt4.flotsblancs.database.model.Client;
@@ -26,6 +16,17 @@ import pt4.flotsblancs.scenes.items.Item;
 import pt4.flotsblancs.scenes.utils.ExceptionHandler;
 import pt4.flotsblancs.scenes.utils.ToastType;
 
+import java.util.List;
+import java.sql.SQLException;
+
+import javafx.geometry.Pos;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+
+import io.github.palexdev.materialfx.controls.MFXButton;
 public class ProblemsAddScene extends VBox implements IItemScene<Item> {
 
 	private Problem problem;
@@ -79,7 +80,7 @@ public class ProblemsAddScene extends VBox implements IItemScene<Item> {
 
 	}
 
-	public HBox createHeader() {
+	private HBox createHeader() {
 		HBox box = new HBox();
 		try {
 			resaCombo = new ReservationComboBox(this.problem);
@@ -108,7 +109,7 @@ public class ProblemsAddScene extends VBox implements IItemScene<Item> {
 		return box;
 	}
 
-	public BorderPane createBottom() {
+	private BorderPane createBottom() {
 
 		BorderPane bottom = new BorderPane();
 
@@ -166,28 +167,28 @@ public class ProblemsAddScene extends VBox implements IItemScene<Item> {
 		return bottom;
 	}
 
-	public void setCampground(CampGround campground) {
+	private void setCampground(CampGround campground) {
 		this.campground = campground;
 		if(!this.campCombo.getItems().contains(campground))
 			this.campCombo.getItems().add(campground);
 		this.campCombo.selectItem(campground);
 	}
 	
-	public void setClient(Client client) {
+	private void setClient(Client client) {
 		this.client = client;
 		if(!this.clientCombo.getItems().contains(client))
 			this.clientCombo.getItems().add(client);
 		this.clientCombo.selectItem(client);
 	}
 	
-	public void setReservation(Reservation reservation) {
+	private void setReservation(Reservation reservation) {
 		this.reservation = reservation;
 		if(!this.resaCombo.getItems().contains(reservation))
 			this.resaCombo.getItems().add(reservation);
 		this.resaCombo.selectItem(reservation);
 	}
 
-	public void refreshPage() {
+	private void refreshPage() {
 		if (this.resaCombo.getSelectedItem() != null && changed instanceof ReservationComboBox) {
 			changed = null;
 			Reservation resa = resaCombo.getSelectedItem();
