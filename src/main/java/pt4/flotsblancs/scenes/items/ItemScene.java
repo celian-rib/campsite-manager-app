@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -61,8 +62,7 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     };
 
     /**
-     * Met en place le BorderPane contenant à gauche la liste des items et à droite
-     * l'item
+     * Met en place le BorderPane contenant à gauche la liste des items et à droite l'item
      * selectionné
      */
     @Override
@@ -70,45 +70,61 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         itemList = new ItemList<I>(this);
 
         BreakPointManager.addListener(this);
-        setLeft(itemList);
         updateContainer(null);
+        setLeft(itemList);
     }
 
     @Override
     public void onFocus() {
-        updateItemList();
+        initItemList();
     }
 
-    protected void updateItemList() {
+    private void initItemList() {
         itemList.setIsLoading(true);
         final Task<List<I>> updateListTask = new Task<List<I>>() {
-            protected java.util.List<I> call() {
+            @Override
+            protected java.util.List<I> call() throws SQLException {
                 List<I> allItems;
-                try {
-                    allItems = queryAll().stream().filter(i -> i.isForeignCorrect()).collect(Collectors.toList());
-                    itemList.updateItems(allItems);
-                    return allItems;
-                } catch (SQLException e) {
-                    ExceptionHandler.loadIssue(e);
-                }
-                return null;
+                allItems = queryAll().stream().filter(i -> i.isForeignCorrect()).sorted()
+                        .collect(Collectors.toList());
+                Platform.runLater(() -> itemList.updateItems(allItems));
+                return allItems;
             };
 
+            @Override
             protected void succeeded() {
+                super.succeeded();
                 itemList.setIsLoading(false);
             };
 
+            @Override
             protected void failed() {
-                ExceptionHandler.loadIssue(new SQLException());
+                super.failed();
+                ExceptionHandler.loadIssue(
+                        new SQLException("ItemList update : " + getException().getMessage()));
             };
         };
-
         new Thread(updateListTask).start();
     }
 
     /**
-     * Met à jour le conteneur droit de la page, affichant les informations de
-     * l'item sélectionné
+     * Permet de dire à l'ItemList que cet Item vient dêtre mit à jour
+     * 
+     * (Utile pour que le rond de couleur StatusDot mette sa couleur à jour)
+     * @param item item à mettre à jour dans la liste
+     */
+    protected void updateItemList(Item item) {
+        log("Updating list for item " + item.getDisplayName());
+        itemList.getListButtons().forEach(itemPane -> {
+            if (itemPane.getItem().equals(item)) {
+                itemPane.updateColor();
+                itemPane.showDots();
+            }
+        });
+    }
+
+    /**
+     * Met à jour le conteneur droit de la page, affichant les informations de l'item sélectionné
      * 
      * @param item item selectionné qui doit être affiché
      */
@@ -139,9 +155,10 @@ public abstract class ItemScene<I extends Item> extends BorderPane
         setCenter((Parent) stack);
     }
 
-    protected void onItemDelete(Item i) {
+    protected void onItemDelete(Item item) {
+        itemList.clearSelectedItem();
         updateContainer(null);
-        updateItemList();
+        initItemList();
     }
 
     @Override
@@ -158,5 +175,9 @@ public abstract class ItemScene<I extends Item> extends BorderPane
     @Override
     public void selectItem(I item) {
         itemList.selectItem(item);
+    }
+
+    private static void log(String message) {
+        System.out.println("[ItemScene] " + message);
     }
 }

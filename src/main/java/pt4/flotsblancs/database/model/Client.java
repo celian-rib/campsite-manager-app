@@ -225,7 +225,7 @@ public class Client implements Item {
 
     @Override
     public Color getStatusColor() {
-        return getOpenProblems().size() > 0 ? StatusColors.RED : StatusColors.BLUE;
+        return hasOpenProblem() ? StatusColors.RED : StatusColors.BLUE;
     }
 
     public boolean isFrequentClient() {
@@ -255,14 +255,8 @@ public class Client implements Item {
 
     @Override
     public int compareTo(Item o) {
-        Client other = (Client) o;
-        return name.compareTo(other.getName());
-        // le tri par problème est compliqué à implémenter, l'utilisation de stream
-        // ralentit l'UI
-        // Et j'ai pas réussi à implémenter l'async.
-
-        // int score = getSortScore(), otherScore = other.getSortScore();
-        // return (score - otherScore) + name.compareTo(other.getName());
+        // Le tri est explicitement fait par la requete queryAll de la ClientScene
+        return 0;
     }
 
 }

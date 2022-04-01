@@ -194,7 +194,7 @@ public class ReservationsScene extends ItemScene<Reservation> {
         try {
             Database.getInstance().getReservationDao().update(reservation);
             Router.showToast(ToastType.SUCCESS, "Réservation mise à jour");
-            updateItemList();
+            updateItemList(reservation);
         } catch (SQLException e) {
             ExceptionHandler.updateIssue(e);
         }

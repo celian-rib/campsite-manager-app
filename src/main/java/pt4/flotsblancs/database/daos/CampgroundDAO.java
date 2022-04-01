@@ -39,20 +39,12 @@ public class CampgroundDAO extends BaseDaoImpl<CampGround, String> {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String startTime = dateFormat.format(start);
         String endTime = dateFormat.format(end);
-
-        for(int i=0;i<10;i++)
-        	System.out.println();
-        
         
         List<Reservation> overlappingReservations = dbr.query((dbr.queryBuilder().where()
                 .raw("('" + startTime + "' < DATE(start_date) AND '" + endTime + "'"
                         + " > DATE(start_date)) OR ('" + startTime + "'" + " < DATE(end_date) AND '"
                         + endTime + "'" + " > DATE(start_date)) AND canceled = 0")
                 .prepare()));
-
-        for(int i=0;i<10;i++)
-        	System.out.println();
-        
         
         List<Integer> ids = new ArrayList<>();
 
