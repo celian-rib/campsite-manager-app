@@ -18,8 +18,8 @@ Campsite Management App
 ---
 
 Authors :
-- Ruben Moreno
+- Ruben Moreno ([@RuMoreno](https://github.com/RuMoreno))
 - Emilien Gallon
 - Gaël Barré-Beylot
-- Hugo Martin
-- Célian Riboulet
+- Hugo Martin ([@Hugo-M33](https://github.com/Hugo-M33))
+- Célian Riboulet ([@celian-rib](https://github.com/celian-rib))
